@@ -33,7 +33,7 @@ on:
       - 'frontend/index.html'
       - 'frontend/package.json'
       - 'frontend/vite.config.*'
-      - '.github/workflows/build-mobile.yml'
+      - '.github/workflows/build-and-sync-vps.yml'
 
 permissions:
   contents: read
