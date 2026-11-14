@@ -9,7 +9,8 @@ export interface ExtractedJobStreetNotification {
 }
 
 export function parseJobStreetNotification(text: string): ExtractedJobStreetNotification | null {
-  const clean = text.trim();
+  // Cap max text length to 30,000 chars to prevent ReDoS and memory exhaustion attacks
+  const clean = (text || '').slice(0, 30000).trim();
   if (!clean) return null;
 
   const lines = clean.split('\n').map(l => l.trim()).filter(Boolean);

@@ -2169,6 +2169,17 @@ nav,
   }
 }
 
+/* 5. Apple Typography Polish: Tabular Numbers for Data Integrity */
+.font-mono,
+.rate b,
+.spec-item strong,
+.status-pill,
+.cv-row .rate b,
+td,
+.kpi-value {
+  font-variant-numeric: tabular-nums;
+}
+
 /* ==========================================================================
    PRINT ENGINE MEDIA QUERY (@media print)
    ========================================================================== */

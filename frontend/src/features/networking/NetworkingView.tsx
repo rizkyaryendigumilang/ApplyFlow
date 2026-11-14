@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import { useProfessionalContacts } from '../../hooks/useProfessionalContacts';
 import type { ProfessionalContact, RelationshipType, ReferralStatus } from '../../lib/pb-types';
-import { daysSince } from '../../lib/utils';
+import { daysSince, sanitizeUrl } from '../../lib/utils';
 
 export function NetworkingView() {
   const { contacts, loading, addContact, updateContact, deleteContact } = useProfessionalContacts();
@@ -436,7 +436,7 @@ Semoga hari Anda menyenangkan dan saya menantikan kabar baik berikutnya!`;
                 <div style={{ display: 'flex', gap: '6px' }}>
                   {c.linkedinUrl && (
                     <a
-                      href={c.linkedinUrl}
+                      href={sanitizeUrl(c.linkedinUrl)}
                       target="_blank"
                       rel="noreferrer"
                       className="secondary compact-btn"

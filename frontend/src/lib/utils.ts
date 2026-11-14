@@ -1,9 +1,9 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import type { Application } from './pb-types';
-import { calculateTHP, type PTKPCategory } from './thp-calculator';
+import { calculateTHP, type PTKPCategory } from './thp-calculator.ts';
 
-export { cn } from './cn';
+export { cn } from './cn.ts';
 
 export const idr = (n: number) =>
   new Intl.NumberFormat('id-ID', {
@@ -51,3 +51,21 @@ export const thp = (
 
 export const responseRate = (responses: number, applications: number) =>
   applications > 0 ? Math.round((responses / applications) * 100) : 0;
+
+/**
+ * Sanitizes external URLs to prevent XSS / malicious schemes (javascript:, data:).
+ * Enforces http, https, or mailto protocols.
+ */
+export function sanitizeUrl(url?: string): string {
+  if (!url) return '';
+  const trimmed = url.trim();
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  if (/^mailto:/i.test(trimmed)) return trimmed;
+  if (/^(?:javascript|data|vbscript):/i.test(trimmed) || trimmed.startsWith('//')) {
+    return '#';
+  }
+  if (!trimmed.includes('://')) {
+    return `https://${trimmed}`;
+  }
+  return '#';
+}

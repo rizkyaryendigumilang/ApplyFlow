@@ -7,6 +7,7 @@ import type {
   JobLead,
   ApplicationEvent,
 } from './pb-types';
+import { sanitizeUrl } from './utils';
 
 export interface BackupDataPayload {
   applications: Application[];
@@ -41,7 +42,11 @@ export function exportApplicationsToCSV(apps: Application[]): string {
 
   const escapeCSV = (val: unknown): string => {
     if (val === null || val === undefined) return '""';
-    const str = String(val).replace(/"/g, '""');
+    let str = String(val).replace(/"/g, '""');
+    // Prevent spreadsheet formula injection (=, +, -, @, \t, \r)
+    if (/^[=+\-@\t\r]/.test(str)) {
+      str = `'${str}`;
+    }
     return `"${str}"`;
   };
 
@@ -126,7 +131,7 @@ export function parseCSVToApplications(csvText: string): Partial<Application>[] 
     parsed.push({
       company: company || 'Unknown Company',
       position: position || 'Engineer',
-      link: linkIdx >= 0 ? cols[linkIdx]?.trim() : undefined,
+      link: linkIdx >= 0 ? sanitizeUrl(cols[linkIdx]?.trim()) : undefined,
       contactName: contactNameIdx >= 0 ? cols[contactNameIdx]?.trim() : undefined,
       contact: contactIdx >= 0 ? cols[contactIdx]?.trim() : undefined,
       location: (locationIdx >= 0 && cols[locationIdx]?.trim()) || 'Jakarta',
