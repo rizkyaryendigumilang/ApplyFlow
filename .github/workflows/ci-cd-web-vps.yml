@@ -1,0 +1,153 @@
+name: Web CI/CD & VPS Sync Pipeline
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/**'
+      - 'pocketbase/**'
+      - 'scripts/**'
+      - 'docker-compose.yml'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/ci-cd-web-vps.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'frontend/**'
+      - 'pocketbase/**'
+      - 'scripts/**'
+      - 'docker-compose.yml'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/ci-cd-web-vps.yml'
+  workflow_dispatch:
+    inputs:
+      deploy_to_vps:
+        description: 'Deploy web bundle & sync to VPS (default false per user request)'
+        type: boolean
+        default: false
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: applyflow-web-production
+  cancel-in-progress: false
+
+jobs:
+  # ========================================================
+  # JOB 1: Validate, Test, and Build Web Bundle
+  # ========================================================
+  validate-and-build:
+    name: Validate, Test, and Build Web App
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install Root Dependencies
+        run: npm ci
+
+      - name: Install Frontend Dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Run Schema & Security Contract Checks
+        run: |
+          node scripts/validate-schema.mjs
+          node scripts/validate-auth-config.mjs
+
+      - name: Run Full Frontend Unit Tests (37 suites)
+        run: npm test
+
+      - name: Build Production Web Bundle
+        env:
+          VITE_POCKETBASE_URL: ${{ vars.VITE_POCKETBASE_URL || secrets.VITE_POCKETBASE_URL || '' }}
+        run: npm run build
+
+      - name: Validate Build Output Integrity
+        run: |
+          set -euo pipefail
+          test -s frontend/dist/index.html || { echo "::error::frontend/dist/index.html is missing or empty"; exit 1; }
+          test -s frontend/dist/manifest.json || { echo "::error::frontend/dist/manifest.json is missing"; exit 1; }
+          test -s frontend/dist/sw.js || { echo "::error::frontend/dist/sw.js is missing"; exit 1; }
+          test -d frontend/dist/assets || { echo "::error::frontend/dist/assets is missing"; exit 1; }
+          echo "✓ Web bundle integrity verified."
+
+      - name: Package Web Distribution Artifact
+        run: tar -czf applyflow-web-dist.tar.gz -C frontend/dist .
+
+      - name: Upload Production Web Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: applyflow-web-dist
+          path: applyflow-web-dist.tar.gz
+          retention-days: 14
+
+  # ========================================================
+  # JOB 2: Deploy & Sync to VPS (Guarded - Triggered manually)
+  # ========================================================
+  deploy-vps:
+    name: Deploy Web Application to VPS
+    needs: validate-and-build
+    # Guard: only runs when explicitly triggered with deploy_to_vps=true and VPS secrets exist
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.deploy_to_vps == true && secrets.VPS_HOST != '' && secrets.VPS_SSH_KEY != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Download Built Web Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: applyflow-web-dist
+          path: dist-artifact
+
+      - name: Deploy to VPS via SSH
+        env:
+          VPS_HOST: ${{ vars.VPS_HOST || secrets.VPS_HOST }}
+          VPS_USER: ${{ vars.VPS_USERNAME || secrets.VPS_USERNAME || 'ubuntu' }}
+          VPS_KEY: ${{ secrets.VPS_SSH_KEY }}
+          VPS_PORT: ${{ vars.VPS_SSH_PORT || secrets.VPS_SSH_PORT || vars.VPS_PORT || secrets.VPS_PORT || '22' }}
+          VPS_TARGET: ${{ vars.VPS_TARGET_DIR || secrets.VPS_TARGET_DIR || '/srv/www/applyflow' }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$HOME/.ssh"
+          printf '%s\n' "$VPS_KEY" | tr -d '\r' > "$HOME/.ssh/id_ed25519"
+          chmod 600 "$HOME/.ssh/id_ed25519"
+          ssh-keyscan -p "$VPS_PORT" -H "$VPS_HOST" > "$HOME/.ssh/known_hosts" 2>/dev/null || true
+          chmod 600 "$HOME/.ssh/known_hosts"
+          STRICT_OPT="-o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=$HOME/.ssh/known_hosts"
+
+          echo "Menguji koneksi SSH ke VPS ($VPS_HOST:$VPS_PORT)..."
+          if ! ssh -o BatchMode=yes -o ConnectTimeout=10 $STRICT_OPT -p "$VPS_PORT" -i "$HOME/.ssh/id_ed25519" "$VPS_USER@$VPS_HOST" "echo SSH_CONNECTION_OK" 2>/dev/null; then
+            echo "::error::Koneksi SSH ke VPS gagal. Periksa VPS_HOST, VPS_SSH_KEY, dan port SSH Anda."
+            rm -f "$HOME/.ssh/id_ed25519"
+            exit 1
+          fi
+
+          echo "Menyiapkan direktori tujuan di VPS..."
+          ssh $STRICT_OPT -p "$VPS_PORT" -i "$HOME/.ssh/id_ed25519" "$VPS_USER@$VPS_HOST" \
+            "mkdir -p '$VPS_TARGET/dist' '$VPS_TARGET/pocketbase' 2>/dev/null || (sudo -n mkdir -p '$VPS_TARGET/dist' '$VPS_TARGET/pocketbase' && sudo -n chown -R $VPS_USER:$VPS_USER '$VPS_TARGET')"
+
+          echo "Mengirim berkas web app ke VPS..."
+          scp $STRICT_OPT -P "$VPS_PORT" -i "$HOME/.ssh/id_ed25519" dist-artifact/applyflow-web-dist.tar.gz "$VPS_USER@$VPS_HOST:$VPS_TARGET/applyflow-web-dist.tar.gz"
+
+          echo "Mengekstrak berkas web dan memperbarui izin..."
+          ssh $STRICT_OPT -p "$VPS_PORT" -i "$HOME/.ssh/id_ed25519" "$VPS_USER@$VPS_HOST" \
+            "tar -xzf '$VPS_TARGET/applyflow-web-dist.tar.gz' -C '$VPS_TARGET/dist' && chmod -R 755 '$VPS_TARGET/dist'"
+
+          echo "Menyinkronkan skema dan hook PocketBase..."
+          scp $STRICT_OPT -P "$VPS_PORT" -i "$HOME/.ssh/id_ed25519" -r pocketbase/pb_schema.json pocketbase/pb_migrations pocketbase/pb_hooks "$VPS_USER@$VPS_HOST:$VPS_TARGET/pocketbase/"
+
+          echo "Membersihkan kredensial runner..."
+          rm -f "$HOME/.ssh/id_ed25519"
+          echo "✓ Sinkronisasi ke VPS selesai dengan sukses."

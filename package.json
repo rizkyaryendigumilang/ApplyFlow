@@ -1,0 +1,23 @@
+{
+  "name": "applyflow",
+  "version": "1.4.0",
+  "description": "ApplyFlow - Autonomous Career CRM & Monotonic Funnel Pipeline",
+  "private": true,
+  "scripts": {
+    "frontend:install": "npm --prefix frontend install",
+    "frontend:build": "npm --prefix frontend run build",
+    "frontend:test": "node --experimental-strip-types --test frontend/src/**/__tests__/*.test.ts",
+    "backend:validate": "node scripts/validate-schema.mjs && node scripts/validate-auth-config.mjs",
+    "test": "node --experimental-strip-types --test frontend/src/**/__tests__/*.test.ts && node scripts/validate-schema.mjs && node scripts/validate-auth-config.mjs",
+    "build": "npm --prefix frontend run build",
+    "cap:sync": "npx cap sync",
+    "cap:android": "npx cap sync android",
+    "cap:ios": "npx cap sync ios"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.2.0",
+    "@capacitor/cli": "^6.2.0",
+    "@capacitor/core": "^6.2.0",
+    "@capacitor/ios": "^6.2.0"
+  }
+}

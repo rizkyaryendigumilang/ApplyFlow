@@ -1,0 +1,51 @@
+services:
+  pocketbase:
+    build:
+      context: ./pocketbase
+      args:
+        PB_VERSION: ${PB_VERSION:-0.22.57}
+        PB_ARCH: ${PB_ARCH:-linux_amd64}
+        PB_SHA256: ${PB_SHA256:-C1192FFBB40F8C82E5CBAB42D9F6385BE149870A1CF185C7585BF9B3D648D1D8}
+    ports:
+      - "127.0.0.1:8090:8090"
+    restart: unless-stopped
+    init: true
+    environment:
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:-}
+      - REQUIRE_EMAIL_VERIFICATION=${REQUIRE_EMAIL_VERIFICATION:-false}
+    volumes:
+      - pb_data:/pb/pb_data
+      - pb_backups:/pb/pb_data/backups
+      - ./pocketbase/pb_hooks:/pb/pb_hooks:ro
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1:8090/api/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_POCKETBASE_URL: ${VITE_POCKETBASE_URL:-/}
+        VITE_TELEGRAM_BOT_USERNAME: ${VITE_TELEGRAM_BOT_USERNAME:-}
+    ports:
+      - "4173:80"
+    restart: unless-stopped
+    init: true
+    depends_on:
+      pocketbase:
+        condition: service_healthy
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+volumes:
+  pb_data:
+  pb_backups:

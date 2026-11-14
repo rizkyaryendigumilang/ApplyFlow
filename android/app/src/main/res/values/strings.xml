@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">ApplyFlow</string>
+    <string name="title_activity_main">ApplyFlow</string>
+    <string name="package_name">com.applyflow.app</string>
+    <string name="custom_url_scheme">com.applyflow.app</string>
+</resources>

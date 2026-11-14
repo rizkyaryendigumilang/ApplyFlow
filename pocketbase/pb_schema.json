@@ -1,0 +1,2272 @@
+[
+  {
+    "id": "_pb_users_auth_",
+    "name": "users",
+    "type": "auth",
+    "system": true,
+    "schema": [
+      {
+        "id": "displayName",
+        "name": "displayName",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 120,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "telegramChatId",
+        "name": "telegramChatId",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 100,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "role",
+        "name": "role",
+        "type": "select",
+        "required": false,
+        "options": {
+          "maxSelect": 1,
+          "values": [
+            "candidate",
+            "coach",
+            "recruiter",
+            "admin"
+          ]
+        }
+      },
+      {
+        "id": "telegramBotToken",
+        "name": "telegramBotToken",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 255,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "notifyDailyBriefing",
+        "name": "notifyDailyBriefing",
+        "type": "bool",
+        "required": false,
+        "options": {}
+      },
+      {
+        "id": "notifyOnInterview",
+        "name": "notifyOnInterview",
+        "type": "bool",
+        "required": false,
+        "options": {}
+      },
+      {
+        "id": "notifyOnStatusChange",
+        "name": "notifyOnStatusChange",
+        "type": "bool",
+        "required": false,
+        "options": {}
+      },
+      {
+        "id": "notifyOnGhostingWarning",
+        "name": "notifyOnGhostingWarning",
+        "type": "bool",
+        "required": false,
+        "options": {}
+      },
+      {
+        "id": "notifyOnHighFitLead",
+        "name": "notifyOnHighFitLead",
+        "type": "bool",
+        "required": false,
+        "options": {}
+      },
+      {
+        "system": false,
+        "id": "users_briefingHour",
+        "name": "briefingHour",
+        "type": "number",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": 0,
+          "max": 23,
+          "noDecimal": false
+        }
+      },
+      {
+        "system": false,
+        "id": "users_timezone",
+        "name": "timezone",
+        "type": "text",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": 0,
+          "max": 64,
+          "pattern": ""
+        }
+      },
+      {
+        "system": false,
+        "id": "users_lastBriefingAt",
+        "name": "lastBriefingAt",
+        "type": "date",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": "",
+          "max": ""
+        }
+      },
+      {
+        "system": false,
+        "id": "users_telegramDeliveryStatus",
+        "name": "telegramDeliveryStatus",
+        "type": "text",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": 0,
+          "max": 50,
+          "pattern": ""
+        }
+      }
+    ],
+    "indexes": [],
+    "listRule": "id = @request.auth.id",
+    "viewRule": "id = @request.auth.id",
+    "createRule": "",
+    "updateRule": "id = @request.auth.id",
+    "deleteRule": "id = @request.auth.id",
+    "manageRule": "id = @request.auth.id",
+    "options": {
+      "allowEmailAuth": true,
+      "allowOAuth2Auth": true,
+      "allowUsernameAuth": false,
+      "exceptEmailDomains": null,
+      "manageRule": null,
+      "minPasswordLength": 10,
+      "onlyEmailDomains": null,
+      "requireEmail": true
+    }
+  },
+  {
+    "id": "applications",
+    "name": "applications",
+    "type": "base",
+    "system": false,
+    "schema": [
+      {
+        "id": "owner",
+        "name": "owner",
+        "type": "relation",
+        "required": true,
+        "options": {
+          "collectionId": "_pb_users_auth_",
+          "cascadeDelete": true,
+          "maxSelect": 1
+        }
+      },
+      {
+        "id": "company",
+        "name": "company",
+        "type": "text",
+        "required": true,
+        "options": {
+          "min": 1,
+          "max": 120,
+          "pattern": "\\S"
+        }
+      },
+      {
+        "id": "position",
+        "name": "position",
+        "type": "text",
+        "required": true,
+        "options": {
+          "min": 1,
+          "max": 160,
+          "pattern": "\\S"
+        }
+      },
+      {
+        "id": "link",
+        "name": "link",
+        "type": "url",
+        "required": false,
+        "options": {
+          "exceptDomains": [],
+          "onlyDomains": []
+        }
+      },
+      {
+        "id": "contactName",
+        "name": "contactName",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 120,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "contact",
+        "name": "contact",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 160,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "location",
+        "name": "location",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 120,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "type",
+        "name": "type",
+        "type": "select",
+        "required": false,
+        "options": {
+          "maxSelect": 1,
+          "values": [
+            "In-house",
+            "Vendor / Outsource",
+            "Contract"
+          ]
+        }
+      },
+      {
+        "id": "mode",
+        "name": "mode",
+        "type": "select",
+        "required": false,
+        "options": {
+          "maxSelect": 1,
+          "values": [
+            "On-site",
+            "Hybrid",
+            "Remote"
+          ]
+        }
+      },
+      {
+        "id": "salaryMin",
+        "name": "salaryMin",
+        "type": "number",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 1000000000,
+          "noDecimal": true
+        }
+      },
+      {
+        "id": "salaryMax",
+        "name": "salaryMax",
+        "type": "number",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 1000000000,
+          "noDecimal": true
+        }
+      },
+      {
+        "id": "salaryPeriod",
+        "name": "salaryPeriod",
+        "type": "select",
+        "required": false,
+        "options": {
+          "maxSelect": 1,
+          "values": [
+            "monthly",
+            "annual"
+          ]
+        }
+      },
+      {
+        "id": "status",
+        "name": "status",
+        "type": "select",
+        "required": true,
+        "options": {
+          "maxSelect": 1,
+          "values": [
+            "Wishlist",
+            "Applied",
+            "Viewed",
+            "Screening",
+            "Interview",
+            "Offer",
+            "Rejected",
+            "Ghosted"
+          ]
+        }
+      },
+      {
+        "id": "sentAt",
+        "name": "sentAt",
+        "type": "date",
+        "required": false,
+        "options": {
+          "min": "",
+          "max": ""
+        }
+      },
+      {
+        "id": "nextFollowUp",
+        "name": "nextFollowUp",
+        "type": "date",
+        "required": false,
+        "options": {
+          "min": "",
+          "max": ""
+        }
+      },
+      {
+        "id": "notes",
+        "name": "notes",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 2000,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "cvVersion",
+        "name": "cvVersion",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 40,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "cvArtifact",
+        "name": "cvArtifact",
+        "type": "relation",
+        "required": false,
+        "options": {
+          "collectionId": "cv_artifacts",
+          "cascadeDelete": false,
+          "maxSelect": 1
+        }
+      },
+      {
+        "id": "jobSource",
+        "name": "jobSource",
+        "type": "select",
+        "required": false,
+        "options": {
+          "maxSelect": 1,
+          "values": [
+            "JobStreet",
+            "LinkedIn",
+            "Company Website",
+            "Direct / Referral",
+            "Other"
+          ]
+        }
+      },
+      {
+        "id": "applicationMethod",
+        "name": "applicationMethod",
+        "type": "select",
+        "required": false,
+        "options": {
+          "maxSelect": 1,
+          "values": [
+            "JobStreet Apply",
+            "Email",
+            "Portal / ATS",
+            "Easy Apply",
+            "Manual"
+          ]
+        }
+      },
+      {
+        "id": "externalJobId",
+        "name": "externalJobId",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 120,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "autoCreated",
+        "name": "autoCreated",
+        "type": "bool",
+        "required": false,
+        "options": {}
+      },
+      {
+        "id": "needsReview",
+        "name": "needsReview",
+        "type": "bool",
+        "required": false,
+        "options": {}
+      },
+      {
+        "id": "leadSource",
+        "name": "leadSource",
+        "type": "relation",
+        "required": false,
+        "options": {
+          "collectionId": "job_leads",
+          "cascadeDelete": false,
+          "maxSelect": 1
+        }
+      },
+      {
+        "id": "contractInspection",
+        "name": "contractInspection",
+        "type": "json",
+        "required": false,
+        "options": {
+          "maxSize": 1000000
+        }
+      }
+    ],
+    "indexes": [
+      "CREATE INDEX idx_app_owner_status ON applications (owner, status)",
+      "CREATE INDEX idx_app_owner_followup ON applications (owner, nextFollowUp)",
+      "CREATE INDEX idx_app_owner_created ON applications (owner, created)",
+      "CREATE INDEX idx_app_owner_cv ON applications (owner, cvArtifact)"
+    ],
+    "listRule": "@request.auth.id != \"\" && owner = @request.auth.id && (cvArtifact = \"\" || cvArtifact.owner = @request.auth.id)",
+    "viewRule": "@request.auth.id != \"\" && owner = @request.auth.id && (cvArtifact = \"\" || cvArtifact.owner = @request.auth.id)",
+    "createRule": "@request.auth.id != \"\" && owner = @request.auth.id && (cvArtifact = \"\" || cvArtifact.owner = @request.auth.id)",
+    "updateRule": "@request.auth.id != \"\" && owner = @request.auth.id && (cvArtifact = \"\" || cvArtifact.owner = @request.auth.id)",
+    "deleteRule": "@request.auth.id != \"\" && owner = @request.auth.id && (cvArtifact = \"\" || cvArtifact.owner = @request.auth.id)"
+  },
+  {
+    "id": "interviews",
+    "name": "interviews",
+    "type": "base",
+    "system": false,
+    "schema": [
+      {
+        "id": "owner",
+        "name": "owner",
+        "type": "relation",
+        "required": true,
+        "options": {
+          "collectionId": "_pb_users_auth_",
+          "cascadeDelete": true,
+          "maxSelect": 1
+        }
+      },
+      {
+        "id": "application",
+        "name": "application",
+        "type": "relation",
+        "required": true,
+        "options": {
+          "collectionId": "applications",
+          "cascadeDelete": true,
+          "maxSelect": 1
+        }
+      },
+      {
+        "id": "round",
+        "name": "round",
+        "type": "text",
+        "required": true,
+        "options": {
+          "min": 1,
+          "max": 80,
+          "pattern": "\\S"
+        }
+      },
+      {
+        "id": "scheduledAt",
+        "name": "scheduledAt",
+        "type": "date",
+        "required": false,
+        "options": {
+          "min": "",
+          "max": ""
+        }
+      },
+      {
+        "id": "status",
+        "name": "status",
+        "type": "select",
+        "required": true,
+        "options": {
+          "maxSelect": 1,
+          "values": [
+            "Scheduled",
+            "Completed",
+            "Cancelled"
+          ]
+        }
+      },
+      {
+        "id": "questions",
+        "name": "questions",
+        "type": "json",
+        "required": false,
+        "options": {
+          "maxSize": 20000
+        }
+      },
+      {
+        "id": "interviewType",
+        "name": "interviewType",
+        "type": "select",
+        "required": false,
+        "options": {
+          "maxSelect": 1,
+          "values": [
+            "HR Screening",
+            "Technical Interview",
+            "System Design",
+            "User / Hiring Manager",
+            "Cultural Fit",
+            "Final / Offering"
+          ]
+        }
+      },
+      {
+        "id": "interviewerName",
+        "name": "interviewerName",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 120,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "meetingLink",
+        "name": "meetingLink",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 500,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "prepNotes",
+        "name": "prepNotes",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 5000,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "feedback",
+        "name": "feedback",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 5000,
+          "pattern": ""
+        }
+      },
+      {
+        "system": false,
+        "id": "int_locationType",
+        "name": "locationType",
+        "type": "select",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSelect": 1,
+          "values": [
+            "Online",
+            "On-site",
+            "Phone"
+          ]
+        }
+      },
+      {
+        "system": false,
+        "id": "int_meetingPlatform",
+        "name": "meetingPlatform",
+        "type": "select",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSelect": 1,
+          "values": [
+            "Google Meet",
+            "Zoom",
+            "Microsoft Teams",
+            "On-site",
+            "Phone",
+            "Other"
+          ]
+        }
+      },
+      {
+        "system": false,
+        "id": "int_keyQuestions",
+        "name": "keyQuestions",
+        "type": "json",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSize": 500000
+        }
+      },
+      {
+        "system": false,
+        "id": "int_salaryDiscussed",
+        "name": "salaryDiscussed",
+        "type": "number",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": 0,
+          "noDecimal": false
+        }
+      },
+      {
+        "system": false,
+        "id": "int_reminderSentAt",
+        "name": "reminderSentAt",
+        "type": "date",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": "",
+          "max": ""
+        }
+      },
+      {
+        "system": false,
+        "id": "int_starStories",
+        "name": "starStories",
+        "type": "json",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSize": 1000000
+        }
+      }
+    ],
+    "indexes": [
+      "CREATE INDEX idx_interview_owner_date ON interviews (owner, scheduledAt)",
+      "CREATE INDEX idx_interview_owner_application ON interviews (owner, application)"
+    ],
+    "listRule": "@request.auth.id != \"\" && owner = @request.auth.id && application.owner = @request.auth.id",
+    "viewRule": "@request.auth.id != \"\" && owner = @request.auth.id && application.owner = @request.auth.id",
+    "createRule": "@request.auth.id != \"\" && owner = @request.auth.id && application.owner = @request.auth.id",
+    "updateRule": "@request.auth.id != \"\" && owner = @request.auth.id && application.owner = @request.auth.id",
+    "deleteRule": "@request.auth.id != \"\" && owner = @request.auth.id && application.owner = @request.auth.id"
+  },
+  {
+    "id": "cv_artifacts",
+    "name": "cv_artifacts",
+    "type": "base",
+    "system": false,
+    "schema": [
+      {
+        "id": "owner",
+        "name": "owner",
+        "type": "relation",
+        "required": true,
+        "options": {
+          "collectionId": "_pb_users_auth_",
+          "cascadeDelete": true,
+          "maxSelect": 1
+        }
+      },
+      {
+        "id": "version",
+        "name": "version",
+        "type": "text",
+        "required": true,
+        "options": {
+          "min": 1,
+          "max": 40,
+          "pattern": "\\S"
+        }
+      },
+      {
+        "id": "label",
+        "name": "label",
+        "type": "text",
+        "required": true,
+        "options": {
+          "min": 1,
+          "max": 120,
+          "pattern": "\\S"
+        }
+      },
+      {
+        "id": "applications",
+        "name": "applications",
+        "type": "number",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 100000,
+          "noDecimal": true
+        }
+      },
+      {
+        "id": "responses",
+        "name": "responses",
+        "type": "number",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 100000,
+          "noDecimal": true
+        }
+      },
+      {
+        "id": "offers",
+        "name": "offers",
+        "type": "number",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 100000,
+          "noDecimal": true
+        }
+      },
+      {
+        "id": "content",
+        "name": "content",
+        "type": "json",
+        "required": false,
+        "options": {
+          "maxSize": 2000000
+        }
+      },
+      {
+        "id": "targetRole",
+        "name": "targetRole",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 160,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "isMaster",
+        "name": "isMaster",
+        "type": "bool",
+        "required": false,
+        "options": {}
+      },
+      {
+        "system": false,
+        "id": "cv_atsScore",
+        "name": "atsScore",
+        "type": "number",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": 0,
+          "max": 100,
+          "noDecimal": false
+        }
+      },
+      {
+        "system": false,
+        "id": "cv_lastAtsAudit",
+        "name": "lastAtsAudit",
+        "type": "json",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSize": 500000
+        }
+      }
+    ],
+    "indexes": [
+      "CREATE UNIQUE INDEX idx_cv_owner_version ON cv_artifacts (owner, version)"
+    ],
+    "listRule": "@request.auth.id != \"\" && owner = @request.auth.id",
+    "viewRule": "@request.auth.id != \"\" && owner = @request.auth.id",
+    "createRule": "@request.auth.id != \"\" && owner = @request.auth.id",
+    "updateRule": "@request.auth.id != \"\" && owner = @request.auth.id",
+    "deleteRule": "@request.auth.id != \"\" && owner = @request.auth.id"
+  },
+  {
+    "id": "applyflow_drafts",
+    "name": "applyflow_drafts",
+    "type": "base",
+    "system": false,
+    "schema": [
+      {
+        "id": "owner",
+        "name": "owner",
+        "type": "relation",
+        "required": true,
+        "options": {
+          "collectionId": "_pb_users_auth_",
+          "cascadeDelete": true,
+          "maxSelect": 1
+        }
+      },
+      {
+        "id": "rawText",
+        "name": "rawText",
+        "type": "text",
+        "required": true,
+        "options": {
+          "min": 1,
+          "max": 100000,
+          "pattern": "\\S"
+        }
+      },
+      {
+        "id": "sourcePlatform",
+        "name": "sourcePlatform",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 40,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "sourceUrl",
+        "name": "sourceUrl",
+        "type": "url",
+        "required": false,
+        "options": {
+          "exceptDomains": [],
+          "onlyDomains": []
+        }
+      },
+      {
+        "id": "parsedData",
+        "name": "parsedData",
+        "type": "json",
+        "required": false,
+        "options": {
+          "maxSize": 120000
+        }
+      },
+      {
+        "id": "selectedPositionId",
+        "name": "selectedPositionId",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 80,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "selectedCvArtifact",
+        "name": "selectedCvArtifact",
+        "type": "relation",
+        "required": false,
+        "options": {
+          "collectionId": "cv_artifacts",
+          "cascadeDelete": false,
+          "maxSelect": 1
+        }
+      },
+      {
+        "id": "candidateName",
+        "name": "candidateName",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 120,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "evidence",
+        "name": "evidence",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 12000,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "subject",
+        "name": "subject",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 255,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "body",
+        "name": "body",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 30000,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "state",
+        "name": "state",
+        "type": "select",
+        "required": true,
+        "options": {
+          "maxSelect": 1,
+          "values": [
+            "draft",
+            "copied",
+            "compose_opened",
+            "manually_marked_sent"
+          ]
+        }
+      },
+      {
+        "id": "applicationIds",
+        "name": "applicationIds",
+        "type": "json",
+        "required": false,
+        "options": {
+          "maxSize": 20000
+        }
+      }
+    ],
+    "indexes": [
+      "CREATE INDEX idx_applyflow_owner_updated ON applyflow_drafts (owner, updated)"
+    ],
+    "listRule": "@request.auth.id != \"\" && owner = @request.auth.id && (selectedCvArtifact = \"\" || selectedCvArtifact.owner = @request.auth.id)",
+    "viewRule": "@request.auth.id != \"\" && owner = @request.auth.id && (selectedCvArtifact = \"\" || selectedCvArtifact.owner = @request.auth.id)",
+    "createRule": "@request.auth.id != \"\" && owner = @request.auth.id && (selectedCvArtifact = \"\" || selectedCvArtifact.owner = @request.auth.id)",
+    "updateRule": "@request.auth.id != \"\" && owner = @request.auth.id && (selectedCvArtifact = \"\" || selectedCvArtifact.owner = @request.auth.id)",
+    "deleteRule": "@request.auth.id != \"\" && owner = @request.auth.id && (selectedCvArtifact = \"\" || selectedCvArtifact.owner = @request.auth.id)"
+  },
+  {
+    "id": "candidate_profiles",
+    "name": "candidate_profiles",
+    "type": "base",
+    "system": false,
+    "schema": [
+      {
+        "id": "owner",
+        "name": "owner",
+        "type": "relation",
+        "required": true,
+        "options": {
+          "collectionId": "_pb_users_auth_",
+          "cascadeDelete": true,
+          "maxSelect": 1
+        }
+      },
+      {
+        "id": "headline",
+        "name": "headline",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 160,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "targetRoles",
+        "name": "targetRoles",
+        "type": "json",
+        "required": false,
+        "options": {
+          "maxSize": 10000
+        }
+      },
+      {
+        "id": "skills",
+        "name": "skills",
+        "type": "json",
+        "required": false,
+        "options": {
+          "maxSize": 20000
+        }
+      },
+      {
+        "id": "minSalary",
+        "name": "minSalary",
+        "type": "number",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 1000000000,
+          "noDecimal": true
+        }
+      },
+      {
+        "id": "preferredModes",
+        "name": "preferredModes",
+        "type": "json",
+        "required": false,
+        "options": {
+          "maxSize": 5000
+        }
+      },
+      {
+        "id": "dealbreakers",
+        "name": "dealbreakers",
+        "type": "json",
+        "required": false,
+        "options": {
+          "maxSize": 10000
+        }
+      },
+      {
+        "id": "experienceSummary",
+        "name": "experienceSummary",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 8000,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "phone",
+        "name": "phone",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 50,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "location",
+        "name": "location",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 120,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "linkedinUrl",
+        "name": "linkedinUrl",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 255,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "githubUrl",
+        "name": "githubUrl",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 255,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "portfolioUrl",
+        "name": "portfolioUrl",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 255,
+          "pattern": ""
+        }
+      },
+      {
+        "system": false,
+        "id": "prof_fullName",
+        "name": "fullName",
+        "type": "text",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": 0,
+          "max": 120,
+          "pattern": ""
+        }
+      },
+      {
+        "system": false,
+        "id": "prof_educationSummary",
+        "name": "educationSummary",
+        "type": "json",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSize": 500000
+        }
+      },
+      {
+        "system": false,
+        "id": "prof_certifications",
+        "name": "certifications",
+        "type": "json",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSize": 500000
+        }
+      },
+      {
+        "system": false,
+        "id": "prof_languages",
+        "name": "languages",
+        "type": "json",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSize": 500000
+        }
+      }
+    ],
+    "indexes": [
+      "CREATE UNIQUE INDEX idx_profile_owner ON candidate_profiles (owner)"
+    ],
+    "listRule": "@request.auth.id != \"\" && owner = @request.auth.id",
+    "viewRule": "@request.auth.id != \"\" && owner = @request.auth.id",
+    "createRule": "@request.auth.id != \"\" && owner = @request.auth.id",
+    "updateRule": "@request.auth.id != \"\" && owner = @request.auth.id",
+    "deleteRule": "@request.auth.id != \"\" && owner = @request.auth.id"
+  },
+  {
+    "id": "job_leads",
+    "name": "job_leads",
+    "type": "base",
+    "system": false,
+    "schema": [
+      {
+        "id": "owner",
+        "name": "owner",
+        "type": "relation",
+        "required": true,
+        "options": {
+          "collectionId": "_pb_users_auth_",
+          "cascadeDelete": true,
+          "maxSelect": 1
+        }
+      },
+      {
+        "id": "title",
+        "name": "title",
+        "type": "text",
+        "required": true,
+        "options": {
+          "min": 1,
+          "max": 160,
+          "pattern": "\\S"
+        }
+      },
+      {
+        "id": "company",
+        "name": "company",
+        "type": "text",
+        "required": true,
+        "options": {
+          "min": 1,
+          "max": 120,
+          "pattern": "\\S"
+        }
+      },
+      {
+        "id": "url",
+        "name": "url",
+        "type": "url",
+        "required": false,
+        "options": {
+          "exceptDomains": [],
+          "onlyDomains": []
+        }
+      },
+      {
+        "id": "location",
+        "name": "location",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 120,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "employmentType",
+        "name": "employmentType",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 60,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "workMode",
+        "name": "workMode",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 40,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "rawJd",
+        "name": "rawJd",
+        "type": "text",
+        "required": true,
+        "options": {
+          "min": 1,
+          "max": 100000,
+          "pattern": "\\S"
+        }
+      },
+      {
+        "id": "source",
+        "name": "source",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 60,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "matchScore",
+        "name": "matchScore",
+        "type": "number",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 100,
+          "noDecimal": true
+        }
+      },
+      {
+        "id": "evaluation",
+        "name": "evaluation",
+        "type": "json",
+        "required": false,
+        "options": {
+          "maxSize": 30000
+        }
+      },
+      {
+        "id": "status",
+        "name": "status",
+        "type": "select",
+        "required": true,
+        "options": {
+          "maxSelect": 1,
+          "values": [
+            "inbox",
+            "triage_passed",
+            "triage_rejected",
+            "shortlisted",
+            "promoted_to_apply",
+            "archived"
+          ]
+        }
+      },
+      {
+        "id": "promotedApplication",
+        "name": "promotedApplication",
+        "type": "relation",
+        "required": false,
+        "options": {
+          "collectionId": "applications",
+          "cascadeDelete": false,
+          "maxSelect": 1
+        }
+      },
+      {
+        "id": "salaryRange",
+        "name": "salaryRange",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 120,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "dealbreakerFlags",
+        "name": "dealbreakerFlags",
+        "type": "json",
+        "required": false,
+        "options": {
+          "maxSize": 500000
+        }
+      },
+      {
+        "system": false,
+        "id": "lead_salaryMin",
+        "name": "salaryMin",
+        "type": "number",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": 0,
+          "noDecimal": false
+        }
+      },
+      {
+        "system": false,
+        "id": "lead_salaryMax",
+        "name": "salaryMax",
+        "type": "number",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": 0,
+          "noDecimal": false
+        }
+      },
+      {
+        "system": false,
+        "id": "lead_salaryCurrency",
+        "name": "salaryCurrency",
+        "type": "text",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": 0,
+          "max": 10,
+          "pattern": ""
+        }
+      },
+      {
+        "system": false,
+        "id": "lead_compensationType",
+        "name": "compensationType",
+        "type": "select",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSelect": 1,
+          "values": [
+            "Gross",
+            "Nett",
+            "Undisclosed"
+          ]
+        }
+      },
+      {
+        "system": false,
+        "id": "lead_redFlags",
+        "name": "redFlags",
+        "type": "json",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSize": 500000
+        }
+      },
+      {
+        "system": false,
+        "id": "lead_greenFlags",
+        "name": "greenFlags",
+        "type": "json",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSize": 500000
+        }
+      }
+    ],
+    "indexes": [
+      "CREATE INDEX idx_leads_owner_status ON job_leads (owner, status)",
+      "CREATE INDEX idx_leads_owner_score ON job_leads (owner, matchScore)"
+    ],
+    "listRule": "@request.auth.id != \"\" && owner = @request.auth.id",
+    "viewRule": "@request.auth.id != \"\" && owner = @request.auth.id",
+    "createRule": "@request.auth.id != \"\" && owner = @request.auth.id",
+    "updateRule": "@request.auth.id != \"\" && owner = @request.auth.id",
+    "deleteRule": "@request.auth.id != \"\" && owner = @request.auth.id"
+  },
+  {
+    "id": "gmail_connections",
+    "name": "gmail_connections",
+    "type": "base",
+    "system": false,
+    "schema": [
+      {
+        "id": "owner",
+        "name": "owner",
+        "type": "relation",
+        "required": true,
+        "options": {
+          "collectionId": "_pb_users_auth_",
+          "cascadeDelete": true,
+          "maxSelect": 1
+        }
+      },
+      {
+        "id": "email",
+        "name": "email",
+        "type": "email",
+        "required": true,
+        "options": {
+          "exceptDomains": [],
+          "onlyDomains": []
+        }
+      },
+      {
+        "id": "accessToken",
+        "name": "accessToken",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 4000,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "refreshToken",
+        "name": "refreshToken",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 4000,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "tokenExpiry",
+        "name": "tokenExpiry",
+        "type": "date",
+        "required": false,
+        "options": {
+          "min": "",
+          "max": ""
+        }
+      },
+      {
+        "id": "syncStatus",
+        "name": "syncStatus",
+        "type": "select",
+        "required": true,
+        "options": {
+          "maxSelect": 1,
+          "values": [
+            "idle",
+            "syncing",
+            "failed",
+            "paused"
+          ]
+        }
+      },
+      {
+        "id": "lastHistoryId",
+        "name": "lastHistoryId",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 120,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "lastSyncedAt",
+        "name": "lastSyncedAt",
+        "type": "date",
+        "required": false,
+        "options": {
+          "min": "",
+          "max": ""
+        }
+      },
+      {
+        "id": "autoCreateApplication",
+        "name": "autoCreateApplication",
+        "type": "bool",
+        "required": false,
+        "options": {}
+      }
+    ],
+    "indexes": [
+      "CREATE UNIQUE INDEX idx_gmail_owner ON gmail_connections (owner)"
+    ],
+    "listRule": "@request.auth.id != \"\" && owner = @request.auth.id",
+    "viewRule": "@request.auth.id != \"\" && owner = @request.auth.id",
+    "createRule": "@request.auth.id != \"\" && owner = @request.auth.id",
+    "updateRule": "@request.auth.id != \"\" && owner = @request.auth.id",
+    "deleteRule": "@request.auth.id != \"\" && owner = @request.auth.id"
+  },
+  {
+    "id": "application_events",
+    "name": "application_events",
+    "type": "base",
+    "system": false,
+    "schema": [
+      {
+        "id": "owner",
+        "name": "owner",
+        "type": "relation",
+        "required": true,
+        "options": {
+          "collectionId": "_pb_users_auth_",
+          "cascadeDelete": true,
+          "maxSelect": 1
+        }
+      },
+      {
+        "id": "application",
+        "name": "application",
+        "type": "relation",
+        "required": true,
+        "options": {
+          "collectionId": "applications",
+          "cascadeDelete": true,
+          "maxSelect": 1
+        }
+      },
+      {
+        "id": "eventType",
+        "name": "eventType",
+        "type": "select",
+        "required": true,
+        "options": {
+          "maxSelect": 1,
+          "values": [
+            "application_submitted",
+            "employer_viewed",
+            "recruiter_contacted",
+            "screening_started",
+            "interview_invited",
+            "interview_rescheduled",
+            "assessment_received",
+            "document_requested",
+            "rejection_received",
+            "offer_received",
+            "note_added"
+          ]
+        }
+      },
+      {
+        "id": "eventAt",
+        "name": "eventAt",
+        "type": "date",
+        "required": false,
+        "options": {
+          "min": "",
+          "max": ""
+        }
+      },
+      {
+        "id": "receivedAt",
+        "name": "receivedAt",
+        "type": "date",
+        "required": false,
+        "options": {
+          "min": "",
+          "max": ""
+        }
+      },
+      {
+        "id": "sourcePlatform",
+        "name": "sourcePlatform",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 60,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "gmailMessageId",
+        "name": "gmailMessageId",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 160,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "gmailThreadId",
+        "name": "gmailThreadId",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 160,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "rawSubject",
+        "name": "rawSubject",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 255,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "evidenceSnippet",
+        "name": "evidenceSnippet",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 6000,
+          "pattern": ""
+        }
+      }
+    ],
+    "indexes": [
+      "CREATE INDEX idx_app_events_owner_app ON application_events (owner, application)",
+      "CREATE INDEX idx_app_events_app_msg ON application_events (application, gmailMessageId)",
+      "CREATE UNIQUE INDEX idx_events_owner_msg ON application_events (owner, gmailMessageId) WHERE gmailMessageId != '' AND gmailMessageId IS NOT NULL"
+    ],
+    "listRule": "@request.auth.id != \"\" && owner = @request.auth.id && application.owner = @request.auth.id",
+    "viewRule": "@request.auth.id != \"\" && owner = @request.auth.id && application.owner = @request.auth.id",
+    "createRule": "@request.auth.id != \"\" && owner = @request.auth.id && application.owner = @request.auth.id",
+    "updateRule": "@request.auth.id != \"\" && owner = @request.auth.id && application.owner = @request.auth.id",
+    "deleteRule": "@request.auth.id != \"\" && owner = @request.auth.id && application.owner = @request.auth.id"
+  },
+  {
+    "id": "recruitment_notifications",
+    "name": "recruitment_notifications",
+    "type": "base",
+    "system": false,
+    "schema": [
+      {
+        "id": "owner",
+        "name": "owner",
+        "type": "relation",
+        "required": true,
+        "options": {
+          "collectionId": "_pb_users_auth_",
+          "cascadeDelete": true,
+          "maxSelect": 1
+        }
+      },
+      {
+        "id": "gmailMessageId",
+        "name": "gmailMessageId",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 160,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "platform",
+        "name": "platform",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 60,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "extractedCompany",
+        "name": "extractedCompany",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 120,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "extractedPosition",
+        "name": "extractedPosition",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 160,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "extractedEventType",
+        "name": "extractedEventType",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 60,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "rawSubject",
+        "name": "rawSubject",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 255,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "evidenceSnippet",
+        "name": "evidenceSnippet",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 6000,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "matchStatus",
+        "name": "matchStatus",
+        "type": "select",
+        "required": true,
+        "options": {
+          "maxSelect": 1,
+          "values": [
+            "matched",
+            "needs_review",
+            "unmatched",
+            "auto_created",
+            "ignored"
+          ]
+        }
+      },
+      {
+        "id": "matchedApplication",
+        "name": "matchedApplication",
+        "type": "relation",
+        "required": false,
+        "options": {
+          "collectionId": "applications",
+          "cascadeDelete": false,
+          "maxSelect": 1
+        }
+      },
+      {
+        "id": "confidence",
+        "name": "confidence",
+        "type": "number",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 100,
+          "noDecimal": true
+        }
+      }
+    ],
+    "indexes": [
+      "CREATE INDEX idx_notif_owner_status ON recruitment_notifications (owner, matchStatus)",
+      "CREATE UNIQUE INDEX idx_notif_owner_msg ON recruitment_notifications (owner, gmailMessageId) WHERE gmailMessageId != '' AND gmailMessageId IS NOT NULL"
+    ],
+    "listRule": "@request.auth.id != \"\" && owner = @request.auth.id",
+    "viewRule": "@request.auth.id != \"\" && owner = @request.auth.id",
+    "createRule": "@request.auth.id != \"\" && owner = @request.auth.id",
+    "updateRule": "@request.auth.id != \"\" && owner = @request.auth.id",
+    "deleteRule": "@request.auth.id != \"\" && owner = @request.auth.id"
+  },
+  {
+    "id": "offers",
+    "name": "offers",
+    "type": "base",
+    "system": false,
+    "schema": [
+      {
+        "id": "owner",
+        "name": "owner",
+        "type": "relation",
+        "required": true,
+        "options": {
+          "collectionId": "_pb_users_auth_",
+          "cascadeDelete": true,
+          "maxSelect": 1
+        }
+      },
+      {
+        "id": "application",
+        "name": "application",
+        "type": "relation",
+        "required": true,
+        "options": {
+          "collectionId": "applications",
+          "cascadeDelete": true,
+          "maxSelect": 1
+        }
+      },
+      {
+        "id": "company",
+        "name": "company",
+        "type": "text",
+        "required": true,
+        "options": {
+          "min": 1,
+          "max": 120,
+          "pattern": "\\S"
+        }
+      },
+      {
+        "id": "position",
+        "name": "position",
+        "type": "text",
+        "required": true,
+        "options": {
+          "min": 1,
+          "max": 160,
+          "pattern": "\\S"
+        }
+      },
+      {
+        "id": "placementType",
+        "name": "placementType",
+        "type": "select",
+        "required": false,
+        "options": {
+          "maxSelect": 1,
+          "values": [
+            "In-house",
+            "Vendor / Outsource",
+            "Contract"
+          ]
+        }
+      },
+      {
+        "id": "workMode",
+        "name": "workMode",
+        "type": "select",
+        "required": false,
+        "options": {
+          "maxSelect": 1,
+          "values": [
+            "Remote",
+            "Hybrid",
+            "On-site"
+          ]
+        }
+      },
+      {
+        "id": "baseSalary",
+        "name": "baseSalary",
+        "type": "number",
+        "required": true,
+        "options": {
+          "min": 0,
+          "max": 2000000000,
+          "noDecimal": true
+        }
+      },
+      {
+        "id": "fixedAllowance",
+        "name": "fixedAllowance",
+        "type": "number",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 1000000000,
+          "noDecimal": true
+        }
+      },
+      {
+        "id": "onCallAllowance",
+        "name": "onCallAllowance",
+        "type": "number",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 1000000000,
+          "noDecimal": true
+        }
+      },
+      {
+        "id": "shiftAllowance",
+        "name": "shiftAllowance",
+        "type": "number",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 1000000000,
+          "noDecimal": true
+        }
+      },
+      {
+        "id": "wfhAllowance",
+        "name": "wfhAllowance",
+        "type": "number",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 1000000000,
+          "noDecimal": true
+        }
+      },
+      {
+        "id": "thrMultiplier",
+        "name": "thrMultiplier",
+        "type": "number",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 10
+        }
+      },
+      {
+        "id": "bonusMonths",
+        "name": "bonusMonths",
+        "type": "number",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 24
+        }
+      },
+      {
+        "id": "ptkpCategory",
+        "name": "ptkpCategory",
+        "type": "select",
+        "required": false,
+        "options": {
+          "maxSelect": 1,
+          "values": [
+            "TK/0",
+            "TK/1",
+            "K/0",
+            "K/1",
+            "K/2",
+            "K/3"
+          ]
+        }
+      },
+      {
+        "id": "hasBpjs",
+        "name": "hasBpjs",
+        "type": "bool",
+        "required": false,
+        "options": {}
+      },
+      {
+        "id": "monthlyCommuteCost",
+        "name": "monthlyCommuteCost",
+        "type": "number",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 50000000,
+          "noDecimal": true
+        }
+      },
+      {
+        "id": "customTaxRatePercent",
+        "name": "customTaxRatePercent",
+        "type": "number",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 100
+        }
+      },
+      {
+        "id": "status",
+        "name": "status",
+        "type": "select",
+        "required": true,
+        "options": {
+          "maxSelect": 1,
+          "values": [
+            "Draft",
+            "Received",
+            "Negotiating",
+            "Accepted",
+            "Declined"
+          ]
+        }
+      },
+      {
+        "id": "notes",
+        "name": "notes",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 5000,
+          "pattern": ""
+        }
+      }
+    ],
+    "indexes": [
+      "CREATE INDEX idx_offers_owner ON offers (owner)",
+      "CREATE INDEX idx_offers_application ON offers (application)",
+      "CREATE INDEX idx_offers_status ON offers (owner, status)"
+    ],
+    "listRule": "@request.auth.id != \"\" && owner = @request.auth.id && application.owner = @request.auth.id",
+    "viewRule": "@request.auth.id != \"\" && owner = @request.auth.id && application.owner = @request.auth.id",
+    "createRule": "@request.auth.id != \"\" && owner = @request.auth.id && application.owner = @request.auth.id",
+    "updateRule": "@request.auth.id != \"\" && owner = @request.auth.id && application.owner = @request.auth.id",
+    "deleteRule": "@request.auth.id != \"\" && owner = @request.auth.id && application.owner = @request.auth.id"
+  },
+  {
+    "id": "professional_contacts",
+    "name": "professional_contacts",
+    "type": "base",
+    "system": false,
+    "schema": [
+      {
+        "id": "con_owner",
+        "name": "owner",
+        "type": "relation",
+        "required": true,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "collectionId": "_pb_users_auth_",
+          "cascadeDelete": true,
+          "maxSelect": 1
+        }
+      },
+      {
+        "id": "con_name",
+        "name": "name",
+        "type": "text",
+        "required": true,
+        "presentable": true,
+        "unique": false,
+        "options": {
+          "min": 1,
+          "max": 120,
+          "pattern": "\\S"
+        }
+      },
+      {
+        "id": "con_company",
+        "name": "company",
+        "type": "text",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": 0,
+          "max": 120,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "con_role",
+        "name": "role",
+        "type": "text",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": 0,
+          "max": 120,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "con_email",
+        "name": "email",
+        "type": "email",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "exceptDomains": [],
+          "onlyDomains": []
+        }
+      },
+      {
+        "id": "con_phone",
+        "name": "phone",
+        "type": "text",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": 0,
+          "max": 50,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "con_linkedinUrl",
+        "name": "linkedinUrl",
+        "type": "url",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "exceptDomains": [],
+          "onlyDomains": []
+        }
+      },
+      {
+        "id": "con_relationship",
+        "name": "relationship",
+        "type": "select",
+        "required": true,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSelect": 1,
+          "values": [
+            "Recruiter",
+            "Hiring Manager",
+            "Peer",
+            "Mentor",
+            "Alumni",
+            "Former Colleague",
+            "Other"
+          ]
+        }
+      },
+      {
+        "id": "con_associatedApplication",
+        "name": "associatedApplication",
+        "type": "relation",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "collectionId": "applications",
+          "cascadeDelete": false,
+          "maxSelect": 1
+        }
+      },
+      {
+        "id": "con_referralStatus",
+        "name": "referralStatus",
+        "type": "select",
+        "required": true,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "maxSelect": 1,
+          "values": [
+            "None",
+            "Requested",
+            "Submitted",
+            "Interview Secured",
+            "Declined"
+          ]
+        }
+      },
+      {
+        "id": "con_lastContactDate",
+        "name": "lastContactDate",
+        "type": "date",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": "",
+          "max": ""
+        }
+      },
+      {
+        "id": "con_notes",
+        "name": "notes",
+        "type": "text",
+        "required": false,
+        "presentable": false,
+        "unique": false,
+        "options": {
+          "min": 0,
+          "max": 10000,
+          "pattern": ""
+        }
+      }
+    ],
+    "indexes": [
+      "CREATE INDEX idx_contacts_owner ON professional_contacts (owner)",
+      "CREATE INDEX idx_contacts_owner_company ON professional_contacts (owner, company)"
+    ],
+    "listRule": "@request.auth.id != \"\" && owner = @request.auth.id",
+    "viewRule": "@request.auth.id != \"\" && owner = @request.auth.id",
+    "createRule": "@request.auth.id != \"\" && owner = @request.auth.id",
+    "updateRule": "@request.auth.id != \"\" && owner = @request.auth.id",
+    "deleteRule": "@request.auth.id != \"\" && owner = @request.auth.id"
+  }
+]

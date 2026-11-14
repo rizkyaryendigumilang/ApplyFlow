@@ -1,0 +1,34 @@
+.env
+.env.*
+!.env.example
+
+node_modules/
+frontend/dist/
+frontend/.vite/
+*.tsbuildinfo
+*.log
+*.tar.gz
+
+# PocketBase local database & backups
+pocketbase/pb_data/
+pocketbase/pb_backups/
+*.zip
+
+# Mobile build artifacts
+*.apk
+*.aab
+*.ipa
+Payload/
+build/
+DerivedData/
+
+# Credentials & security
+*.pem
+*.key
+id_rsa*
+id_ed25519*
+
+# OS & IDE artifacts
+.DS_Store
+Thumbs.db
+.superpowers/

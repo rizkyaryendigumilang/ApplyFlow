@@ -1,0 +1,23 @@
+{
+  "appId": "com.applyflow.app",
+  "appName": "ApplyFlow",
+  "webDir": "frontend/dist",
+  "server": {
+    "androidScheme": "https",
+    "cleartext": true
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 1500,
+      "backgroundColor": "#18181b",
+      "showSpinner": false,
+      "androidScaleType": "CENTER_CROP",
+      "splashFullScreen": true,
+      "splashImmersive": true
+    },
+    "StatusBar": {
+      "style": "DARK",
+      "backgroundColor": "#18181b"
+    }
+  }
+}

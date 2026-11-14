@@ -1,0 +1,37 @@
+{
+  "name": "Junction Career CRM",
+  "short_name": "Junction",
+  "description": "Private Career CRM & Funnel Analytics Operating System",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "background_color": "#f5f5f0",
+  "theme_color": "#202320",
+  "orientation": "portrait-primary",
+  "categories": ["business", "productivity"],
+  "shortcuts": [
+    {
+      "name": "Command Cockpit",
+      "short_name": "Cockpit",
+      "description": "Buka Pusat Komando Harian",
+      "url": "/?module=cockpit",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Opportunity Pipeline",
+      "short_name": "Pipeline",
+      "description": "Pantau Papan Lamaran Kerja",
+      "url": "/?module=pipeline",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+    }
+  ],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
