@@ -314,6 +314,8 @@ Thank you for your consideration, and I look forward to your thoughts.`;
                     Gaji Pokok (Base Salary)
                     <input
                       type="number"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
                       step={500000}
                       value={pkg.baseSalary}
                       onChange={e => updateOffer(pkg.id, { baseSalary: parseInt(e.target.value) || 0 })}
@@ -323,6 +325,8 @@ Thank you for your consideration, and I look forward to your thoughts.`;
                     Tunjangan Tetap
                     <input
                       type="number"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
                       step={250000}
                       value={pkg.fixedAllowance}
                       onChange={e => updateOffer(pkg.id, { fixedAllowance: parseInt(e.target.value) || 0 })}
@@ -335,6 +339,8 @@ Thank you for your consideration, and I look forward to your thoughts.`;
                     On-Call Standby Piket
                     <input
                       type="number"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
                       step={500000}
                       value={pkg.onCallAllowance}
                       onChange={e => updateOffer(pkg.id, { onCallAllowance: parseInt(e.target.value) || 0 })}
@@ -344,6 +350,8 @@ Thank you for your consideration, and I look forward to your thoughts.`;
                     Tunjangan WFH / Internet
                     <input
                       type="number"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
                       step={250000}
                       value={pkg.wfhAllowance}
                       onChange={e => updateOffer(pkg.id, { wfhAllowance: parseInt(e.target.value) || 0 })}
@@ -356,6 +364,8 @@ Thank you for your consideration, and I look forward to your thoughts.`;
                     Estimasi Biaya WFO / Komuter (Bln)
                     <input
                       type="number"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
                       step={100000}
                       value={pkg.monthlyCommuteCost}
                       onChange={e => updateOffer(pkg.id, { monthlyCommuteCost: parseInt(e.target.value) || 0 })}
@@ -382,6 +392,7 @@ Thank you for your consideration, and I look forward to your thoughts.`;
                     Target Bonus (Bulan Gaji)
                     <input
                       type="number"
+                      inputMode="decimal"
                       step={0.5}
                       min={0}
                       max={12}
@@ -517,6 +528,8 @@ Thank you for your consideration, and I look forward to your thoughts.`;
                 </label>
                 <input
                   type="number"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   step="500000"
                   value={targetCounterSalary}
                   onChange={(e) => setTargetCounterSalary(Number(e.target.value) || 0)}

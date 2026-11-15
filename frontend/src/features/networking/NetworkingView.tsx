@@ -22,6 +22,7 @@ import {
 import { useProfessionalContacts } from '../../hooks/useProfessionalContacts';
 import type { ProfessionalContact, RelationshipType, ReferralStatus } from '../../lib/pb-types';
 import { daysSince, sanitizeUrl } from '../../lib/utils';
+import { EmptyState } from '../../components/ui/EmptyState';
 
 export function NetworkingView() {
   const { contacts, loading, addContact, updateContact, deleteContact } = useProfessionalContacts();
@@ -509,17 +510,17 @@ Semoga hari Anda menyenangkan dan saya menantikan kabar baik berikutnya!`;
       </div>
 
       {filteredContacts.length === 0 && (
-        <div
-          style={{
-            textAlign: 'center',
-            padding: '48px',
-            border: '1px dashed #dedfd8',
-            color: '#888d82',
-            fontSize: '13px',
-          }}
-        >
-          Belum ada kontak profesional yang sesuai. Klik "+ Tambah Kontak Profesional" untuk mencatat recruiter atau rekanan.
-        </div>
+        <EmptyState
+          icon={Users}
+          title={contacts.length === 0 ? "Belum Ada Kontak Profesional" : "Tidak Ada Kontak Sesuai Filter"}
+          description={
+            contacts.length === 0
+              ? "Bangun jejaring karir Anda. Catat kontak rekruter, hiring manager, atau rekanan untuk meminta referral dan memantau follow-up."
+              : "Coba sesuaikan kata kunci pencarian atau ganti filter relasi di atas."
+          }
+          actionLabel="+ Tambah Kontak Baru"
+          onAction={openAddModal}
+        />
       )}
 
       {/* Add / Edit Contact Modal */}

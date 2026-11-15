@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Activity,
   ArrowUpRight,
   Bell,
   ChevronDown,
   CirclePlus,
+  Command,
   Eye,
   FileText,
   LayoutGrid,
@@ -49,6 +50,7 @@ import { HelpSupportView } from './features/help/HelpSupportView';
 import { SystemPagesView } from './features/system-pages/SystemPagesView';
 import { GlobalSearchModal } from './features/search/GlobalSearchModal';
 import { OnboardingWizardModal } from './features/onboarding/OnboardingWizardModal';
+import { KeyboardShortcutsModal } from './components/layout/KeyboardShortcutsModal';
 
 // Deconstructed Kanban & Table components (codebase-design)
 import { ApplicationCard } from './features/kanban/ApplicationCard';
@@ -58,6 +60,7 @@ import { ApplicationDrawer } from './features/application-detail/ApplicationDraw
 import { AddOpportunityModal } from './components/layout/AddOpportunityModal';
 import { FollowUpModal } from './features/application-detail/FollowUpModal';
 import { AtsResumeFormatterModal } from './features/resume-formatter/AtsResumeFormatterModal';
+import { EmptyState } from './components/ui/EmptyState';
 import { saveAutoBackupSnapshot } from './lib/data-transfer';
 
 const statuses: Status[] = [
@@ -124,6 +127,8 @@ function App() {
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
   const [isAtsResumeOpen, setIsAtsResumeOpen] = useState(false);
   const [isGlobalSearchOpen, setIsGlobalSearchOpen] = useState(false);
+  const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const [isOnboardingOpen, setIsOnboardingOpen] = useState(() => {
     try {
       return !localStorage.getItem('junction_onboarding_completed');
@@ -134,14 +139,65 @@ function App() {
 
   const { canInstall, promptInstall } = usePWAInstall();
 
-  // Global keyboard shortcut: Cmd+K / Ctrl+K for Global Search
+  // Global keyboard shortcuts (Ctrl+K, N, Esc, /, ?)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      const isInputActive =
+        target &&
+        (target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.tagName === 'SELECT' ||
+          target.isContentEditable);
+
+      // Cmd+K / Ctrl+K: Global Search
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
         setIsGlobalSearchOpen((prev) => !prev);
+        return;
+      }
+
+      // Escape: Close any open modal or drawer
+      if (e.key === 'Escape') {
+        setIsGlobalSearchOpen(false);
+        setIsShortcutsOpen(false);
+        setShowAdd(false);
+        setDrawer(null);
+        setIsMoreMenuOpen(false);
+        setStarCoachParams(null);
+        setIsOnboardingOpen(false);
+        return;
+      }
+
+      // If user is currently typing in an input field, do not trigger single-key shortcuts
+      if (isInputActive) return;
+
+      // N: Add new opportunity
+      if (e.key.toLowerCase() === 'n' && !e.metaKey && !e.ctrlKey && !e.altKey) {
+        e.preventDefault();
+        setShowAdd(true);
+        return;
+      }
+
+      // /: Focus search input in pipeline or open global search
+      if (e.key === '/' && !e.metaKey && !e.ctrlKey && !e.altKey) {
+        e.preventDefault();
+        if (searchInputRef.current) {
+          searchInputRef.current.focus();
+        } else {
+          setIsGlobalSearchOpen(true);
+        }
+        return;
+      }
+
+      // ?: Toggle keyboard shortcuts guide
+      if (e.key === '?' && !e.metaKey && !e.ctrlKey && !e.altKey) {
+        e.preventDefault();
+        setIsShortcutsOpen((prev) => !prev);
+        return;
       }
     };
+
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
@@ -497,6 +553,27 @@ function App() {
             )}
           </button>
 
+          {/* Keyboard Shortcuts Trigger */}
+          <button
+            type="button"
+            onClick={() => setIsShortcutsOpen(true)}
+            style={{
+              display: 'grid',
+              placeItems: 'center',
+              width: '32px',
+              height: '32px',
+              borderRadius: '50%',
+              background: '#f0f2ea',
+              color: '#4e5548',
+              border: 'none',
+              cursor: 'pointer',
+            }}
+            title="Pintasan Keyboard (?)"
+            aria-label="Pintasan Keyboard"
+          >
+            <Command size={14} />
+          </button>
+
           <span className="sync">
             <i /> {loading ? 'Syncing…' : 'PocketBase ready'}
           </span>
@@ -735,7 +812,8 @@ function App() {
                 <div className="search">
                   <Search size={16} />
                   <input
-                    placeholder="Search company, role, location"
+                    ref={searchInputRef}
+                    placeholder="Search company, role, location (/ to focus)"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                   />
@@ -782,27 +860,21 @@ function App() {
                 ))}
               </div>
             ) : filtered.length === 0 && query ? (
-              <div
-                className="empty-state"
-                style={{
-                  background: '#fbfbf8',
-                  border: '1px dashed #d5d8cd',
-                  padding: '48px 24px',
-                  borderRadius: '4px',
-                  textAlign: 'center',
-                }}
-              >
-                <p style={{ margin: '0 0 14px', fontSize: '13px', color: '#555d4e' }}>
-                  Tidak ditemukan peluang karier untuk pencarian &ldquo;<strong>{query}</strong>&rdquo;.
-                </p>
-                <button
-                  type="button"
-                  className="secondary compact-btn"
-                  onClick={() => setQuery('')}
-                >
-                  Reset Filter Pencarian
-                </button>
-              </div>
+              <EmptyState
+                icon={Search}
+                title={`Tidak Ditemukan Hasil untuk "${query}"`}
+                description="Tidak ada peluang karier yang cocok dengan kata kunci pencarian. Coba ubah ejaan atau bersihkan filter."
+                actionLabel="Reset Filter Pencarian"
+                onAction={() => setQuery('')}
+              />
+            ) : applications.length === 0 ? (
+              <EmptyState
+                icon={Target}
+                title="Papan Pipeline Lamaran Masih Kosong"
+                description="Mulai langkah pencarian karir terstruktur Anda. Catat peluang kerja pertama untuk memantau status seleksi, follow-up, dan penawaran gaji."
+                actionLabel="+ Tambah Peluang Pertama (N)"
+                onAction={() => setShowAdd(true)}
+              />
             ) : view === 'board' ? (
               <div className="board">
                 {statuses.slice(0, 6).map((status) => (
@@ -832,7 +904,11 @@ function App() {
                 ))}
               </div>
             ) : (
-              <JobTable applications={filtered} onSelectApplication={setDrawer} />
+              <JobTable
+                applications={filtered}
+                onSelectApplication={setDrawer}
+                onResetFilters={() => setQuery('')}
+              />
             )}
           </section>
 
@@ -1097,6 +1173,12 @@ function App() {
           setIsOnboardingOpen(false);
           navigateTo('cockpit');
         }}
+      />
+
+      {/* Keyboard Shortcuts Cheatsheet Modal */}
+      <KeyboardShortcutsModal
+        isOpen={isShortcutsOpen}
+        onClose={() => setIsShortcutsOpen(false)}
       />
     </div>
   );

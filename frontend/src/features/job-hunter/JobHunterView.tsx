@@ -22,6 +22,7 @@ import { CandidateProfileModal } from './CandidateProfileModal';
 import { AtsResumeFormatterModal } from '../resume-formatter/AtsResumeFormatterModal';
 import { WebClipperModal } from './WebClipperModal';
 import type { JobLead } from '../../lib/pb-types';
+import { EmptyState } from '../../components/ui/EmptyState';
 
 interface JobHunterViewProps {
   onPromoteToApplyFlow: (lead: {
@@ -868,17 +869,13 @@ export function JobHunterView({ onPromoteToApplyFlow }: JobHunterViewProps) {
           </div>
 
           {leads.length === 0 && (
-            <div
-              style={{
-                textAlign: 'center',
-                padding: '40px',
-                border: '1px dashed #dedfd8',
-                color: '#888d82',
-                fontSize: '13px',
-              }}
-            >
-              No leads in pipeline. Evaluate opportunities from the Evaluator tab to track them here.
-            </div>
+            <EmptyState
+              icon={Target}
+              title="Pipeline Lead Masih Kosong"
+              description="Evaluasi deskripsi lowongan kerja (JD) dari tab Evaluator di atas untuk mendeteksi kecocokan skill dan menyaring dealbreaker otomatis."
+              actionLabel="Uji Job Description Baru"
+              onAction={() => setActiveTab('evaluator')}
+            />
           )}
         </div>
       )}

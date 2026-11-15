@@ -424,6 +424,10 @@ export const InterviewCalendarWidget: React.FC<InterviewCalendarWidgetProps> = (
                 </label>
                 <input
                   type="url"
+                  inputMode="url"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
                   value={meetingLink}
                   onChange={(e) => setMeetingLink(e.target.value)}
                   placeholder="https://meet.google.com/xxx-xxxx-xxx atau Zoom URL"

@@ -1,19 +1,24 @@
 import type { Application } from '../../lib/pb-types';
 import { salary } from '../../lib/utils';
+import { EmptyState } from '../../components/ui/EmptyState';
+import { SearchX } from 'lucide-react';
 
 export interface JobTableProps {
   applications: Application[];
   onSelectApplication: (application: Application) => void;
+  onResetFilters?: () => void;
 }
 
-export function JobTable({ applications, onSelectApplication }: JobTableProps) {
+export function JobTable({ applications, onSelectApplication, onResetFilters }: JobTableProps) {
   if (applications.length === 0) {
     return (
-      <div className="table-wrap" style={{ padding: '48px 24px', textAlign: 'center' }}>
-        <p style={{ margin: 0, fontSize: '13px', color: '#777c73' }}>
-          No applications found matching your criteria.
-        </p>
-      </div>
+      <EmptyState
+        icon={SearchX}
+        title="Tidak Ada Lamaran Ditemukan"
+        description="Tidak ada peluang karier yang cocok dengan filter atau kata kunci saat ini. Coba sesuaikan kata kunci atau bersihkan filter."
+        actionLabel={onResetFilters ? "Reset Filter" : undefined}
+        onAction={onResetFilters}
+      />
     );
   }
 

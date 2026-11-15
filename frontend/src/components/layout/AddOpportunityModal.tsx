@@ -66,6 +66,7 @@ export function AddOpportunityModal({ onClose, onAdd }: AddOpportunityModalProps
             Company
             <input
               autoFocus
+              autoComplete="organization"
               value={company}
               onChange={(e) => setCompany(e.target.value)}
               placeholder="e.g. Stripe, GoTo, or Traveloka"
@@ -75,6 +76,7 @@ export function AddOpportunityModal({ onClose, onAdd }: AddOpportunityModalProps
           <label>
             Position
             <input
+              autoComplete="organization-title"
               value={position}
               onChange={(e) => setPosition(e.target.value)}
               placeholder="e.g. Staff Platform Engineer"
@@ -85,6 +87,7 @@ export function AddOpportunityModal({ onClose, onAdd }: AddOpportunityModalProps
             <label>
               Location
               <input
+                autoComplete="address-level2"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 placeholder="e.g. Jakarta, Remote, Singapore"

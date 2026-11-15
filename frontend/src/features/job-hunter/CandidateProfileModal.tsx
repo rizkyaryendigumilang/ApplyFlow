@@ -135,7 +135,9 @@ export function CandidateProfileModal({
                 Phone Number (WhatsApp)
               </label>
               <input
-                type="text"
+                type="tel"
+                inputMode="tel"
+                autoComplete="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="+62 812-3456-7890"
@@ -177,6 +179,10 @@ export function CandidateProfileModal({
               </label>
               <input
                 type="number"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                min="0"
+                step="500000"
                 value={minSalary}
                 onChange={(e) => setMinSalary(e.target.value)}
                 style={{ width: '100%', padding: '10px 12px', border: '1px solid #dedfd8', background: '#fff', fontSize: '13px' }}
@@ -243,10 +249,14 @@ export function CandidateProfileModal({
                 LinkedIn Profile URL
               </label>
               <input
-                type="text"
+                type="url"
+                inputMode="url"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
                 value={linkedinUrl}
                 onChange={(e) => setLinkedinUrl(e.target.value)}
-                placeholder="linkedin.com/in/username"
+                placeholder="https://linkedin.com/in/username"
                 style={{ width: '100%', padding: '10px 12px', border: '1px solid #dedfd8', background: '#fff', fontSize: '13px' }}
               />
             </div>
@@ -255,10 +265,14 @@ export function CandidateProfileModal({
                 GitHub Profile URL
               </label>
               <input
-                type="text"
+                type="url"
+                inputMode="url"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
                 value={githubUrl}
                 onChange={(e) => setGithubUrl(e.target.value)}
-                placeholder="github.com/username"
+                placeholder="https://github.com/username"
                 style={{ width: '100%', padding: '10px 12px', border: '1px solid #dedfd8', background: '#fff', fontSize: '13px' }}
               />
             </div>
