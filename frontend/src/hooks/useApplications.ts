@@ -60,18 +60,24 @@ export function useApplications(){
     catch(cause){ setApplications(xs=>xs.map(x=>x.id===id&&previous?{...x,status:previous}:x)); throw cause; }
   };
 
-  const update=async(id:string,patch:Partial<Application>)=>{
-    const nextList = applications.map(x=>x.id===id?{...x,...patch}:x);
+  const update = async (id: string, patch: Partial<Application>) => {
+    const previous = applications.find((a) => a.id === id);
+    const nextList = applications.map((x) => (x.id === id ? { ...x, ...patch } : x));
     setApplications(nextList);
-    if(!userId){
+    if (!userId) {
       localStorage.setItem(OFFLINE_STORAGE_KEY, JSON.stringify(nextList));
-      return;
+      return (nextList.find((x) => x.id === id) || { ...patch, id }) as Application;
     }
-    try{
-      const updated=await pb.collection<Application>('applications').update(id,patch);
-      setApplications(xs=>xs.map(x=>x.id===id?updated:x));
+    try {
+      const updated = await pb.collection<Application>('applications').update(id, patch);
+      setApplications((xs) => xs.map((x) => (x.id === id ? updated : x)));
       return updated;
-    }catch(cause){throw cause;}
+    } catch (cause) {
+      if (previous) {
+        setApplications((xs) => xs.map((x) => (x.id === id ? previous : x)));
+      }
+      throw cause;
+    }
   };
 
   const add=async(a:ApplicationDraft):Promise<Application>=>{

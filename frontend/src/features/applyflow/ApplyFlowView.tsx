@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { AlertTriangle, ArrowLeft, ArrowRight, Check, Clipboard, ExternalLink, FileText, Link2, Mail, Plus, Printer, Sparkles, WandSparkles } from 'lucide-react';
 import type { ApplicationDraft, CVArtifact } from '../../lib/pb-types';
 import { buildEmail, buildSubject, matchAgainstEvidence, parseJobPosting, validateDraft, type ParsedJobPosting, type ParsedPosition } from '../../lib/applyflow';
@@ -45,6 +45,19 @@ export function ApplyFlowView({
   const selectedCV = cvs.find(cv => cv.id === selectedCv);
   const validation = useMemo(() => job && position ? validateDraft(job, position, subject, body, selectedCV?.label || '') : { errors: [], warnings: [] }, [job, position, subject, body, selectedCV]);
   const matches = useMemo(() => position ? matchAgainstEvidence(position, evidence) : [], [position, evidence]);
+
+  // Synchronize initialData when promoted from Job Hunter or Inbox
+  useEffect(() => {
+    if (initialData) {
+      setRawText(initialData.rawJd || '');
+      setSourcePlatform(initialData.source || '');
+      setSourceUrl(initialData.url || '');
+      setMessage(`Loaded posting for ${initialData.company} - ${initialData.title}. Click Understand to parse.`);
+      setStep('paste');
+      setJob(null);
+      setConfirmed(false);
+    }
+  }, [initialData]);
 
   const analyze = async () => {
     if (!rawText.trim()) return setMessage('Paste the job advertisement first.');

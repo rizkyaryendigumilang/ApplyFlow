@@ -17,6 +17,7 @@ import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import type { Application, Interview } from '../../lib/pb-types';
 import { generateICS, downloadICSFile, getGoogleCalendarUrl } from '../../lib/ics-calendar';
+import { sanitizeUrl } from '../../lib/utils';
 
 interface InterviewCalendarWidgetProps {
   interviews: Interview[];
@@ -246,7 +247,7 @@ export const InterviewCalendarWidget: React.FC<InterviewCalendarWidgetProps> = (
                         <div className="flex items-center gap-2 pt-0.5">
                           <Video className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                           <a
-                            href={interview.meetingLink}
+                            href={sanitizeUrl(interview.meetingLink)}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-xs text-emerald-400 hover:underline truncate max-w-xs"

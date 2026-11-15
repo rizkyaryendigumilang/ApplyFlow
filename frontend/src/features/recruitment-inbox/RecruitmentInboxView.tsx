@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useRecruitmentNotifications } from '../../hooks/useRecruitmentNotifications';
 import { useApplicationEvents } from '../../hooks/useApplicationEvents';
+import { EmptyState } from '../../components/ui/EmptyState';
 import type { Application, ApplicationDraft } from '../../lib/pb-types';
 
 interface RecruitmentInboxViewProps {
@@ -357,17 +358,17 @@ export function RecruitmentInboxView({
         })}
 
         {filteredNotifications.length === 0 && (
-          <div
-            style={{
-              textAlign: 'center',
-              padding: '40px',
-              border: '1px dashed #dedfd8',
-              color: '#888d82',
-              fontSize: '13px',
-            }}
-          >
-            {loading ? 'Loading notifications...' : 'No notifications found for this filter.'}
-          </div>
+          <EmptyState
+            icon={Inbox}
+            title={notifications.length === 0 ? "Kotak Masuk Notifikasi Masih Kosong" : "Tidak Ada Notifikasi Sesuai Filter"}
+            description={
+              notifications.length === 0
+                ? "Hubungkan akun Gmail atau tempelkan teks email undangan wawancara atau pengumuman HRD untuk diekstraksi otomatis ke pipeline."
+                : "Coba ganti filter status di atas untuk melihat notifikasi lainnya."
+            }
+            actionLabel="+ Tempel Notifikasi Baru"
+            onAction={() => setIsIngestModalOpen(true)}
+          />
         )}
       </div>
 

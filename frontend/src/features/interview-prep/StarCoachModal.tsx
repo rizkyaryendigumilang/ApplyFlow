@@ -106,7 +106,15 @@ export function StarCoachModal({
 
   // Evaluation & Scoring Engine for STAR Story
   const audit = useMemo(() => {
-    const textCombined = `${currentStory.situation} ${currentStory.task} ${currentStory.action} ${currentStory.result}`.toLowerCase();
+    if (!currentStory) {
+      return {
+        score: 0,
+        uniqueMetrics: [],
+        verbsFound: [],
+        tips: ['Belum ada cerita STAR yang dipilih.'],
+      };
+    }
+    const textCombined = `${currentStory.situation || ''} ${currentStory.task || ''} ${currentStory.action || ''} ${currentStory.result || ''}`.toLowerCase();
     
     // Check numbers/metrics
     const numberRegex = /(\d+[\d,.]*|\d+%\s*|\$\d+|\b\d+\s*(req\/sec|ms|s|minutes|hours|days|x|bulan|juta|persen|%)\b)/gi;

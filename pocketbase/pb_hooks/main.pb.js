@@ -575,10 +575,10 @@ cronAdd("recruitment_sync_sweep", "*/15 * * * *", () => {
 cronAdd("detect_stale_ghosted_applications", "0 2 * * *", () => {
   try {
     const dao = $app.dao();
-    const fourteenDaysAgo = new Date(Date.now() - 14 * 86400000).toISOString();
+    const fourteenDaysAgo = new Date(Date.now() - 14 * 86400000).toISOString().slice(0, 10);
     const staleApps = dao.findRecordsByFilter(
       "applications",
-      "status IN ('Applied', 'Viewed') && sentAt <= {:cutoff} && (nextFollowUp = '' || nextFollowUp <= {:cutoff})",
+      "(status = 'Applied' || status = 'Viewed') && sentAt <= {:cutoff} && (nextFollowUp = '' || nextFollowUp <= {:cutoff})",
       "-sentAt", 50, 0,
       { cutoff: fourteenDaysAgo }
     );
@@ -773,7 +773,7 @@ cronAdd("daily_telegram_briefing", "30 1 * * *", () => {
       const offerApps = apps.filter((a) => a.getString("status") === "Offer");
 
       // Follow-up warnings (14+ days)
-      const fourteenDaysAgo = new Date(Date.now() - 14 * 86400000).toISOString();
+      const fourteenDaysAgo = new Date(Date.now() - 14 * 86400000).toISOString().slice(0, 10);
       const staleApps = apps.filter((a) => {
         const s = a.getString("status");
         return (s === "Applied" || s === "Viewed") && a.getString("sentAt") <= fourteenDaysAgo;
