@@ -100,7 +100,7 @@ export type Module =
 function App() {
   const { applications, loading, error, updateStatus, update, add } = useApplications();
   const { cvs, error: cvError } = useCVArtifacts();
-  const { interviews, error: interviewError } = useInterviews();
+  const { interviews, error: interviewError, addInterview } = useInterviews();
   const { addEvent } = useApplicationEvents();
   const { profile } = useCandidateProfile();
 
@@ -606,6 +606,17 @@ function App() {
             }}
             onOpenAddModal={() => setShowAdd(true)}
             onOpenStarCoach={(comp, pos) => setStarCoachParams({ company: comp, position: pos })}
+            onAddInterview={addInterview}
+            onPromoteLead={(lead) => {
+              setPromotedLead({
+                title: lead.title,
+                company: lead.company,
+                rawJd: lead.rawJd,
+                url: lead.url,
+                source: lead.source,
+              });
+              navigateTo('applyflow');
+            }}
           />
         </main>
       ) : module === 'linkedin' ? (

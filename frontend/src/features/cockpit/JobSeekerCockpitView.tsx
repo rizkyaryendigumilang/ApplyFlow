@@ -7,6 +7,9 @@ import { DailyAttentionRadar } from './DailyAttentionRadar';
 import { FunnelMomentumWidget } from './FunnelMomentumWidget';
 import { PriorityActionList } from './PriorityActionList';
 import { SafeQuotaTrackerCard } from '../linkedin-assistant/SafeQuotaTrackerCard';
+import { InterviewCalendarWidget } from './InterviewCalendarWidget';
+import { JobScoutMiniFeedWidget } from './JobScoutMiniFeedWidget';
+import { OfferComparatorSnapshotWidget } from './OfferComparatorSnapshotWidget';
 import { Button } from '../../components/ui/button';
 import {
   calculateRadarAlerts,
@@ -24,6 +27,8 @@ interface JobSeekerCockpitViewProps {
   onSelectApplication: (app: Application) => void;
   onOpenAddModal: () => void;
   onOpenStarCoach?: (company: string, position: string) => void;
+  onAddInterview?: (data: Omit<Interview, 'id'>) => Promise<Interview>;
+  onPromoteLead?: (lead: JobLead) => void;
 }
 
 export const JobSeekerCockpitView: React.FC<JobSeekerCockpitViewProps> = ({
@@ -34,6 +39,8 @@ export const JobSeekerCockpitView: React.FC<JobSeekerCockpitViewProps> = ({
   onSelectApplication,
   onOpenAddModal,
   onOpenStarCoach,
+  onAddInterview,
+  onPromoteLead,
 }) => {
   const { profile } = useCandidateProfile();
   const { t, locale } = useI18n();
@@ -141,7 +148,16 @@ export const JobSeekerCockpitView: React.FC<JobSeekerCockpitViewProps> = ({
         onOpenStarCoach={onOpenStarCoach}
       />
 
-      {/* 2. Bento Grid: Funnel Momentum & Safe Quota Habit */}
+      {/* 2. Kalender Wawancara & Pengingat (.ics) Widget */}
+      <InterviewCalendarWidget
+        interviews={interviews}
+        applications={applications}
+        onAddInterview={onAddInterview}
+        onOpenStarCoach={onOpenStarCoach}
+        onSelectApplication={onSelectApplication}
+      />
+
+      {/* 3. Bento Grid: Funnel Momentum & Safe Quota Habit */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <FunnelMomentumWidget stats={funnelStats} />
         
@@ -161,7 +177,21 @@ export const JobSeekerCockpitView: React.FC<JobSeekerCockpitViewProps> = ({
         </div>
       </div>
 
-      {/* 3. Top 5 Priority Applications Queue */}
+      {/* 4. Intelligence Grid: AI Job Scout & Real THP Offer Comparator */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <JobScoutMiniFeedWidget
+          jobLeads={jobLeads}
+          onNavigateToJobHunter={() => onNavigateTo('jobhunter')}
+          onPromoteLead={onPromoteLead}
+        />
+
+        <OfferComparatorSnapshotWidget
+          applications={applications}
+          onNavigateToOffers={() => onNavigateTo('offers')}
+        />
+      </div>
+
+      {/* 5. Top 5 Priority Applications Queue */}
       <PriorityActionList
         applications={applications}
         onSelectApplication={onSelectApplication}
