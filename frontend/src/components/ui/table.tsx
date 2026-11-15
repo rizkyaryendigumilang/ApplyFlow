@@ -3,7 +3,7 @@ import { cn } from '../../lib/utils';
 
 export const Table = React.forwardRef<HTMLTableElement, React.HTMLAttributes<HTMLTableElement>>(
   ({ className, ...props }, ref) => (
-    <div className="relative w-full overflow-auto rounded-xl border border-slate-800">
+    <div className="relative w-full overflow-auto rounded-2xl border border-slate-800/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
       <table ref={ref} className={cn('w-full caption-bottom text-sm', className)} {...props} />
     </div>
   )
@@ -12,7 +12,7 @@ Table.displayName = 'Table';
 
 export const TableHeader = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(
   ({ className, ...props }, ref) => (
-    <thead ref={ref} className={cn('[&_tr]:border-b border-slate-800 bg-slate-950/60', className)} {...props} />
+    <thead ref={ref} className={cn('[&_tr]:border-b border-slate-800 bg-slate-950/80', className)} {...props} />
   )
 );
 TableHeader.displayName = 'TableHeader';
@@ -29,7 +29,7 @@ export const TableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttribut
     <tr
       ref={ref}
       className={cn(
-        'border-b border-slate-800/80 transition-colors hover:bg-slate-800/40 data-[state=selected]:bg-slate-800',
+        'border-b border-slate-800/70 transition-colors duration-150 hover:bg-slate-800/40 data-[state=selected]:bg-slate-800',
         className
       )}
       {...props}

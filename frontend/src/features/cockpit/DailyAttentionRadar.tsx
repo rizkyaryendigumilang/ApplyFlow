@@ -35,8 +35,11 @@ export const DailyAttentionRadar: React.FC<DailyAttentionRadarProps> = ({
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <CardTitle className="text-lg font-bold text-slate-100 flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse" />
+            <CardTitle className="text-lg font-bold text-slate-100 flex items-center gap-2.5">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-500" />
+              </span>
               {t('cockpit.attentionTitle')}
             </CardTitle>
             <CardDescription>{t('cockpit.attentionSubtitle')}</CardDescription>
@@ -46,7 +49,7 @@ export const DailyAttentionRadar: React.FC<DailyAttentionRadarProps> = ({
 
       <CardContent className="space-y-3 pt-2">
         {isAllClear ? (
-          <div className="flex items-center gap-3 p-4 rounded-xl bg-slate-950/70 border border-slate-800 text-slate-300">
+          <div className="flex items-center gap-3 p-4 rounded-2xl bg-slate-950/70 border border-slate-800 text-slate-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
             <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
             <div className="text-xs">{t('cockpit.allCaughtUp')}</div>
           </div>
@@ -54,14 +57,14 @@ export const DailyAttentionRadar: React.FC<DailyAttentionRadarProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {/* Stale applications card */}
             <div
-              className={`p-4 rounded-xl border transition-colors duration-150 ${
+              className={`p-4 rounded-2xl border shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_1px_2px_rgba(0,0,0,0.2)] transition-[transform,border-color,box-shadow,background-color] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 active:scale-[0.99] ${
                 hasStale
-                  ? 'bg-slate-950/80 border-amber-500/30 hover:border-amber-500/50'
+                  ? 'bg-slate-950/80 border-amber-500/30 hover:border-amber-500/60 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_4px_16px_rgba(245,158,11,0.15)]'
                   : 'bg-slate-950/40 border-slate-800/60 opacity-60'
               }`}
             >
               <div className="flex items-center justify-between mb-2">
-                <span className="p-1.5 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                <span className="p-1.5 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
                   <AlertCircle className="w-4 h-4" />
                 </span>
                 <Badge variant={hasStale ? 'interview' : 'outline'}>
@@ -81,7 +84,7 @@ export const DailyAttentionRadar: React.FC<DailyAttentionRadarProps> = ({
                       key={app.id}
                       type="button"
                       onClick={() => onSelectApplication(app.id)}
-                      className="w-full text-left text-[11px] px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 flex items-center justify-between transition-colors border border-slate-800/80"
+                      className="w-full text-left text-[11px] px-2.5 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-300 flex items-center justify-between transition-colors border border-slate-800/80 active:scale-[0.985]"
                     >
                       <span className="font-medium truncate">{app.company}</span>
                       <span className="text-slate-500 text-[10px] shrink-0">Tindak Lanjut &rarr;</span>
@@ -93,14 +96,14 @@ export const DailyAttentionRadar: React.FC<DailyAttentionRadarProps> = ({
 
             {/* Upcoming interviews card */}
             <div
-              className={`p-4 rounded-xl border transition-colors duration-150 ${
+              className={`p-4 rounded-2xl border shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_1px_2px_rgba(0,0,0,0.2)] transition-[transform,border-color,box-shadow,background-color] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 active:scale-[0.99] ${
                 hasInterviews
-                  ? 'bg-slate-950/80 border-blue-500/30 hover:border-blue-500/50'
+                  ? 'bg-slate-950/80 border-blue-500/30 hover:border-blue-500/60 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_4px_16px_rgba(59,130,246,0.15)]'
                   : 'bg-slate-950/40 border-slate-800/60 opacity-60'
               }`}
             >
               <div className="flex items-center justify-between mb-2">
-                <span className="p-1.5 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                <span className="p-1.5 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
                   <Calendar className="w-4 h-4" />
                 </span>
                 <Badge variant={hasInterviews ? 'applied' : 'outline'}>
@@ -118,14 +121,14 @@ export const DailyAttentionRadar: React.FC<DailyAttentionRadarProps> = ({
                   {alerts.upcomingInterviews.slice(0, 2).map((iv) => (
                     <div
                       key={iv.id}
-                      className="text-[11px] px-2.5 py-1.5 rounded-lg bg-slate-900 text-slate-300 flex items-center justify-between border border-slate-800/80"
+                      className="text-[11px] px-2.5 py-1.5 rounded-xl bg-slate-900/90 text-slate-300 flex items-center justify-between border border-slate-800/80"
                     >
                       <span className="font-medium truncate">{iv.company || 'Perusahaan'}</span>
                       {onOpenStarCoach && (
                         <button
                           type="button"
                           onClick={() => onOpenStarCoach(iv.company || 'Perusahaan', iv.stage || 'Interview')}
-                          className="text-blue-400 hover:text-blue-300 text-[10px] font-semibold"
+                          className="text-blue-400 hover:text-blue-300 text-[10px] font-semibold active:scale-95 transition-transform"
                         >
                           STAR Prep &rarr;
                         </button>
@@ -138,14 +141,14 @@ export const DailyAttentionRadar: React.FC<DailyAttentionRadarProps> = ({
 
             {/* High match leads card */}
             <div
-              className={`p-4 rounded-xl border transition-colors duration-150 ${
+              className={`p-4 rounded-2xl border shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_1px_2px_rgba(0,0,0,0.2)] transition-[transform,border-color,box-shadow,background-color] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 active:scale-[0.99] ${
                 hasLeads
-                  ? 'bg-slate-950/80 border-emerald-500/30 hover:border-emerald-500/50'
+                  ? 'bg-slate-950/80 border-emerald-500/30 hover:border-emerald-500/60 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_4px_16px_rgba(16,185,129,0.15)]'
                   : 'bg-slate-950/40 border-slate-800/60 opacity-60'
               }`}
             >
               <div className="flex items-center justify-between mb-2">
-                <span className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <span className="p-1.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
                   <Sparkles className="w-4 h-4" />
                 </span>
                 <Badge variant={hasLeads ? 'offer' : 'outline'}>

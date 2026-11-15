@@ -72,10 +72,25 @@
   --shadow-drawer: -12px 0 36px rgba(32, 35, 32, 0.08);
   --shadow-modal: 0 24px 64px rgba(32, 35, 32, 0.12), 0 4px 16px rgba(32, 35, 32, 0.05);
 
-  /* Tactile Physics */
+  /* Ignara-inspired Tactile Physics & Neat Curvature System */
   --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-ignara: cubic-bezier(0.22, 1, 0.36, 1);
   --transition-fast: 0.15s ease;
   --transition-smooth: 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-ignara: 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Squircle Radius Hierarchy */
+  --r-xs: 6px;
+  --r-sm: 10px;
+  --r-md: 14px;
+  --r-lg: 18px;
+  --r-xl: 24px;
+
+  /* Dual-border Lighting & Ambient Layering */
+  --top-light: rgba(255, 255, 255, 0.08);
+  --line-subtle: rgba(255, 255, 255, 0.07);
+  --shadow-ignara-card: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 1px 2px rgba(0, 0, 0, 0.25), 0 18px 36px -18px rgba(0, 0, 0, 0.55);
+  --shadow-ignara-hover: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 4px 14px rgba(0, 0, 0, 0.3), 0 24px 48px -18px rgba(0, 0, 0, 0.7);
 }
 
 * {
@@ -109,11 +124,11 @@ button {
   background: none;
   color: inherit;
   touch-action: manipulation;
-  transition: transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+  transition: transform 0.2s var(--ease-ignara), background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
 }
 
 button:active:not(:disabled) {
-  transform: scale(0.985);
+  transform: scale(0.98);
 }
 
 /* Accessibility Focus Visible Ring */
@@ -342,19 +357,19 @@ main {
   padding: 11px 18px;
   font-size: 12px;
   font-weight: 600;
-  border-radius: 3px;
-  box-shadow: var(--shadow-subtle);
-  transition: transform var(--transition-fast), background-color var(--transition-fast), box-shadow var(--transition-fast);
+  border-radius: var(--r-sm);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), var(--shadow-subtle);
+  transition: transform 0.22s var(--ease-ignara), background-color 0.2s ease, box-shadow 0.22s var(--ease-ignara);
 }
 
 .primary:hover {
   background: #363e32;
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-card);
+  transform: translateY(-1.5px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), var(--shadow-card);
 }
 
 .primary:active {
-  transform: translateY(0) scale(0.985);
+  transform: translateY(0) scale(0.98);
 }
 
 /* Metrics Ribbon with Modern Proportions */
@@ -567,20 +582,20 @@ main {
   border: 1px solid var(--border-card);
   padding: 16px;
   min-height: 153px;
-  border-radius: 4px;
-  box-shadow: var(--shadow-card);
+  border-radius: var(--r-md);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), var(--shadow-card);
   cursor: pointer;
-  transition: transform var(--transition-smooth), box-shadow var(--transition-smooth), border-color var(--transition-fast);
+  transition: transform 0.24s var(--ease-ignara), box-shadow 0.24s var(--ease-ignara), border-color 0.2s ease;
 }
 
 .job-card:hover {
   border-color: var(--border-hover);
   transform: translateY(-2px);
-  box-shadow: var(--shadow-hover);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), var(--shadow-hover);
 }
 
 .job-card:active {
-  transform: translateY(0) scale(0.99);
+  transform: translateY(0) scale(0.985);
 }
 
 .job-top {
@@ -592,27 +607,30 @@ main {
 
 .job-top button {
   color: #a4a8a0;
-  padding: 2px;
-  border-radius: 2px;
+  padding: 4px;
+  border-radius: var(--r-xs);
+  transition: all 0.15s ease;
 }
 
 .job-top button:hover {
   color: #202320;
   background: #eef1e6;
+  transform: scale(1.05);
 }
 
 .company-logo {
   display: inline-grid;
   place-items: center;
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   background: #e8edda;
   color: #65753e;
   font: 12px 'Playfair Display', serif;
   font-style: italic;
   font-weight: 600;
-  border-radius: 50%;
+  border-radius: 8px;
   border: 1px solid #d4deb9;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
 .job-card h4 {
@@ -640,12 +658,13 @@ main {
 }
 
 .tags span {
-  font: 9px 'DM Mono', monospace;
+  font: 9.5px 'DM Mono', monospace;
   color: #798072;
   background: #f0f2eb;
-  padding: 3px 6px;
-  border-radius: 2px;
+  padding: 3px 7px;
+  border-radius: var(--r-xs);
   border: 1px solid #e1e5da;
+  letter-spacing: -0.01em;
 }
 
 .job-foot {
@@ -909,7 +928,7 @@ tbody tr:hover {
   box-shadow: var(--shadow-drawer);
   overflow-y: auto;
   border-left: 1px solid rgba(222, 223, 216, 0.9);
-  animation: drawer-slide-in 0.25s var(--ease-spring);
+  animation: drawer-slide-in 0.26s var(--ease-ignara);
   transform: translateZ(0);
   will-change: transform;
 }
@@ -1022,17 +1041,38 @@ tbody tr:hover {
   padding: 32px;
   align-self: center;
   margin: auto;
-  border-radius: 6px;
+  border-radius: var(--r-lg);
   border: 1px solid #dedfd8;
-  box-shadow: var(--shadow-modal);
-  animation: modal-pop 0.22s var(--ease-spring);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), var(--shadow-modal);
+  animation: modal-pop 0.24s var(--ease-ignara);
   transform: translateZ(0);
   will-change: transform, opacity;
 }
 
 @keyframes modal-pop {
-  from { opacity: 0; transform: scale(0.97); }
-  to { opacity: 1; transform: scale(1); }
+  from { opacity: 0; transform: scale(0.96) translateY(6px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes breathe {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.65; }
+}
+
+@keyframes breathe-ring {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.12); }
+}
+
+@keyframes ignara-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .modal h2 {
@@ -1060,12 +1100,13 @@ tbody tr:hover {
   margin-top: 7px;
   outline: 0;
   font-size: 13px;
-  border-radius: 3px;
+  border-radius: var(--r-sm);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .modal input:focus {
   border-color: var(--accent-olive);
-  box-shadow: 0 0 0 2px rgba(125, 152, 80, 0.2);
+  box-shadow: 0 0 0 3px rgba(125, 152, 80, 0.2);
 }
 
 /* 4 & 8. Functional UX: Shimmer Skeleton Placeholders */

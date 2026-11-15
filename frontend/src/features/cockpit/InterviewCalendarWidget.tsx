@@ -218,51 +218,56 @@ export const InterviewCalendarWidget: React.FC<InterviewCalendarWidgetProps> = (
               return (
                 <div
                   key={interview.id}
-                  className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 hover:border-slate-700 transition-colors duration-150 flex flex-col md:flex-row md:items-center justify-between gap-4"
+                  className="p-4 rounded-2xl bg-slate-950/75 border border-slate-800/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_1px_2px_rgba(0,0,0,0.2)] hover:border-slate-700/90 hover:bg-slate-950/90 hover:-translate-y-0.5 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_4px_16px_rgba(0,0,0,0.35)] transition-[transform,border-color,box-shadow,background-color] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] active:scale-[0.99] flex flex-col md:flex-row md:items-center justify-between gap-4"
                 >
-                  <div className="space-y-1.5 min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-xs font-bold text-slate-100 truncate">{compName}</span>
-                      <span className="text-slate-500 text-xs">•</span>
-                      <span className="text-xs text-slate-300 truncate">{posName}</span>
-                      <Badge variant="interview" className="text-[10px] py-0 px-2">
-                        {interview.interviewType || interview.round}
-                      </Badge>
-                      <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                        ⏳ {countdownLabel}
-                      </span>
+                  <div className="flex items-start gap-3.5 min-w-0">
+                    <div className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800/80 flex items-center justify-center shrink-0 text-blue-400 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+                      <Building className="w-5 h-5 text-blue-400" />
                     </div>
-
-                    <div className="flex items-center gap-2 text-xs text-slate-400">
-                      <Clock className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-                      <span>{formattedDate} WIB</span>
-                    </div>
-
-                    {interview.meetingLink && (
-                      <div className="flex items-center gap-2 pt-0.5">
-                        <Video className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                        <a
-                          href={interview.meetingLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-xs text-emerald-400 hover:underline truncate max-w-xs"
-                        >
-                          {interview.meetingLink}
-                        </a>
-                        <button
-                          type="button"
-                          onClick={() => handleCopyLink(interview.meetingLink!, interview.id)}
-                          className="p-1 text-slate-400 hover:text-slate-200"
-                          title="Salin Link Meeting"
-                        >
-                          {copiedId === interview.id ? (
-                            <Check className="w-3 h-3 text-emerald-400" />
-                          ) : (
-                            <Copy className="w-3 h-3" />
-                          )}
-                        </button>
+                    <div className="space-y-1.5 min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-xs font-bold text-slate-100 truncate">{compName}</span>
+                        <span className="text-slate-500 text-xs">•</span>
+                        <span className="text-xs text-slate-300 truncate">{posName}</span>
+                        <Badge variant="interview" className="text-[10px] py-0 px-2 font-medium">
+                          {interview.interviewType || interview.round}
+                        </Badge>
+                        <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                          ⏳ {countdownLabel}
+                        </span>
                       </div>
-                    )}
+
+                      <div className="flex items-center gap-2 text-xs text-slate-400">
+                        <Clock className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                        <span>{formattedDate} WIB</span>
+                      </div>
+
+                      {interview.meetingLink && (
+                        <div className="flex items-center gap-2 pt-0.5">
+                          <Video className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                          <a
+                            href={interview.meetingLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-emerald-400 hover:underline truncate max-w-xs"
+                          >
+                            {interview.meetingLink}
+                          </a>
+                          <button
+                            type="button"
+                            onClick={() => handleCopyLink(interview.meetingLink!, interview.id)}
+                            className="p-1 text-slate-400 hover:text-slate-200 rounded-lg hover:bg-slate-800 active:scale-95 transition-all duration-150"
+                            title="Salin Link Meeting"
+                          >
+                            {copiedId === interview.id ? (
+                              <Check className="w-3 h-3 text-emerald-400" />
+                            ) : (
+                              <Copy className="w-3 h-3" />
+                            )}
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   <div className="flex flex-wrap items-center gap-2 shrink-0">
@@ -271,7 +276,7 @@ export const InterviewCalendarWidget: React.FC<InterviewCalendarWidgetProps> = (
                         size="sm"
                         variant="outline"
                         onClick={() => onOpenStarCoach(compName, posName)}
-                        className="text-xs border-purple-500/30 text-purple-300 hover:bg-purple-950/40"
+                        className="text-xs border-purple-500/30 text-purple-300 hover:bg-purple-950/40 hover:-translate-y-0.5 active:translate-y-0 transition-[transform,background-color,border-color] duration-150 ease-[cubic-bezier(0.22,1,0.36,1)]"
                       >
                         <Sparkles className="w-3 h-3 mr-1 text-purple-400" />
                         STAR Prep
@@ -282,7 +287,7 @@ export const InterviewCalendarWidget: React.FC<InterviewCalendarWidgetProps> = (
                       size="sm"
                       variant="outline"
                       onClick={() => handleExportSingleICS(interview, matchedApp)}
-                      className="text-xs border-slate-700 text-slate-300 hover:text-white"
+                      className="text-xs border-slate-700 text-slate-300 hover:text-white hover:-translate-y-0.5 active:translate-y-0 transition-[transform,border-color,color] duration-150 ease-[cubic-bezier(0.22,1,0.36,1)]"
                       title="Download file kalender universal (.ics) dengan pengingat alarm H-30 menit"
                     >
                       <Download className="w-3 h-3 mr-1" />
@@ -293,7 +298,7 @@ export const InterviewCalendarWidget: React.FC<InterviewCalendarWidgetProps> = (
                       href={gcalUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-700 text-slate-300 hover:text-white text-xs font-medium hover:bg-slate-800 transition-colors"
+                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-slate-700 text-slate-300 hover:text-white text-xs font-medium hover:bg-slate-800/80 hover:-translate-y-0.5 active:translate-y-0 transition-[transform,background-color,border-color,color] duration-150 ease-[cubic-bezier(0.22,1,0.36,1)]"
                       title="Simpan langsung ke Google Calendar"
                     >
                       <ExternalLink className="w-3 h-3" />
@@ -309,8 +314,8 @@ export const InterviewCalendarWidget: React.FC<InterviewCalendarWidgetProps> = (
 
       {/* Modal Jadwalkan Wawancara */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-lg w-full shadow-2xl space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="bg-slate-900/95 border border-slate-800 rounded-2xl p-6 max-w-lg w-full shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_24px_64px_rgba(0,0,0,0.8)] backdrop-blur-xl animate-in zoom-in-95 ease-[cubic-bezier(0.22,1,0.36,1)] duration-200 space-y-4">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div>
                 <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
@@ -324,7 +329,7 @@ export const InterviewCalendarWidget: React.FC<InterviewCalendarWidgetProps> = (
               <button
                 type="button"
                 onClick={() => setShowModal(false)}
-                className="text-slate-400 hover:text-slate-200 text-lg leading-none p-1"
+                className="text-slate-400 hover:text-slate-200 text-lg leading-none p-1 rounded-lg hover:bg-slate-800 transition-colors"
               >
                 &times;
               </button>
@@ -338,12 +343,12 @@ export const InterviewCalendarWidget: React.FC<InterviewCalendarWidgetProps> = (
                 <select
                   value={selectedAppId}
                   onChange={(e) => setSelectedAppId(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-blue-500"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-blue-500/60 focus:ring-2 focus:ring-blue-500/20 transition-[border-color,box-shadow] duration-150"
                 >
                   <option value="">-- Pilih dari pipeline atau isi manual --</option>
                   {applications.map((app) => (
                     <option key={app.id} value={app.id}>
-                      {app.company} &mdash; {app.position} ({app.status})
+                      {app.company} - {app.position} ({app.status})
                     </option>
                   ))}
                 </select>
@@ -361,7 +366,7 @@ export const InterviewCalendarWidget: React.FC<InterviewCalendarWidgetProps> = (
                       value={customCompany}
                       onChange={(e) => setCustomCompany(e.target.value)}
                       placeholder="Contoh: Shopee"
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-blue-500"
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-blue-500/60 focus:ring-2 focus:ring-blue-500/20 transition-[border-color,box-shadow] duration-150"
                     />
                   </div>
                   <div>
@@ -374,7 +379,7 @@ export const InterviewCalendarWidget: React.FC<InterviewCalendarWidgetProps> = (
                       value={customPosition}
                       onChange={(e) => setCustomPosition(e.target.value)}
                       placeholder="Contoh: Senior DevOps"
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-blue-500"
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-blue-500/60 focus:ring-2 focus:ring-blue-500/20 transition-[border-color,box-shadow] duration-150"
                     />
                   </div>
                 </div>
@@ -388,7 +393,7 @@ export const InterviewCalendarWidget: React.FC<InterviewCalendarWidgetProps> = (
                   <select
                     value={roundType}
                     onChange={(e) => setRoundType(e.target.value as Interview['interviewType'])}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-blue-500"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-blue-500/60 focus:ring-2 focus:ring-blue-500/20 transition-[border-color,box-shadow] duration-150"
                   >
                     <option value="HR Screening">HR Screening</option>
                     <option value="Technical Interview">Technical Interview</option>
@@ -408,7 +413,7 @@ export const InterviewCalendarWidget: React.FC<InterviewCalendarWidgetProps> = (
                     required
                     value={scheduledAt}
                     onChange={(e) => setScheduledAt(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-blue-500"
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-blue-500/60 focus:ring-2 focus:ring-blue-500/20 transition-[border-color,box-shadow] duration-150"
                   />
                 </div>
               </div>
@@ -422,7 +427,7 @@ export const InterviewCalendarWidget: React.FC<InterviewCalendarWidgetProps> = (
                   value={meetingLink}
                   onChange={(e) => setMeetingLink(e.target.value)}
                   placeholder="https://meet.google.com/xxx-xxxx-xxx atau Zoom URL"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-blue-500"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-blue-500/60 focus:ring-2 focus:ring-blue-500/20 transition-[border-color,box-shadow] duration-150"
                 />
               </div>
 
@@ -435,7 +440,7 @@ export const InterviewCalendarWidget: React.FC<InterviewCalendarWidgetProps> = (
                   value={prepNotes}
                   onChange={(e) => setPrepNotes(e.target.value)}
                   placeholder="Siapkan arsitektur microservices, proyek portfolio..."
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-blue-500 resize-none"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-blue-500/60 focus:ring-2 focus:ring-blue-500/20 transition-[border-color,box-shadow] duration-150 resize-none"
                 />
               </div>
 

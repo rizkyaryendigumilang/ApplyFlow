@@ -104,7 +104,7 @@ export const PriorityActionList: React.FC<PriorityActionListProps> = ({
                       {app.status}
                     </Badge>
                   </TableCell>
-                  <TableCell className="hidden sm:table-cell text-slate-300 font-mono text-[11px]">
+                  <TableCell className="hidden sm:table-cell text-slate-300 font-mono text-[11px] tabular-nums">
                     {app.salaryMin > 0 ? `${idr(app.salaryMin)} - ${idr(app.salaryMax)}` : 'Dirahasiakan'}
                   </TableCell>
                   <TableCell className="hidden md:table-cell text-slate-400 text-xs">

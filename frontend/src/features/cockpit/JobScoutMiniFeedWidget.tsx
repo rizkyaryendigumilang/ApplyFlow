@@ -59,35 +59,40 @@ export const JobScoutMiniFeedWidget: React.FC<JobScoutMiniFeedWidgetProps> = ({
             {topLeads.map((lead) => (
               <div
                 key={lead.id}
-                className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 hover:border-slate-700 transition-colors duration-150 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                className="p-3.5 rounded-2xl bg-slate-950/75 border border-slate-800/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_1px_2px_rgba(0,0,0,0.2)] hover:border-slate-700/90 hover:bg-slate-950/90 hover:-translate-y-0.5 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_4px_16px_rgba(0,0,0,0.35)] transition-[transform,border-color,box-shadow,background-color] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] active:scale-[0.99] flex flex-col sm:flex-row sm:items-center justify-between gap-3"
               >
-                <div className="space-y-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-slate-100 truncate">{lead.title}</span>
-                    <Badge variant="offer" className="text-[10px] py-0 px-1.5 font-mono">
-                      {lead.matchScore}% Match
-                    </Badge>
+                <div className="flex items-start gap-3 min-w-0">
+                  <div className="w-9 h-9 rounded-xl bg-slate-900 border border-slate-800/80 flex items-center justify-center shrink-0 text-emerald-400 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] mt-0.5">
+                    <Sparkles className="w-4 h-4 text-emerald-400" />
                   </div>
-
-                  <div className="flex flex-wrap items-center gap-2 text-[11px] text-slate-400">
-                    <span className="font-medium text-slate-300">{lead.company}</span>
-                    <span>•</span>
-                    <span className="flex items-center gap-1">
-                      <MapPin className="w-3 h-3 text-slate-500" />
-                      {lead.location || 'Remote'}
-                    </span>
-                    <span>•</span>
-                    <span className="flex items-center gap-1">
-                      <Briefcase className="w-3 h-3 text-slate-500" />
-                      {lead.workMode || 'Full-time'}
-                    </span>
-                  </div>
-
-                  {lead.evaluation?.suggestedAngle && (
-                    <div className="text-[11px] text-emerald-400/90 italic truncate pt-0.5">
-                      💡 {lead.evaluation.suggestedAngle}
+                  <div className="space-y-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold text-slate-100 truncate">{lead.title}</span>
+                      <Badge variant="offer" className="text-[10px] py-0 px-1.5 font-mono">
+                        {lead.matchScore}% Match
+                      </Badge>
                     </div>
-                  )}
+
+                    <div className="flex flex-wrap items-center gap-2 text-[11px] text-slate-400">
+                      <span className="font-medium text-slate-300">{lead.company}</span>
+                      <span>•</span>
+                      <span className="flex items-center gap-1">
+                        <MapPin className="w-3 h-3 text-slate-500" />
+                        {lead.location || 'Remote'}
+                      </span>
+                      <span>•</span>
+                      <span className="flex items-center gap-1">
+                        <Briefcase className="w-3 h-3 text-slate-500" />
+                        {lead.workMode || 'Full-time'}
+                      </span>
+                    </div>
+
+                    {lead.evaluation?.suggestedAngle && (
+                      <div className="text-[11px] text-emerald-400/90 italic truncate pt-0.5">
+                        💡 {lead.evaluation.suggestedAngle}
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0">

@@ -104,12 +104,12 @@ export const JobSeekerCockpitView: React.FC<JobSeekerCockpitViewProps> = ({
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-12 animate-in fade-in duration-300">
       {/* Welcome Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-slate-900 to-blue-950/40 border border-slate-800 rounded-3xl p-6 sm:p-8 backdrop-blur-md relative overflow-hidden shadow-2xl">
+      <div className="bg-gradient-to-r from-slate-900 via-slate-900 to-blue-950/40 border border-slate-800/90 rounded-3xl p-6 sm:p-8 backdrop-blur-md relative overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_1px_2px_rgba(0,0,0,0.3),0_20px_40px_-20px_rgba(0,0,0,0.7)]">
         <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 text-xs font-semibold">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 text-xs font-semibold ring-1 ring-inset ring-blue-500/20">
               <LayoutDashboard className="w-3.5 h-3.5" />
               {t('cockpit.eyebrow')}
             </div>
@@ -122,12 +122,12 @@ export const JobSeekerCockpitView: React.FC<JobSeekerCockpitViewProps> = ({
           </div>
 
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-            <div className="px-3.5 py-2 rounded-xl bg-slate-950/80 border border-slate-800 text-xs text-slate-400 font-mono text-center">
+            <div className="px-3.5 py-2 rounded-xl bg-slate-950/80 border border-slate-800 text-xs text-slate-400 font-mono text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] tabular-nums">
               📅 {dateLabel}
             </div>
             <Button
               onClick={onOpenAddModal}
-              className="bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs shadow-lg shadow-blue-500/20"
+              className="bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_8px_18px_-8px_rgba(37,99,235,0.5)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-200"
             >
               <Plus className="w-4 h-4 mr-1.5" />
               Tambah Lowongan

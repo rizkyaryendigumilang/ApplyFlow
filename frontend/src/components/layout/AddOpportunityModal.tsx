@@ -95,7 +95,7 @@ export function AddOpportunityModal({ onClose, onAdd }: AddOpportunityModalProps
               <select
                 value={mode}
                 onChange={(e) => setMode(e.target.value as 'Remote' | 'Hybrid' | 'On-site')}
-                className="mt-1 block w-full p-2 border border-slate-300 bg-white"
+                className="mt-1 block w-full p-2.5 rounded-xl border border-[#d9dbd2] bg-white text-xs font-medium focus:outline-none focus:border-[#7d9850] focus:ring-2 focus:ring-[#7d9850]/20 transition-all duration-150"
               >
                 <option value="Remote">Remote</option>
                 <option value="Hybrid">Hybrid</option>

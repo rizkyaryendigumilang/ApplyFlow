@@ -111,7 +111,7 @@ export const OfferComparatorSnapshotWidget: React.FC<OfferComparatorSnapshotWidg
               {offerPackages.slice(0, 2).map(({ app, thp }) => (
                 <div
                   key={app.id}
-                  className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 hover:border-slate-700 transition-colors duration-150 space-y-2.5"
+                  className="p-3.5 rounded-2xl bg-slate-950/75 border border-slate-800/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_1px_2px_rgba(0,0,0,0.2)] hover:border-slate-700/90 hover:bg-slate-950/90 hover:-translate-y-0.5 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_4px_16px_rgba(0,0,0,0.35)] transition-[transform,border-color,box-shadow,background-color] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] active:scale-[0.99] space-y-2.5"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
@@ -126,17 +126,17 @@ export const OfferComparatorSnapshotWidget: React.FC<OfferComparatorSnapshotWidg
                   <div className="grid grid-cols-2 gap-2 pt-1 border-t border-slate-800/80 text-xs">
                     <div>
                       <span className="text-[10px] text-slate-500 block">Gaji Kotor Bulanan:</span>
-                      <strong className="text-slate-200 font-mono text-xs">{formatIdr(thp.grossMonthly)}</strong>
+                      <strong className="text-slate-200 font-mono text-xs tabular-nums">{formatIdr(thp.grossMonthly)}</strong>
                     </div>
                     <div>
                       <span className="text-[10px] text-emerald-400 block font-medium">Real THP (Netto):</span>
-                      <strong className="text-emerald-300 font-mono text-xs font-bold">
+                      <strong className="text-emerald-300 font-mono text-xs font-bold tabular-nums">
                         {formatIdr(thp.realNetTakeHome)}
                       </strong>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between text-[10px] text-slate-400 bg-slate-900/60 px-2 py-1.5 rounded-lg">
+                  <div className="flex items-center justify-between text-[10px] text-slate-400 bg-slate-900/60 px-2 py-1.5 rounded-lg border border-slate-800/60 tabular-nums">
                     <span>Potongan BPJS & Pajak: {formatIdr(thp.totalDeductions)}</span>
                     <span>Transpor: {formatIdr(app.mode === 'On-site' ? 1200000 : app.mode === 'Hybrid' ? 600000 : 0)}</span>
                   </div>

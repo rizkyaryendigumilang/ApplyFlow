@@ -358,72 +358,45 @@ function App() {
 
             {isMoreMenuOpen && (
               <div
-                style={{
-                  position: 'absolute',
-                  top: '64px',
-                  left: 0,
-                  background: '#fbfbf8',
-                  border: '1px solid #dedfd8',
-                  boxShadow: '0 10px 25px rgba(0,0,0,0.08)',
-                  zIndex: 20,
-                  minWidth: '180px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  padding: '6px 0',
-                }}
+                className="absolute top-16 left-0 bg-[#fbfbf8]/95 backdrop-blur-md border border-[#dedfd8] rounded-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.8),0_12px_32px_rgba(32,35,32,0.1)] z-20 min-w-[200px] flex flex-col py-1.5 animate-in fade-in-50 zoom-in-95 duration-150"
               >
                 <button
                   onClick={() => navigateTo('users')}
-                  style={{
-                    padding: '9px 16px',
-                    textAlign: 'left',
-                    fontSize: '12px',
-                    color: module === 'users' ? '#7d9850' : '#202320',
-                    fontWeight: module === 'users' ? 600 : 400,
-                  }}
+                  className={`mx-1.5 px-3.5 py-2 text-left text-xs rounded-xl transition-colors duration-150 ${
+                    module === 'users'
+                      ? 'bg-[#eef1e5] text-[#7d9850] font-semibold'
+                      : 'text-[#202320] hover:bg-[#f0eee8]'
+                  }`}
                 >
                   {t('nav.users')}
                 </button>
                 <button
                   onClick={() => navigateTo('help')}
-                  style={{
-                    padding: '9px 16px',
-                    textAlign: 'left',
-                    fontSize: '12px',
-                    color: module === 'help' ? '#7d9850' : '#202320',
-                    fontWeight: module === 'help' ? 600 : 400,
-                  }}
+                  className={`mx-1.5 px-3.5 py-2 text-left text-xs rounded-xl transition-colors duration-150 ${
+                    module === 'help'
+                      ? 'bg-[#eef1e5] text-[#7d9850] font-semibold'
+                      : 'text-[#202320] hover:bg-[#f0eee8]'
+                  }`}
                 >
                   {t('nav.help')}
                 </button>
                 <button
                   onClick={() => navigateTo('system')}
-                  style={{
-                    padding: '9px 16px',
-                    textAlign: 'left',
-                    fontSize: '12px',
-                    color: module === 'system' ? '#7d9850' : '#202320',
-                    fontWeight: module === 'system' ? 600 : 400,
-                  }}
+                  className={`mx-1.5 px-3.5 py-2 text-left text-xs rounded-xl transition-colors duration-150 ${
+                    module === 'system'
+                      ? 'bg-[#eef1e5] text-[#7d9850] font-semibold'
+                      : 'text-[#202320] hover:bg-[#f0eee8]'
+                  }`}
                 >
                   {t('nav.system')}
                 </button>
-                <div style={{ height: '1px', background: '#e5e7eb', margin: '4px 0' }} />
+                <div className="h-px bg-[#dedfd8]/80 my-1 mx-2" />
                 <button
                   onClick={() => {
                     setIsOnboardingOpen(true);
                     setIsMoreMenuOpen(false);
                   }}
-                  style={{
-                    padding: '9px 16px',
-                    textAlign: 'left',
-                    fontSize: '12px',
-                    color: '#202320',
-                    fontWeight: 500,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                  }}
+                  className="mx-1.5 px-3.5 py-2 text-left text-xs rounded-xl text-[#202320] hover:bg-[#f0eee8] font-medium flex items-center gap-2 transition-colors duration-150"
                 >
                   <Sparkles size={13} className="text-amber-600" /> {t('nav.onboardingTour')}
                 </button>
@@ -433,16 +406,7 @@ function App() {
                       promptInstall();
                       setIsMoreMenuOpen(false);
                     }}
-                    style={{
-                      padding: '9px 16px',
-                      textAlign: 'left',
-                      fontSize: '12px',
-                      color: '#202320',
-                      fontWeight: 500,
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '6px',
-                    }}
+                    className="mx-1.5 px-3.5 py-2 text-left text-xs rounded-xl text-[#202320] hover:bg-[#f0eee8] font-medium flex items-center gap-2 transition-colors duration-150"
                   >
                     <Smartphone size={13} className="text-emerald-600" /> Pasang Aplikasi (PWA)
                   </button>

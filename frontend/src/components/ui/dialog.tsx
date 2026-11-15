@@ -29,7 +29,7 @@ export const DialogContent = React.forwardRef<HTMLDivElement, React.HTMLAttribut
     <div
       ref={ref}
       className={cn(
-        'relative w-full rounded-2xl border border-slate-800 bg-slate-900 p-6 text-slate-100 shadow-2xl backdrop-blur-xl animate-in zoom-in-95 duration-200',
+        'relative w-full rounded-2xl border border-slate-800/90 bg-slate-900/95 p-6 text-slate-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_24px_64px_rgba(0,0,0,0.8)] backdrop-blur-xl animate-in zoom-in-95 ease-[cubic-bezier(0.22,1,0.36,1)] duration-200',
         className
       )}
       {...props}
