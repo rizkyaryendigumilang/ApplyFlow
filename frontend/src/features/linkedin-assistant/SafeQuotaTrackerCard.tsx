@@ -70,7 +70,7 @@ export const SafeQuotaTrackerCard: React.FC = () => {
 
         <div className="h-2.5 w-full bg-slate-950 rounded-full overflow-hidden border border-slate-800">
           <div
-            className={`h-full transition-all duration-500 rounded-full ${statusConfig.barClass}`}
+            className={`h-full transition-[width] duration-500 ease-out rounded-full ${statusConfig.barClass}`}
             style={{ width: `${percentage}%` }}
           />
         </div>
@@ -80,7 +80,7 @@ export const SafeQuotaTrackerCard: React.FC = () => {
           <button
             type="button"
             onClick={increment}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-300 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 rounded-lg transition-all active:scale-95"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-300 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 rounded-lg transition-colors duration-150 active:scale-95 transition-transform"
           >
             <Plus className="w-3.5 h-3.5" />
             Catat 1 Invite (+1)

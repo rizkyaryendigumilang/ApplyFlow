@@ -60,7 +60,7 @@ export const CompanyDeepLinkCard: React.FC<CompanyDeepLinkCardProps> = ({
                 key={comp}
                 type="button"
                 onClick={() => onCompanyChange(comp)}
-                className={`text-[11px] px-2.5 py-1 rounded-lg border transition-all ${
+                className={`text-[11px] px-2.5 py-1 rounded-lg border transition-colors duration-150 ${
                   company.toLowerCase() === comp.toLowerCase()
                     ? 'bg-blue-600/20 border-blue-500/40 text-blue-300 font-medium'
                     : 'bg-slate-800/40 border-slate-700/50 text-slate-400 hover:text-slate-200 hover:bg-slate-800'
@@ -78,7 +78,7 @@ export const CompanyDeepLinkCard: React.FC<CompanyDeepLinkCardProps> = ({
           href={firstDegreeUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-between p-3 rounded-xl bg-slate-950/80 border border-emerald-500/30 hover:border-emerald-500/60 text-slate-200 hover:text-emerald-300 transition-all group"
+          className="flex items-center justify-between p-3 rounded-xl bg-slate-950/80 border border-emerald-500/30 hover:border-emerald-500/60 text-slate-200 hover:text-emerald-300 transition-colors duration-150 group"
         >
           <div className="flex items-center gap-2.5">
             <UserCheck className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform" />
@@ -96,7 +96,7 @@ export const CompanyDeepLinkCard: React.FC<CompanyDeepLinkCardProps> = ({
           href={recruiterUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-between p-3 rounded-xl bg-slate-950/80 border border-blue-500/30 hover:border-blue-500/60 text-slate-200 hover:text-blue-300 transition-all group"
+          className="flex items-center justify-between p-3 rounded-xl bg-slate-950/80 border border-blue-500/30 hover:border-blue-500/60 text-slate-200 hover:text-blue-300 transition-colors duration-150 group"
         >
           <div className="flex items-center gap-2.5">
             <Users className="w-4 h-4 text-blue-400 group-hover:scale-110 transition-transform" />
@@ -114,7 +114,7 @@ export const CompanyDeepLinkCard: React.FC<CompanyDeepLinkCardProps> = ({
           href={managerUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-between p-3 rounded-xl bg-slate-950/80 border border-purple-500/30 hover:border-purple-500/60 text-slate-200 hover:text-purple-300 transition-all group"
+          className="flex items-center justify-between p-3 rounded-xl bg-slate-950/80 border border-purple-500/30 hover:border-purple-500/60 text-slate-200 hover:text-purple-300 transition-colors duration-150 group"
         >
           <div className="flex items-center gap-2.5">
             <Briefcase className="w-4 h-4 text-purple-400 group-hover:scale-110 transition-transform" />

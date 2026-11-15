@@ -135,7 +135,7 @@ export const OutreachComposerCard: React.FC<OutreachComposerCardProps> = ({
           <button
             type="button"
             onClick={() => setLang('id')}
-            className={`px-2.5 py-1 text-xs rounded-lg font-medium transition-all ${
+            className={`px-2.5 py-1 text-xs rounded-lg font-medium transition-colors duration-150 ${
               lang === 'id' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
             }`}
           >
@@ -144,7 +144,7 @@ export const OutreachComposerCard: React.FC<OutreachComposerCardProps> = ({
           <button
             type="button"
             onClick={() => setLang('en')}
-            className={`px-2.5 py-1 text-xs rounded-lg font-medium transition-all ${
+            className={`px-2.5 py-1 text-xs rounded-lg font-medium transition-colors duration-150 ${
               lang === 'en' ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
             }`}
           >
@@ -161,7 +161,7 @@ export const OutreachComposerCard: React.FC<OutreachComposerCardProps> = ({
             <button
               type="button"
               onClick={() => setPersona('peer')}
-              className={`flex items-center justify-center gap-1.5 py-1.5 text-xs rounded-lg font-medium transition-all ${
+              className={`flex items-center justify-center gap-1.5 py-1.5 text-xs rounded-lg font-medium transition-colors duration-150 ${
                 persona === 'peer'
                   ? 'bg-blue-600/30 border border-blue-500/50 text-blue-200'
                   : 'text-slate-400 hover:text-slate-200'
@@ -173,7 +173,7 @@ export const OutreachComposerCard: React.FC<OutreachComposerCardProps> = ({
             <button
               type="button"
               onClick={() => setPersona('recruiter')}
-              className={`flex items-center justify-center gap-1.5 py-1.5 text-xs rounded-lg font-medium transition-all ${
+              className={`flex items-center justify-center gap-1.5 py-1.5 text-xs rounded-lg font-medium transition-colors duration-150 ${
                 persona === 'recruiter'
                   ? 'bg-blue-600/30 border border-blue-500/50 text-blue-200'
                   : 'text-slate-400 hover:text-slate-200'
@@ -185,7 +185,7 @@ export const OutreachComposerCard: React.FC<OutreachComposerCardProps> = ({
             <button
               type="button"
               onClick={() => setPersona('lead')}
-              className={`flex items-center justify-center gap-1.5 py-1.5 text-xs rounded-lg font-medium transition-all ${
+              className={`flex items-center justify-center gap-1.5 py-1.5 text-xs rounded-lg font-medium transition-colors duration-150 ${
                 persona === 'lead'
                   ? 'bg-blue-600/30 border border-blue-500/50 text-blue-200'
                   : 'text-slate-400 hover:text-slate-200'
@@ -203,7 +203,7 @@ export const OutreachComposerCard: React.FC<OutreachComposerCardProps> = ({
             <button
               type="button"
               onClick={() => setDegree('1st')}
-              className={`py-1.5 text-xs rounded-lg font-medium transition-all ${
+              className={`py-1.5 text-xs rounded-lg font-medium transition-colors duration-150 ${
                 degree === '1st'
                   ? 'bg-emerald-600/30 border border-emerald-500/50 text-emerald-200'
                   : 'text-slate-400 hover:text-slate-200'
@@ -214,7 +214,7 @@ export const OutreachComposerCard: React.FC<OutreachComposerCardProps> = ({
             <button
               type="button"
               onClick={() => setDegree('2nd')}
-              className={`py-1.5 text-xs rounded-lg font-medium transition-all ${
+              className={`py-1.5 text-xs rounded-lg font-medium transition-colors duration-150 ${
                 degree === '2nd'
                   ? 'bg-emerald-600/30 border border-emerald-500/50 text-emerald-200'
                   : 'text-slate-400 hover:text-slate-200'
@@ -274,7 +274,7 @@ export const OutreachComposerCard: React.FC<OutreachComposerCardProps> = ({
         <button
           type="button"
           onClick={handleCopy}
-          className="flex-1 min-w-[140px] inline-flex items-center justify-center gap-2 px-4 py-2 text-xs font-semibold rounded-xl bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-500/20 transition-all active:scale-95"
+          className="flex-1 min-w-[140px] inline-flex items-center justify-center gap-2 px-4 py-2 text-xs font-semibold rounded-xl bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-500/20 transition-colors duration-150 active:scale-95 transition-transform"
         >
           {copied ? (
             <>
@@ -292,7 +292,7 @@ export const OutreachComposerCard: React.FC<OutreachComposerCardProps> = ({
         <button
           type="button"
           onClick={() => setShowSyncModal(true)}
-          className="inline-flex items-center justify-center gap-2 px-4 py-2 text-xs font-semibold rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-all active:scale-95"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2 text-xs font-semibold rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors duration-150 active:scale-95 transition-transform"
         >
           <UserPlus className="w-4 h-4 text-emerald-400" />
           Simpan ke Kontak Networking CRM
@@ -347,7 +347,7 @@ export const OutreachComposerCard: React.FC<OutreachComposerCardProps> = ({
                 <button
                   type="submit"
                   disabled={isSyncing || syncSuccess}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white transition-all disabled:opacity-50"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white transition-colors duration-150 disabled:opacity-50"
                 >
                   {syncSuccess ? (
                     <>

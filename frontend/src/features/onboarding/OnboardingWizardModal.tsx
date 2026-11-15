@@ -90,7 +90,7 @@ export function OnboardingWizardModal({
     >
       <div
         className={cn(
-          'w-full max-w-2xl rounded-2xl border border-zinc-200/80 bg-white p-6 shadow-2xl transition-all dark:border-zinc-800 dark:bg-zinc-950',
+          'w-full max-w-2xl rounded-2xl border border-zinc-200/80 bg-white p-6 shadow-2xl dark:border-zinc-800 dark:bg-zinc-950',
           'flex flex-col gap-6 text-zinc-900 dark:text-zinc-100'
         )}
       >
@@ -116,7 +116,7 @@ export function OnboardingWizardModal({
                 <div
                   key={s}
                   className={cn(
-                    'h-1.5 rounded-full transition-all duration-300',
+                    'h-1.5 rounded-full transition-[width] duration-300 ease-out',
                     s === step
                       ? 'w-6 bg-zinc-900 dark:bg-zinc-100'
                       : s < step
@@ -297,7 +297,7 @@ export function OnboardingWizardModal({
                       type="button"
                       onClick={() => setWorkMode(m)}
                       className={cn(
-                        'py-2 px-3 text-xs font-medium rounded-lg border transition-all active:scale-[0.98]',
+                        'py-2 px-3 text-xs font-medium rounded-lg border transition-colors duration-150 active:scale-[0.98] transition-transform',
                         workMode === m
                           ? 'border-zinc-900 bg-zinc-900 text-white dark:border-white dark:bg-white dark:text-zinc-950 font-semibold'
                           : 'border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300'
@@ -340,7 +340,7 @@ export function OnboardingWizardModal({
                   type="button"
                   onClick={() => setCvTemplate('harvard-ats')}
                   className={cn(
-                    'p-3.5 rounded-xl border text-left transition-all active:scale-[0.98]',
+                    'p-3.5 rounded-xl border text-left transition-colors duration-150 active:scale-[0.98] transition-transform',
                     cvTemplate === 'harvard-ats'
                       ? 'border-zinc-900 bg-zinc-50 ring-1 ring-zinc-900 dark:border-zinc-100 dark:bg-zinc-900 dark:ring-zinc-100'
                       : 'border-zinc-200 bg-white hover:bg-zinc-50/50 dark:border-zinc-800 dark:bg-zinc-950'
@@ -361,7 +361,7 @@ export function OnboardingWizardModal({
                   type="button"
                   onClick={() => setCvTemplate('tech-deep')}
                   className={cn(
-                    'p-3.5 rounded-xl border text-left transition-all active:scale-[0.98]',
+                    'p-3.5 rounded-xl border text-left transition-colors duration-150 active:scale-[0.98] transition-transform',
                     cvTemplate === 'tech-deep'
                       ? 'border-zinc-900 bg-zinc-50 ring-1 ring-zinc-900 dark:border-zinc-100 dark:bg-zinc-900 dark:ring-zinc-100'
                       : 'border-zinc-200 bg-white hover:bg-zinc-50/50 dark:border-zinc-800 dark:bg-zinc-950'
@@ -435,7 +435,7 @@ export function OnboardingWizardModal({
               <button
                 type="button"
                 onClick={() => setStep((s) => (s - 1) as 1 | 2 | 3 | 4)}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 px-3.5 py-2 text-xs font-medium text-zinc-700 hover:bg-zinc-50 active:scale-[0.98] transition-all dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 px-3.5 py-2 text-xs font-medium text-zinc-700 hover:bg-zinc-50 active:scale-[0.98] transition-colors duration-150 transition-transform dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
               >
                 <ArrowLeft size={14} /> Kembali
               </button>
@@ -455,7 +455,7 @@ export function OnboardingWizardModal({
               <button
                 type="button"
                 onClick={() => setStep((s) => (s + 1) as 1 | 2 | 3 | 4)}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-zinc-900 px-4 py-2 text-xs font-medium text-white shadow-sm hover:bg-zinc-800 active:scale-[0.98] transition-all dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-100"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-zinc-900 px-4 py-2 text-xs font-medium text-white shadow-sm hover:bg-zinc-800 active:scale-[0.98] transition-colors duration-150 transition-transform dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-100"
               >
                 Lanjutkan <ArrowRight size={14} />
               </button>
@@ -463,7 +463,7 @@ export function OnboardingWizardModal({
               <button
                 type="button"
                 onClick={handleFinish}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-zinc-900 px-4 py-2 text-xs font-medium text-white shadow-sm hover:bg-zinc-800 active:scale-[0.98] transition-all dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-100"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-zinc-900 px-4 py-2 text-xs font-medium text-white shadow-sm hover:bg-zinc-800 active:scale-[0.98] transition-colors duration-150 transition-transform dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-100"
               >
                 <CheckCircle2 size={15} /> Mulai Gunakan Junction
               </button>

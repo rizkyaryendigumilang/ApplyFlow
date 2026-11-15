@@ -69,7 +69,7 @@ export const ProfilePolisherCard: React.FC<ProfilePolisherCardProps> = ({ candid
           <button
             type="button"
             onClick={() => setLang('id')}
-            className={`px-2.5 py-1 text-xs rounded-lg font-medium transition-all ${
+            className={`px-2.5 py-1 text-xs rounded-lg font-medium transition-colors duration-150 ${
               lang === 'id' ? 'bg-purple-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
             }`}
           >
@@ -78,7 +78,7 @@ export const ProfilePolisherCard: React.FC<ProfilePolisherCardProps> = ({ candid
           <button
             type="button"
             onClick={() => setLang('en')}
-            className={`px-2.5 py-1 text-xs rounded-lg font-medium transition-all ${
+            className={`px-2.5 py-1 text-xs rounded-lg font-medium transition-colors duration-150 ${
               lang === 'en' ? 'bg-purple-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
             }`}
           >
@@ -115,13 +115,13 @@ export const ProfilePolisherCard: React.FC<ProfilePolisherCardProps> = ({ candid
           {headlines.map((headline, idx) => (
             <div
               key={idx}
-              className="flex items-center justify-between gap-3 p-3 rounded-xl bg-slate-950 border border-slate-800 hover:border-purple-500/40 transition-all group"
+              className="flex items-center justify-between gap-3 p-3 rounded-xl bg-slate-950 border border-slate-800 hover:border-purple-500/40 transition-colors duration-150 group"
             >
               <div className="text-xs text-slate-200 leading-relaxed font-sans">{headline}</div>
               <button
                 type="button"
                 onClick={() => handleCopyHeadline(headline, idx)}
-                className="shrink-0 p-2 text-xs font-medium text-slate-400 hover:text-purple-300 bg-slate-900 hover:bg-purple-950/40 rounded-lg border border-slate-800 hover:border-purple-500/30 transition-all"
+                className="shrink-0 p-2 text-xs font-medium text-slate-400 hover:text-purple-300 bg-slate-900 hover:bg-purple-950/40 rounded-lg border border-slate-800 hover:border-purple-500/30 transition-colors duration-150"
                 title="Salin Headline"
               >
                 {copiedIndex === idx ? (
@@ -144,7 +144,7 @@ export const ProfilePolisherCard: React.FC<ProfilePolisherCardProps> = ({ candid
           <button
             type="button"
             onClick={handleCopyAbout}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-purple-300 bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 rounded-lg transition-all"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-purple-300 bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 rounded-lg transition-colors duration-150"
           >
             {copiedAbout ? (
               <>

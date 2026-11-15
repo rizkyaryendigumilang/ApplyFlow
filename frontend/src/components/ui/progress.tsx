@@ -18,7 +18,7 @@ export const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(
         {...props}
       >
         <div
-          className={cn('h-full w-full flex-1 bg-primary transition-all duration-500 rounded-full', indicatorClassName)}
+          className={cn('h-full w-full flex-1 bg-primary transition-transform duration-500 ease-out rounded-full', indicatorClassName)}
           style={{ transform: `translateX(-${100 - percentage}%)` }}
         />
       </div>

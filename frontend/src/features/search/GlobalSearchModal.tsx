@@ -152,7 +152,7 @@ export function GlobalSearchModal({
     >
       <div
         className={cn(
-          'w-full max-w-2xl rounded-2xl border border-zinc-200/90 bg-white/95 p-5 shadow-2xl transition-all dark:border-zinc-800 dark:bg-zinc-950/95',
+          'w-full max-w-2xl rounded-2xl border border-zinc-200/90 bg-white/95 p-5 shadow-2xl dark:border-zinc-800 dark:bg-zinc-950/95',
           'flex flex-col gap-4 text-zinc-900 dark:text-zinc-100 max-h-[85vh] overflow-hidden'
         )}
       >
@@ -204,7 +204,7 @@ export function GlobalSearchModal({
               type="button"
               onClick={() => handleApplySavedView(view.id)}
               className={cn(
-                'px-2.5 py-1 rounded-md text-xs font-medium shrink-0 transition-all active:scale-[0.98]',
+                'px-2.5 py-1 rounded-md text-xs font-medium shrink-0 transition-colors duration-150 active:scale-[0.98] transition-transform',
                 savedView === view.id
                   ? 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-950 font-semibold'
                   : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800'
@@ -326,7 +326,7 @@ export function GlobalSearchModal({
                   onClose();
                 }}
                 className={cn(
-                  'group flex items-center justify-between rounded-xl border border-zinc-100 bg-white p-3 hover:border-zinc-300 hover:bg-zinc-50/80 cursor-pointer transition-all active:scale-[0.99] dark:border-zinc-900 dark:bg-zinc-900/50 dark:hover:border-zinc-700 dark:hover:bg-zinc-900'
+                  'group flex items-center justify-between rounded-xl border border-zinc-100 bg-white p-3 hover:border-zinc-300 hover:bg-zinc-50/80 cursor-pointer transition-colors duration-150 active:scale-[0.99] transition-transform dark:border-zinc-900 dark:bg-zinc-900/50 dark:hover:border-zinc-700 dark:hover:bg-zinc-900'
                 )}
               >
                 <div className="flex items-center gap-3">
@@ -370,7 +370,7 @@ export function GlobalSearchModal({
                   ) : null}
                   <ArrowRight
                     size={15}
-                    className="text-zinc-400 group-hover:text-zinc-800 group-hover:translate-x-0.5 transition-all dark:group-hover:text-zinc-200"
+                    className="text-zinc-400 group-hover:text-zinc-800 group-hover:translate-x-0.5 transition-[color,transform] duration-150 dark:group-hover:text-zinc-200"
                   />
                 </div>
               </div>

@@ -54,7 +54,7 @@ export const DailyAttentionRadar: React.FC<DailyAttentionRadarProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {/* Stale applications card */}
             <div
-              className={`p-4 rounded-xl border transition-all ${
+              className={`p-4 rounded-xl border transition-colors duration-150 ${
                 hasStale
                   ? 'bg-slate-950/80 border-amber-500/30 hover:border-amber-500/50'
                   : 'bg-slate-950/40 border-slate-800/60 opacity-60'
@@ -93,7 +93,7 @@ export const DailyAttentionRadar: React.FC<DailyAttentionRadarProps> = ({
 
             {/* Upcoming interviews card */}
             <div
-              className={`p-4 rounded-xl border transition-all ${
+              className={`p-4 rounded-xl border transition-colors duration-150 ${
                 hasInterviews
                   ? 'bg-slate-950/80 border-blue-500/30 hover:border-blue-500/50'
                   : 'bg-slate-950/40 border-slate-800/60 opacity-60'
@@ -138,7 +138,7 @@ export const DailyAttentionRadar: React.FC<DailyAttentionRadarProps> = ({
 
             {/* High match leads card */}
             <div
-              className={`p-4 rounded-xl border transition-all ${
+              className={`p-4 rounded-xl border transition-colors duration-150 ${
                 hasLeads
                   ? 'bg-slate-950/80 border-emerald-500/30 hover:border-emerald-500/50'
                   : 'bg-slate-950/40 border-slate-800/60 opacity-60'
