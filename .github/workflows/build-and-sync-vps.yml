@@ -200,6 +200,11 @@ jobs:
           echo "✓ Android APK berhasil ditransfer ke $VPS_TARGET/${{ env.APP_SLUG }}-latest.apk"
           rm -f "$HOME/.ssh/id_ed25519"
 
+      - name: Ensure SSH Key Cleanup on Android Job
+        if: always()
+        run: |
+          rm -f "$HOME/.ssh/id_ed25519" "$HOME/.ssh/known_hosts" 2>/dev/null || true
+
   # ========================================================
   # JOB 2: Build iOS IPA (Unsigned Package for Sideload / AltStore)
   # ========================================================
@@ -352,3 +357,8 @@ jobs:
             "chmod 644 '$VPS_TARGET/${{ env.APP_SLUG }}-latest.ipa' '$VPS_TARGET/app-latest.ipa'" || true
           echo "✓ iOS IPA berhasil ditransfer ke $VPS_TARGET/${{ env.APP_SLUG }}-latest.ipa"
           rm -f "$HOME/.ssh/id_ed25519"
+
+      - name: Ensure SSH Key Cleanup on iOS Job
+        if: always()
+        run: |
+          rm -f "$HOME/.ssh/id_ed25519" "$HOME/.ssh/known_hosts" 2>/dev/null || true

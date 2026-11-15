@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import './styles.css';
 import App from './App';
 import { AuthGate } from './components/AuthGate';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 // Register PWA Service Worker for offline capability & mobile installation
 if ('serviceWorker' in navigator) {
@@ -15,8 +16,10 @@ if ('serviceWorker' in navigator) {
 
 createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <AuthGate>
-      <App />
-    </AuthGate>
+    <ErrorBoundary>
+      <AuthGate>
+        <App />
+      </AuthGate>
+    </ErrorBoundary>
   </React.StrictMode>
 );

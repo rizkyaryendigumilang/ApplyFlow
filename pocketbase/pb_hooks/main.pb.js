@@ -13,8 +13,21 @@ const junctionUserScopedCollections = [
 ];
 
 globalThis.junctionGetEncryptionKey = function() {
-  const raw = $os.getenv("ENCRYPTION_KEY") || $os.getenv("TELEGRAM_BOT_TOKEN") || "jobtracker-secret-salt-key-default";
-  return $security.sha256(raw).slice(0, 32);
+  const envKey = $os.getenv("ENCRYPTION_KEY") || $os.getenv("TELEGRAM_BOT_TOKEN");
+  if (envKey && envKey.trim()) {
+    return $security.sha256(envKey.trim()).slice(0, 32);
+  }
+
+  const env = ($os.getenv("PB_ENV") || $os.getenv("NODE_ENV") || "").toLowerCase();
+  if (env === "production" || env === "prod") {
+    throw new Error("FATAL [SECURITY]: ENCRYPTION_KEY environment variable is mandatory in production.");
+  }
+
+  if (!globalThis.__junctionWarnedNoKey) {
+    console.log("[SECURITY WARNING] No ENCRYPTION_KEY configured. Running with local development key. Set ENCRYPTION_KEY in production.");
+    globalThis.__junctionWarnedNoKey = true;
+  }
+  return $security.sha256("junction-dev-local-secret-do-not-use-in-production").slice(0, 32);
 };
 
 function junctionGetEncryptionKey() {
@@ -156,8 +169,7 @@ onRecordBeforeCreateRequest((e) => {
         const dao = $app.dao();
         const artifact = dao.findRecordById("cv_artifacts", artifactId);
         if (artifact) {
-          const escapedId = artifactId.replace(/'/g, "\\'");
-          const applications = dao.findRecordsByFilter("applications", "cvArtifact = '" + escapedId + "'", "", 0, 0);
+          const applications = dao.findRecordsByFilter("applications", "cvArtifact = {:id}", "", 0, 0, { id: artifactId });
           let applicationCount = 1;
           let responseCount = ["Screening", "Interview", "Offer"].indexOf(e.record.getString("status")) >= 0 ? 1 : 0;
           let offerCount = e.record.getString("status") === "Offer" ? 1 : 0;
@@ -205,8 +217,7 @@ onRecordBeforeCreateRequest((e) => {
               try {
                 const cvRec = dao.findRecordById("cv_artifacts", cvId);
                 if (cvRec) {
-                  const escapedId = cvId.replace(/'/g, "\\'");
-                  const apps = dao.findRecordsByFilter("applications", "cvArtifact = '" + escapedId + "'", "", 0, 0);
+                  const apps = dao.findRecordsByFilter("applications", "cvArtifact = {:id}", "", 0, 0, { id: cvId });
                   let appsTotal = apps.length;
                   let respTotal = apps.filter((r) => ["Screening", "Interview", "Offer"].indexOf(r.getString("status")) >= 0).length;
                   let offerTotal = apps.filter((r) => r.getString("status") === "Offer").length;
@@ -411,8 +422,7 @@ onRecordBeforeUpdateRequest((e) => {
         const dao = $app.dao();
         const artifact = dao.findRecordById("cv_artifacts", artifactId);
         if (artifact) {
-          const escapedId = artifactId.replace(/'/g, "\\'");
-          const applications = dao.findRecordsByFilter("applications", "cvArtifact = '" + escapedId + "'", "", 0, 0);
+          const applications = dao.findRecordsByFilter("applications", "cvArtifact = {:id}", "", 0, 0, { id: artifactId });
           let applicationCount = 0;
           let responseCount = 0;
           let offerCount = 0;
@@ -463,8 +473,7 @@ onRecordAfterDeleteRequest((e) => {
       const dao = $app.dao();
       const artifact = dao.findRecordById("cv_artifacts", artifactId);
       if (artifact) {
-        const escapedId = artifactId.replace(/'/g, "\\'");
-        const applications = dao.findRecordsByFilter("applications", "cvArtifact = '" + escapedId + "'", "", 0, 0);
+        const applications = dao.findRecordsByFilter("applications", "cvArtifact = {:id}", "", 0, 0, { id: artifactId });
         let applicationCount = 0;
         let responseCount = 0;
         let offerCount = 0;
@@ -642,8 +651,13 @@ routerAdd("POST", "/api/junction/hunter/analyze", (e) => {
 
   const foundDealbreakers = dynamicDealbreakers.filter((d) => text.includes(d));
   const matchedSkills = dynamicSkills.filter((s) => {
-    const regex = new RegExp("\\b" + s + "\\b", "i");
-    return regex.test(text);
+    try {
+      const escaped = s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const regex = new RegExp("(^|[^a-z0-9_])" + escaped + "([^a-z0-9_]|$)", "i");
+      return regex.test(text);
+    } catch (_) {
+      return text.includes(s.toLowerCase());
+    }
   });
 
   const score = Math.max(30, Math.min(95, 40 + matchedSkills.length * 10 - foundDealbreakers.length * 40));
@@ -675,6 +689,18 @@ routerAdd("POST", "/api/junction/telegram/send", (e) => {
   if (!chatId) throw new BadRequestError("chatId is required");
   if (!text) throw new BadRequestError("message is required");
   if (!token) throw new BadRequestError("Telegram botToken must be provided or configured in server environment (TELEGRAM_BOT_TOKEN).");
+
+  // Anti-relay protection: Prevent arbitrary message dispatching via the server's shared bot token
+  const userChatId = String(user.getString("telegramChatId") || "").trim();
+  const isAdmin = user.getString("role") === "admin" || Boolean(reqInfo && reqInfo.admin);
+  if (!isAdmin && !providedToken) {
+    if (!userChatId) {
+      throw new ForbiddenError("Please register your Telegram Chat ID in your Profile Settings before dispatching notifications via server bot.");
+    }
+    if (chatId !== userChatId) {
+      throw new ForbiddenError("You may only dispatch notifications to your own verified telegramChatId when using server bot.");
+    }
+  }
 
   try {
     const res = $http.send({
@@ -788,7 +814,7 @@ cronAdd("daily_telegram_briefing", "30 1 * * *", () => {
       if (staleApps.length > 0) {
         msg += "⏳ <b>Anti-Ghosting Alert (14+ Hari Tanpa Kabar):</b>\n";
         staleApps.slice(0, 3).forEach((a) => {
-          msg += "• <b>" + a.getString("company") + "</b> — " + a.getString("position") + "\n";
+          msg += "• <b>" + a.getString("company") + "</b> - " + a.getString("position") + "\n";
         });
         msg += "\n";
       }

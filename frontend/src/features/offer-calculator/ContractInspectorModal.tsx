@@ -141,14 +141,17 @@ export function ContractInspectorModal({
       lawReference: string;
     }> = [];
 
+    // Inspector Analysis Engine - Capped at 50,000 chars to prevent ReDoS / UI freezing on huge pastes
+    const textToScan = contractText.slice(0, 50000);
+
     INDONESIAN_LABOR_RULES.forEach((rule) => {
-      const match = contractText.match(rule.regex);
+      const match = textToScan.match(rule.regex);
       if (match) {
         // Extract surrounding sentence/context
         const matchIndex = match.index || 0;
         const start = Math.max(0, matchIndex - 40);
-        const end = Math.min(contractText.length, matchIndex + match[0].length + 80);
-        const snippet = '...' + contractText.substring(start, end).replace(/\s+/g, ' ').trim() + '...';
+        const end = Math.min(textToScan.length, matchIndex + match[0].length + 80);
+        const snippet = '...' + textToScan.substring(start, end).replace(/\s+/g, ' ').trim() + '...';
 
         findings.push({
           category: rule.category,
@@ -395,6 +398,23 @@ export function ContractInspectorModal({
                 Muat Contoh Draf Bermasalah
               </button>
             </div>
+
+            {contractText.length > 50000 && (
+              <div
+                style={{
+                  padding: '8px 12px',
+                  marginBottom: '10px',
+                  background: '#fef3c7',
+                  border: '1px solid #fde68a',
+                  borderRadius: '3px',
+                  fontSize: '11px',
+                  color: '#92400e',
+                  lineHeight: 1.4,
+                }}
+              >
+                Pemberitahuan: Teks kontrak melebihi 50.000 karakter ({contractText.length.toLocaleString()} karakter). Analisis otomatis difokuskan pada 50.000 karakter pertama demi performa.
+              </div>
+            )}
 
             <textarea
               rows={20}

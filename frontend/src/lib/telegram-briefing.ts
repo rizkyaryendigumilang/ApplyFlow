@@ -1,5 +1,6 @@
 import type { Application, Interview, JobLead } from './pb-types';
 import { daysSince } from './utils';
+import { pb } from './pocketbase';
 
 export interface TelegramConfig {
   chatId: string;
@@ -135,11 +136,16 @@ export async function sendTelegramMessage({
 
   // 1. Try Backend API first if available
   try {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+    if (pb.authStore && pb.authStore.isValid && pb.authStore.token) {
+      headers['Authorization'] = `Bearer ${pb.authStore.token}`;
+    }
+
     const res = await fetch('/api/junction/telegram/send', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers,
       body: JSON.stringify({
         chatId: chatId.trim(),
         botToken: botToken?.trim(),

@@ -8,6 +8,7 @@ import type {
   ApplicationEvent,
 } from './pb-types';
 import { sanitizeUrl } from './utils';
+import { escapeICSText, formatICSDate } from './ics-calendar';
 
 export interface BackupDataPayload {
   applications: Application[];
@@ -184,10 +185,6 @@ export function exportInterviewsToICS(interviews: Interview[], applications: App
   const appMap = new Map<string, Application>();
   applications.forEach(a => appMap.set(a.id, a));
 
-  const formatICSDate = (d: Date): string => {
-    return d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
-  };
-
   interviews.forEach(interview => {
     if (!interview.scheduledAt) return;
     const start = new Date(interview.scheduledAt);
@@ -195,8 +192,9 @@ export function exportInterviewsToICS(interviews: Interview[], applications: App
     const end = new Date(start.getTime() + 60 * 60 * 1000); // 1 hour default
 
     const app = appMap.get(interview.application);
-    const summary = `${interview.round} Interview - ${app?.company || 'Opportunity'}`;
-    const desc = `Role: ${app?.position || 'N/A'}\\nCompany: ${app?.company || 'N/A'}\\nStatus: ${interview.status}\\nQuestions:\\n${(interview.questions || []).join('\\n')}`;
+    const summary = escapeICSText(`${interview.round} Interview - ${app?.company || 'Opportunity'}`);
+    const questionsText = (interview.questions || []).join('\n');
+    const desc = escapeICSText(`Role: ${app?.position || 'N/A'}\nCompany: ${app?.company || 'N/A'}\nStatus: ${interview.status}${questionsText ? `\nQuestions:\n${questionsText}` : ''}`);
 
     lines.push('BEGIN:VEVENT');
     lines.push(`UID:junction-interview-${interview.id}@junction.local`);
