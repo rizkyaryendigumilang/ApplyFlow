@@ -1,10 +1,10 @@
-name: Build Mobile Apps (APK & IPA) and Sync to VPS
+name: Build Mobile Apps (Android APK & iOS IPA) and Sync to VPS
 
 on:
   workflow_dispatch:
     inputs:
       target_environment:
-        description: 'Environment target (production, staging, development)'
+        description: 'Target Environment (production, staging, development)'
         required: true
         default: 'production'
         type: choice
@@ -12,8 +12,17 @@ on:
           - production
           - staging
           - development
+      build_target:
+        description: 'Target Mobile Platforms to Build'
+        required: true
+        default: 'both'
+        type: choice
+        options:
+          - both
+          - android
+          - ios
       sync_to_vps:
-        description: 'Sync built APK/IPA artifacts to VPS downloads folder'
+        description: 'Sync built APK/IPA artifacts to VPS downloads folder (default false)'
         required: true
         type: boolean
         default: false
@@ -47,10 +56,11 @@ env:
 
 jobs:
   # ========================================================
-  # JOB 1: Build Android APK (Debug / Release-ready)
+  # JOB 1: Build Android APK (Debug & Sideload Ready)
   # ========================================================
   build-android:
     name: Build Android APK
+    if: ${{ github.event_name == 'push' || inputs.build_target == 'both' || inputs.build_target == 'android' }}
     runs-on: ubuntu-latest
     env:
       VPS_HOST: ${{ secrets.VPS_HOST }}
@@ -61,11 +71,11 @@ jobs:
       - name: Checkout Source Code
         uses: actions/checkout@v4
 
-      - name: Set up Java JDK 21
+      - name: Set up Java JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '21'
+          java-version: '17'
           cache: 'gradle'
 
       - name: Set up Node.js 22
@@ -86,29 +96,61 @@ jobs:
 
       - name: Build Web Application
         env:
-          VITE_POCKETBASE_URL: ${{ inputs.pocketbase_url || secrets.VITE_POCKETBASE_URL || '' }}
+          VITE_POCKETBASE_URL: ${{ inputs.pocketbase_url || vars.VITE_POCKETBASE_URL || secrets.VITE_POCKETBASE_URL || '' }}
         run: npm run build
 
       - name: Sync Capacitor Android Platform
         run: npx cap sync android
 
-      - name: Compile Android APK (assembleDebug)
+      - name: Make Gradle Wrapper Executable
+        run: chmod +x android/gradlew
+
+      - name: Compile Android APK with Retry Logic
         working-directory: android
         run: |
-          chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon
+          set -euo pipefail
+          for attempt in 1 2 3; do
+            echo "Attempt $attempt: Compiling Android APK (assembleDebug)..."
+            if ./gradlew assembleDebug --stacktrace --no-daemon; then
+              echo "Android APK compile succeeded on attempt $attempt."
+              break
+            elif [ "$attempt" -eq 3 ]; then
+              echo "::error::Android APK compile failed after 3 attempts."
+              exit 1
+            fi
+            echo "Attempt $attempt encountered a transient error. Retrying in 5 seconds..."
+            sleep 5
+          done
 
-      - name: Prepare APK Artifact
+      - name: Prepare APK Outputs
         run: |
-          cp android/app/build/outputs/apk/debug/app-debug.apk ${{ env.APP_SLUG }}-latest.apk
-          echo "APK generated: $(ls -lh ${{ env.APP_SLUG }}-latest.apk)"
+          mkdir -p dist-mobile
+          cp android/app/build/outputs/apk/debug/app-debug.apk dist-mobile/${{ env.APP_SLUG }}-android-debug.apk
+          cp android/app/build/outputs/apk/debug/app-debug.apk dist-mobile/${{ env.APP_SLUG }}-latest.apk
+          cp android/app/build/outputs/apk/debug/app-debug.apk dist-mobile/app-latest.apk
+          echo "APK outputs prepared:"
+          ls -lh dist-mobile/
 
-      - name: Upload Android APK
+      - name: Upload Android APK Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.APP_SLUG }}-android-apk
-          path: ${{ env.APP_SLUG }}-latest.apk
+          path: dist-mobile/*.apk
           retention-days: 14
+
+      - name: Android APK Build Summary
+        run: |
+          echo "### Android APK Build Status :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo "- **Application Name**: ApplyFlow" >> $GITHUB_STEP_SUMMARY
+          echo "- **Package ID**: \`com.applyflow.app\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Build Flavor**: Debug APK (Sideload / Testing Ready)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Primary Artifact**: \`${{ env.APP_SLUG }}-android-debug.apk\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Latest Alias**: \`${{ env.APP_SLUG }}-latest.apk\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Target SDK**: Android 14 (API 34) / Min SDK 22 (Android 5.1+)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "#### Cara Pasang di HP Android:" >> $GITHUB_STEP_SUMMARY
+          echo "1. Unduh \`${{ env.APP_SLUG }}-android-debug.apk\` dari bagian Artifacts di atas." >> $GITHUB_STEP_SUMMARY
+          echo "2. Salin ke HP atau jalankan: \`adb install -r ${{ env.APP_SLUG }}-latest.apk\`" >> $GITHUB_STEP_SUMMARY
 
       - name: Transfer APK to VPS via SSH & SCP
         if: ${{ env.SYNC_ENABLED == 'true' && env.VPS_HOST != '' && env.VPS_SSH_KEY != '' }}
@@ -121,36 +163,49 @@ jobs:
           VPS_TARGET: ${{ vars.VPS_TARGET_DIR || secrets.VPS_TARGET_DIR || '/srv/www/applyflow/downloads' }}
         run: |
           set -euo pipefail
+
+          TARGET_PORT="$VPS_PORT"
+          if ! nc -z -w 3 "$VPS_HOST" "$TARGET_PORT" 2>/dev/null; then
+            if nc -z -w 3 "$VPS_HOST" 2222 2>/dev/null; then
+              TARGET_PORT=2222
+            elif nc -z -w 3 "$VPS_HOST" 22 2>/dev/null; then
+              TARGET_PORT=22
+            fi
+          fi
+          echo "Target VPS SSH port: $TARGET_PORT"
+
           mkdir -p "$HOME/.ssh"
           printf '%s\n' "$VPS_KEY" | tr -d '\r' > "$HOME/.ssh/id_ed25519"
           chmod 600 "$HOME/.ssh/id_ed25519"
-          ssh-keyscan -p "$VPS_PORT" -H "$VPS_HOST" > "$HOME/.ssh/known_hosts" 2>/dev/null || true
+          ssh-keyscan -p "$TARGET_PORT" -H "$VPS_HOST" > "$HOME/.ssh/known_hosts" 2>/dev/null || true
           chmod 600 "$HOME/.ssh/known_hosts"
           STRICT_OPT="-o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=$HOME/.ssh/known_hosts"
 
-          echo "Menguji konektivitas SSH ke VPS ($VPS_HOST:$VPS_PORT)..."
-          if ! ssh -o BatchMode=yes -o ConnectTimeout=10 $STRICT_OPT -p "$VPS_PORT" -i "$HOME/.ssh/id_ed25519" "$VPS_USER@$VPS_HOST" "echo SSH_CONNECTION_OK" 2>/dev/null; then
-            echo "::warning::Koneksi SSH ke VPS timed out atau belum dikonfigurasi. File APK tetap aman di GitHub Artifacts."
+          echo "Menguji konektivitas SSH ke VPS ($VPS_HOST:$TARGET_PORT)..."
+          if ! ssh -o BatchMode=yes -o ConnectTimeout=10 $STRICT_OPT -p "$TARGET_PORT" -i "$HOME/.ssh/id_ed25519" "$VPS_USER@$VPS_HOST" "echo SSH_CONNECTION_OK" 2>/dev/null; then
+            echo "::warning::Koneksi SSH ke VPS ($VPS_HOST:$TARGET_PORT) ditolak atau firewall aktif. File APK tetap aman tersimpan di GitHub Artifacts."
             rm -f "$HOME/.ssh/id_ed25519"
             exit 0
           fi
 
           echo "Memastikan direktori tujuan di VPS: $VPS_TARGET"
-          ssh -o BatchMode=yes -o ConnectTimeout=20 $STRICT_OPT -p "$VPS_PORT" -i "$HOME/.ssh/id_ed25519" "$VPS_USER@$VPS_HOST" \
+          ssh -o BatchMode=yes -o ConnectTimeout=20 $STRICT_OPT -p "$TARGET_PORT" -i "$HOME/.ssh/id_ed25519" "$VPS_USER@$VPS_HOST" \
             "mkdir -p '$VPS_TARGET' 2>/dev/null || (sudo -n mkdir -p '$VPS_TARGET' && sudo -n chown -R $VPS_USER:$VPS_USER '$VPS_TARGET' && chmod 755 '$VPS_TARGET')" || true
 
-          echo "Mentransfer ${{ env.APP_SLUG }}-latest.apk ke VPS..."
-          scp -o BatchMode=yes -o ConnectTimeout=20 $STRICT_OPT -P "$VPS_PORT" -i "$HOME/.ssh/id_ed25519" ${{ env.APP_SLUG }}-latest.apk "$VPS_USER@$VPS_HOST:$VPS_TARGET/${{ env.APP_SLUG }}-latest.apk"
-          ssh -o BatchMode=yes -o ConnectTimeout=20 $STRICT_OPT -p "$VPS_PORT" -i "$HOME/.ssh/id_ed25519" "$VPS_USER@$VPS_HOST" \
-            "chmod 644 '$VPS_TARGET/${{ env.APP_SLUG }}-latest.apk'" || true
+          echo "Mentransfer APK ke VPS..."
+          scp -o BatchMode=yes -o ConnectTimeout=20 $STRICT_OPT -P "$TARGET_PORT" -i "$HOME/.ssh/id_ed25519" dist-mobile/${{ env.APP_SLUG }}-latest.apk "$VPS_USER@$VPS_HOST:$VPS_TARGET/${{ env.APP_SLUG }}-latest.apk"
+          scp -o BatchMode=yes -o ConnectTimeout=20 $STRICT_OPT -P "$TARGET_PORT" -i "$HOME/.ssh/id_ed25519" dist-mobile/app-latest.apk "$VPS_USER@$VPS_HOST:$VPS_TARGET/app-latest.apk"
+          ssh -o BatchMode=yes -o ConnectTimeout=20 $STRICT_OPT -p "$TARGET_PORT" -i "$HOME/.ssh/id_ed25519" "$VPS_USER@$VPS_HOST" \
+            "chmod 644 '$VPS_TARGET/${{ env.APP_SLUG }}-latest.apk' '$VPS_TARGET/app-latest.apk'" || true
           echo "✓ Android APK berhasil ditransfer ke $VPS_TARGET/${{ env.APP_SLUG }}-latest.apk"
           rm -f "$HOME/.ssh/id_ed25519"
 
   # ========================================================
-  # JOB 2: Build iOS IPA (Unsigned Package for Ad-Hoc/AltStore)
+  # JOB 2: Build iOS IPA (Unsigned Package for Sideload / AltStore)
   # ========================================================
   build-ios:
     name: Build iOS IPA
+    if: ${{ github.event_name == 'push' || inputs.build_target == 'both' || inputs.build_target == 'ios' }}
     runs-on: macos-14
     continue-on-error: true
     env:
@@ -175,52 +230,80 @@ jobs:
         working-directory: frontend
         run: npm ci
 
+      - name: Run Test Verification
+        run: npm test
+
       - name: Build Web Application
         env:
-          VITE_POCKETBASE_URL: ${{ inputs.pocketbase_url || secrets.VITE_POCKETBASE_URL || '' }}
+          VITE_POCKETBASE_URL: ${{ inputs.pocketbase_url || vars.VITE_POCKETBASE_URL || secrets.VITE_POCKETBASE_URL || '' }}
         run: npm run build
 
       - name: Sync Capacitor iOS Platform
         run: npx cap sync ios
 
-      - name: Compile and Archive iOS App (Unsigned)
+      - name: Compile and Build iOS App (Unsigned)
         run: |
-          mkdir -p build
+          mkdir -p build/DerivedData
           if [ -d "ios/App/App.xcworkspace" ]; then
             TARGET_FLAG="-workspace ios/App/App.xcworkspace"
           else
             TARGET_FLAG="-project ios/App/App.xcodeproj"
           fi
-          echo "Running xcodebuild archive with $TARGET_FLAG..."
-          xcodebuild archive \
-            $TARGET_FLAG \
-            -scheme App \
-            -destination "generic/platform=iOS" \
-            -archivePath build/App.xcarchive \
-            CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGN_IDENTITY="" \
-            CODE_SIGNING_REQUIRED=NO \
-            COMPILER_INDEX_STORE_ENABLE=NO
+          echo "Compiling Xcode project with $TARGET_FLAG..."
+          xcodebuild $TARGET_FLAG \
+                     -scheme App \
+                     -configuration Release \
+                     -destination 'generic/platform=iOS' \
+                     -derivedDataPath build/DerivedData \
+                     build \
+                     CODE_SIGN_STYLE=Manual \
+                     CODE_SIGNING_ALLOWED=NO \
+                     CODE_SIGNING_REQUIRED=NO \
+                     CODE_SIGN_IDENTITY="" \
+                     PROVISIONING_PROFILE_SPECIFIER="" \
+                     DEVELOPMENT_TEAM="" \
+                     CODE_SIGN_ENTITLEMENTS="" \
+                     CODE_SIGNING_INJECT_BASE_ENTITLEMENTS=NO
 
       - name: Extract Payload and Package IPA
         run: |
-          mkdir -p Payload
-          APP_PATH=$(find build/App.xcarchive/Products/Applications -name "*.app" -maxdepth 1 | head -n 1)
-          if [ -z "$APP_PATH" ]; then
-            echo "::error::Could not find .app in archive Products!"
+          mkdir -p build/Payload
+          APP_PATH=$(find build/DerivedData/Build/Products/Release-iphoneos -name "*.app" -type d | head -n 1)
+          if [ -z "$APP_PATH" ] || [ ! -d "$APP_PATH" ]; then
+            echo "::error::Could not find compiled .app in DerivedData!"
             exit 1
           fi
-          echo "Found compiled app at: $APP_PATH"
-          cp -r "$APP_PATH" Payload/
-          zip -r -y ${{ env.APP_SLUG }}-latest.ipa Payload
-          echo "IPA packaged: $(ls -lh ${{ env.APP_SLUG }}-latest.ipa)"
+          echo "Found compiled iOS app bundle at: $APP_PATH"
+          cp -r "$APP_PATH" build/Payload/
+          cd build
+          zip -r ../${{ env.APP_SLUG }}-ios-unsigned.ipa Payload
+          cp ../${{ env.APP_SLUG }}-ios-unsigned.ipa ../${{ env.APP_SLUG }}-latest.ipa
+          cp ../${{ env.APP_SLUG }}-ios-unsigned.ipa ../app-latest.ipa
+          cd ..
+          echo "iOS IPA packaged:"
+          ls -lh ${{ env.APP_SLUG }}-ios-unsigned.ipa
 
-      - name: Upload iOS IPA
+      - name: Upload iOS IPA Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.APP_SLUG }}-ios-ipa
-          path: ${{ env.APP_SLUG }}-latest.ipa
+          path: |
+            ${{ env.APP_SLUG }}-ios-unsigned.ipa
+            ${{ env.APP_SLUG }}-latest.ipa
           retention-days: 14
+
+      - name: iOS IPA Build Summary
+        run: |
+          echo "### iOS IPA Build Status :apple:" >> $GITHUB_STEP_SUMMARY
+          echo "- **Application Name**: ApplyFlow" >> $GITHUB_STEP_SUMMARY
+          echo "- **Bundle ID**: \`com.applyflow.app\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Signing Status**: Unsigned archive" >> $GITHUB_STEP_SUMMARY
+          echo "- **Primary Artifact**: \`${{ env.APP_SLUG }}-ios-unsigned.ipa\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Latest Alias**: \`${{ env.APP_SLUG }}-latest.ipa\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "#### Cara Pasang di iPhone / iPad:" >> $GITHUB_STEP_SUMMARY
+          echo "1. Unduh file \`${{ env.APP_SLUG }}-ios-unsigned.ipa\` dari GitHub Artifacts." >> $GITHUB_STEP_SUMMARY
+          echo "2. Install menggunakan **AltStore**, **Sideloadly**, **TrollStore**, atau **Scarlet** dengan Apple ID pribadi Anda." >> $GITHUB_STEP_SUMMARY
 
       - name: Transfer IPA to VPS via SSH & SCP
         if: ${{ env.SYNC_ENABLED == 'true' && env.VPS_HOST != '' && env.VPS_SSH_KEY != '' }}
@@ -233,19 +316,39 @@ jobs:
           VPS_TARGET: ${{ vars.VPS_TARGET_DIR || secrets.VPS_TARGET_DIR || '/srv/www/applyflow/downloads' }}
         run: |
           set -euo pipefail
+
+          TARGET_PORT="$VPS_PORT"
+          if ! nc -z -w 3 "$VPS_HOST" "$TARGET_PORT" 2>/dev/null; then
+            if nc -z -w 3 "$VPS_HOST" 2222 2>/dev/null; then
+              TARGET_PORT=2222
+            elif nc -z -w 3 "$VPS_HOST" 22 2>/dev/null; then
+              TARGET_PORT=22
+            fi
+          fi
+          echo "Target VPS SSH port: $TARGET_PORT"
+
           mkdir -p "$HOME/.ssh"
           printf '%s\n' "$VPS_KEY" | tr -d '\r' > "$HOME/.ssh/id_ed25519"
           chmod 600 "$HOME/.ssh/id_ed25519"
-          ssh-keyscan -p "$VPS_PORT" -H "$VPS_HOST" > "$HOME/.ssh/known_hosts" 2>/dev/null || true
+          ssh-keyscan -p "$TARGET_PORT" -H "$VPS_HOST" > "$HOME/.ssh/known_hosts" 2>/dev/null || true
           chmod 600 "$HOME/.ssh/known_hosts"
           STRICT_OPT="-o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=$HOME/.ssh/known_hosts"
 
-          echo "Mentransfer ${{ env.APP_SLUG }}-latest.ipa ke VPS..."
-          if scp -o BatchMode=yes -o ConnectTimeout=20 $STRICT_OPT -P "$VPS_PORT" -i "$HOME/.ssh/id_ed25519" ${{ env.APP_SLUG }}-latest.ipa "$VPS_USER@$VPS_HOST:$VPS_TARGET/${{ env.APP_SLUG }}-latest.ipa"; then
-            ssh -o BatchMode=yes -o ConnectTimeout=20 $STRICT_OPT -p "$VPS_PORT" -i "$HOME/.ssh/id_ed25519" "$VPS_USER@$VPS_HOST" \
-              "chmod 644 '$VPS_TARGET/${{ env.APP_SLUG }}-latest.ipa'" || true
-            echo "✓ iOS IPA berhasil ditransfer ke $VPS_TARGET/${{ env.APP_SLUG }}-latest.ipa"
-          else
-            echo "::warning::Transfer SCP IPA ke VPS gagal atau koneksi ditolak. File IPA tetap aman di GitHub Artifacts."
+          echo "Menguji konektivitas SSH ke VPS ($VPS_HOST:$TARGET_PORT)..."
+          if ! ssh -o BatchMode=yes -o ConnectTimeout=10 $STRICT_OPT -p "$TARGET_PORT" -i "$HOME/.ssh/id_ed25519" "$VPS_USER@$VPS_HOST" "echo SSH_CONNECTION_OK" 2>/dev/null; then
+            echo "::warning::Koneksi SSH ke VPS ($VPS_HOST:$TARGET_PORT) ditolak atau firewall aktif. File IPA tetap aman tersimpan di GitHub Artifacts."
+            rm -f "$HOME/.ssh/id_ed25519"
+            exit 0
           fi
+
+          echo "Memastikan direktori tujuan di VPS: $VPS_TARGET"
+          ssh -o BatchMode=yes -o ConnectTimeout=20 $STRICT_OPT -p "$TARGET_PORT" -i "$HOME/.ssh/id_ed25519" "$VPS_USER@$VPS_HOST" \
+            "mkdir -p '$VPS_TARGET' 2>/dev/null || (sudo -n mkdir -p '$VPS_TARGET' && sudo -n chown -R $VPS_USER:$VPS_USER '$VPS_TARGET' && chmod 755 '$VPS_TARGET')" || true
+
+          echo "Mentransfer IPA ke VPS..."
+          scp -o BatchMode=yes -o ConnectTimeout=20 $STRICT_OPT -P "$TARGET_PORT" -i "$HOME/.ssh/id_ed25519" ${{ env.APP_SLUG }}-latest.ipa "$VPS_USER@$VPS_HOST:$VPS_TARGET/${{ env.APP_SLUG }}-latest.ipa"
+          scp -o BatchMode=yes -o ConnectTimeout=20 $STRICT_OPT -P "$TARGET_PORT" -i "$HOME/.ssh/id_ed25519" app-latest.ipa "$VPS_USER@$VPS_HOST:$VPS_TARGET/app-latest.ipa"
+          ssh -o BatchMode=yes -o ConnectTimeout=20 $STRICT_OPT -p "$TARGET_PORT" -i "$HOME/.ssh/id_ed25519" "$VPS_USER@$VPS_HOST" \
+            "chmod 644 '$VPS_TARGET/${{ env.APP_SLUG }}-latest.ipa' '$VPS_TARGET/app-latest.ipa'" || true
+          echo "✓ iOS IPA berhasil ditransfer ke $VPS_TARGET/${{ env.APP_SLUG }}-latest.ipa"
           rm -f "$HOME/.ssh/id_ed25519"
