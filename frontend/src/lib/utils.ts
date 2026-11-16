@@ -12,8 +12,20 @@ export const idr = (n: number) =>
     maximumFractionDigits: 0,
   }).format(n);
 
-export const salary = (a: Application) =>
-  `${idr(a.salaryMin)} - ${idr(a.salaryMax)} / ${a.salaryPeriod === 'monthly' ? 'mo' : 'yr'}`;
+export const salary = (a: Application): string => {
+  if (a.pay && a.pay.trim().length > 0) {
+    return a.pay.trim();
+  }
+  if (a.salaryMin > 0 || a.salaryMax > 0) {
+    const periodLabel = a.salaryPeriod === 'hourly' ? 'jam' : a.salaryPeriod === 'monthly' ? 'mo' : 'yr';
+    if (a.salaryMin > 0 && a.salaryMax > a.salaryMin) {
+      return `${idr(a.salaryMin)} - ${idr(a.salaryMax)} / ${periodLabel}`;
+    }
+    const val = a.salaryMax > 0 ? a.salaryMax : a.salaryMin;
+    return `${idr(val)} / ${periodLabel}`;
+  }
+  return 'Dirahasiakan';
+};
 
 export const daysSince = (date: string) =>
   Math.max(0, Math.floor((Date.now() - new Date(date).getTime()) / 86400000));

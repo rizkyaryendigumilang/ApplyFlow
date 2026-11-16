@@ -7,8 +7,8 @@ import type {
   JobLead,
   ApplicationEvent,
 } from './pb-types';
-import { sanitizeUrl } from './utils';
-import { escapeICSText, formatICSDate } from './ics-calendar';
+import { sanitizeUrl } from './utils.ts';
+import { escapeICSText, formatICSDate } from './ics-calendar.ts';
 
 export interface BackupDataPayload {
   applications: Application[];
@@ -52,9 +52,14 @@ export function exportApplicationsToCSV(apps: Application[]): string {
   };
 
   const rows = apps.map(a => {
-    const payFormatted = a.salaryMax > 0 
-      ? `${a.salaryMin}-${a.salaryMax} (${a.salaryPeriod})`
-      : 'Unspecified';
+    let payFormatted = a.pay || '';
+    if (!payFormatted && (a.salaryMax > 0 || a.salaryMin > 0)) {
+      payFormatted = a.salaryMin > 0 && a.salaryMax > a.salaryMin
+        ? `${a.salaryMin}-${a.salaryMax} (${a.salaryPeriod})`
+        : `${a.salaryMax || a.salaryMin} (${a.salaryPeriod})`;
+    } else if (!payFormatted) {
+      payFormatted = 'Unspecified';
+    }
 
     return [
       escapeCSV(a.company),
@@ -66,7 +71,7 @@ export function exportApplicationsToCSV(apps: Application[]): string {
       escapeCSV(a.type),
       escapeCSV(a.mode),
       escapeCSV(payFormatted),
-      escapeCSV(a.sentAt),
+      escapeCSV(a.sent || a.sentAt),
       escapeCSV(a.status),
       escapeCSV(a.cvVersion),
       escapeCSV(a.jobSource || 'Direct'),
@@ -83,7 +88,7 @@ export function parseCSVToApplications(csvText: string): Partial<Application>[] 
   const lines = csvText.split(/\r?\n/).filter(line => line.trim().length > 0);
   if (lines.length <= 1) return [];
 
-  // Parse header
+  // Parse CSV row with quotes handling
   const parseRow = (text: string): string[] => {
     const result: string[] = [];
     let cur = '';
@@ -108,26 +113,106 @@ export function parseCSVToApplications(csvText: string): Partial<Application>[] 
     return result;
   };
 
-  const headers = parseRow(lines[0]).map(h => h.trim().toLowerCase());
-  const companyIdx = headers.findIndex(h => h.includes('company'));
-  const positionIdx = headers.findIndex(h => h.includes('position') || h.includes('role'));
-  const linkIdx = headers.findIndex(h => h.includes('link') || h.includes('url'));
-  const contactNameIdx = headers.findIndex(h => h.includes('name of contact') || h.includes('recruiter'));
-  const contactIdx = headers.findIndex(h => h.includes('email') || h.includes('phone') || h.includes('contact'));
-  const locationIdx = headers.findIndex(h => h.includes('location'));
-  const typeIdx = headers.findIndex(h => h.includes('type'));
+  // Find header row dynamically (handles spreadsheet title metadata rows)
+  let headerRowIndex = -1;
+  let headers: string[] = [];
+
+  for (let i = 0; i < Math.min(lines.length, 5); i++) {
+    const row = parseRow(lines[i]).map(h => h.trim().toLowerCase());
+    if (row.some(h => h.includes('company') || h.includes('perusahaan')) &&
+        row.some(h => h.includes('position') || h.includes('role') || h.includes('posisi'))) {
+      headerRowIndex = i;
+      headers = row;
+      break;
+    }
+  }
+
+  // Fallback to row 0 if not auto-detected
+  if (headerRowIndex === -1) {
+    headerRowIndex = 0;
+    headers = parseRow(lines[0]).map(h => h.trim().toLowerCase());
+  }
+
+  const companyIdx = headers.findIndex(h => h.includes('company') || h.includes('perusahaan'));
+  const positionIdx = headers.findIndex(h => h.includes('position') || h.includes('role') || h.includes('posisi'));
+  const linkIdx = headers.findIndex(h => h.includes('link') || h.includes('url') || h.includes('website') || h.includes('tautan'));
+  const contactNameIdx = headers.findIndex(h => h.includes('name of contact') || h.includes('contact name') || h.includes('recruiter') || h.includes('nama kontak'));
+  const contactIdx = headers.findIndex((h, idx) => idx !== contactNameIdx && (h.includes('email') || h.includes('phone') || h.includes('kontak') || h.includes('contact')));
+  const locationIdx = headers.findIndex(h => h.includes('location') || h.includes('lokasi'));
+  const typeIdx = headers.findIndex(h => h.includes('type') || h.includes('tipe'));
   const modeIdx = headers.findIndex(h => h.includes('mode'));
-  const sentIdx = headers.findIndex(h => h.includes('sent') || h.includes('date'));
+  const payIdx = headers.findIndex(h => h.includes('pay') || h.includes('salary') || h.includes('gaji') || h.includes('kompensasi') || h.includes('rate'));
+  const sentIdx = headers.findIndex(h => h.includes('sent') || h.includes('terkirim') || h.includes('dokumen') || h.includes('materi'));
   const statusIdx = headers.findIndex(h => h.includes('status'));
 
   const parsed: Partial<Application>[] = [];
 
-  for (let i = 1; i < lines.length; i++) {
+  for (let i = headerRowIndex + 1; i < lines.length; i++) {
     const cols = parseRow(lines[i]);
     const company = (cols[companyIdx] || '').trim();
     const position = (cols[positionIdx] || '').trim();
 
     if (!company && !position) continue;
+
+    // Detect employment type
+    const rawType = (typeIdx >= 0 ? cols[typeIdx] : '')?.trim().toLowerCase();
+    let typeVal: Application['type'] = 'In-house';
+    if (rawType.includes('part-time') || rawType.includes('part time')) {
+      typeVal = 'Part-time';
+    } else if (rawType.includes('full-time') || rawType.includes('full time')) {
+      typeVal = 'Full-time';
+    } else if (rawType.includes('contract') || rawType.includes('kontrak')) {
+      typeVal = 'Contract';
+    } else if (rawType.includes('vendor') || rawType.includes('outsource')) {
+      typeVal = 'Vendor / Outsource';
+    }
+
+    // Detect work mode
+    const rawMode = (modeIdx >= 0 ? cols[modeIdx] : '')?.trim().toLowerCase();
+    let modeVal: Application['mode'] = 'Hybrid';
+    if (rawMode.includes('remote')) {
+      modeVal = 'Remote';
+    } else if (rawMode.includes('in-person') || rawMode.includes('in person')) {
+      modeVal = 'In-person';
+    } else if (rawMode.includes('on-site') || rawMode.includes('onsite')) {
+      modeVal = 'On-site';
+    }
+
+    // Parse compensation / pay
+    const payRaw = (payIdx >= 0 ? cols[payIdx] : '')?.trim();
+    let salaryPeriod: Application['salaryPeriod'] = 'monthly';
+    let salaryMin = 0;
+    let salaryMax = 0;
+
+    if (payRaw) {
+      if (payRaw.toLowerCase().includes('/hr') || payRaw.toLowerCase().includes('hr') || payRaw.toLowerCase().includes('hour')) {
+        salaryPeriod = 'hourly';
+      } else if (payRaw.toLowerCase().includes('/yr') || payRaw.toLowerCase().includes('annual') || payRaw.toLowerCase().includes('thn')) {
+        salaryPeriod = 'annual';
+      }
+
+      // Extract numbers
+      const digitsMatch = payRaw.replace(/[,.]/g, '').match(/\d+/g);
+      if (digitsMatch && digitsMatch.length > 0) {
+        salaryMin = parseInt(digitsMatch[0], 10) || 0;
+        if (digitsMatch.length > 1) {
+          salaryMax = parseInt(digitsMatch[1], 10) || 0;
+        }
+      }
+    }
+
+    // Parse sent deliverables or date
+    const sentRaw = (sentIdx >= 0 ? cols[sentIdx] : '')?.trim();
+    let sentMaterials: string | undefined = undefined;
+    let sentAt = new Date().toISOString().slice(0, 10);
+
+    if (sentRaw) {
+      if (/^\d{4}-\d{2}-\d{2}$/.test(sentRaw)) {
+        sentAt = sentRaw;
+      } else {
+        sentMaterials = sentRaw;
+      }
+    }
 
     parsed.push({
       company: company || 'Unknown Company',
@@ -135,16 +220,18 @@ export function parseCSVToApplications(csvText: string): Partial<Application>[] 
       link: linkIdx >= 0 ? sanitizeUrl(cols[linkIdx]?.trim()) : undefined,
       contactName: contactNameIdx >= 0 ? cols[contactNameIdx]?.trim() : undefined,
       contact: contactIdx >= 0 ? cols[contactIdx]?.trim() : undefined,
-      location: (locationIdx >= 0 && cols[locationIdx]?.trim()) || 'Jakarta',
-      type: (typeIdx >= 0 && cols[typeIdx]?.includes('Vendor')) ? 'Vendor / Outsource' : 'In-house',
-      mode: (modeIdx >= 0 && cols[modeIdx]?.includes('Remote')) ? 'Remote' : (modeIdx >= 0 && cols[modeIdx]?.includes('On-site')) ? 'On-site' : 'Hybrid',
-      salaryMin: 0,
-      salaryMax: 0,
-      salaryPeriod: 'monthly',
-      status: (statusIdx >= 0 && ['Applied', 'Viewed', 'Screening', 'Interview', 'Offer', 'Rejected', 'Ghosted'].includes(cols[statusIdx]?.trim())) 
+      location: (locationIdx >= 0 && cols[locationIdx]?.trim()) || 'USA',
+      type: typeVal,
+      mode: modeVal,
+      pay: payRaw || undefined,
+      sent: sentMaterials,
+      salaryMin,
+      salaryMax,
+      salaryPeriod,
+      status: (statusIdx >= 0 && ['Wishlist', 'Applied', 'Viewed', 'Screening', 'Interview', 'Offer', 'Rejected', 'Ghosted'].includes(cols[statusIdx]?.trim())) 
         ? cols[statusIdx].trim() as any 
         : 'Wishlist',
-      sentAt: (sentIdx >= 0 && cols[sentIdx]?.trim()) || new Date().toISOString().slice(0, 10),
+      sentAt,
       cvVersion: 'CV-General-v1',
     });
   }

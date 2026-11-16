@@ -9,11 +9,13 @@ export type Application = {
   contactName?: string;
   contact?: string;
   location: string;
-  type: 'In-house' | 'Vendor / Outsource' | 'Contract';
-  mode: 'On-site' | 'Hybrid' | 'Remote';
+  type: 'Full-time' | 'Part-time' | 'Contract' | 'In-house' | 'Vendor / Outsource';
+  mode: 'Remote' | 'In-person' | 'Hybrid' | 'On-site';
   salaryMin: number;
   salaryMax: number;
-  salaryPeriod: 'monthly' | 'annual';
+  salaryPeriod: 'monthly' | 'annual' | 'hourly';
+  pay?: string;
+  sent?: string;
   status: Status;
   sentAt: string;
   nextFollowUp?: string;
@@ -257,8 +259,8 @@ export type OfferRecord = {
   application: string;
   company: string;
   position: string;
-  placementType?: 'In-house' | 'Vendor / Outsource' | 'Contract';
-  workMode?: 'Remote' | 'Hybrid' | 'On-site';
+  placementType?: 'Full-time' | 'Part-time' | 'Contract' | 'In-house' | 'Vendor / Outsource';
+  workMode?: 'Remote' | 'In-person' | 'Hybrid' | 'On-site';
   baseSalary: number;
   fixedAllowance?: number;
   onCallAllowance?: number;

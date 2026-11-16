@@ -644,6 +644,30 @@ function App() {
                     applications={filtered}
                     onSelectApplication={setDrawer}
                     onResetFilters={() => setQuery('')}
+                    onImportApplications={async (imported) => {
+                      for (const item of imported) {
+                        await add({
+                          company: item.company || 'Unknown Company',
+                          position: item.position || 'Engineer',
+                          link: item.link,
+                          contactName: item.contactName,
+                          contact: item.contact,
+                          location: item.location || 'USA',
+                          type: item.type || 'In-house',
+                          mode: item.mode || 'Remote',
+                          pay: item.pay,
+                          sent: item.sent,
+                          salaryMin: item.salaryMin || 0,
+                          salaryMax: item.salaryMax || 0,
+                          salaryPeriod: item.salaryPeriod || 'monthly',
+                          status: item.status || 'Wishlist',
+                          sentAt: item.sentAt || new Date().toISOString().slice(0, 10),
+                          cvVersion: item.cvVersion || 'CV-Tech-v1',
+                          jobSource: item.link ? 'Company Website' : 'Direct / Referral',
+                          applicationMethod: 'Manual',
+                        });
+                      }
+                    }}
                   />
                 )}
               </div>

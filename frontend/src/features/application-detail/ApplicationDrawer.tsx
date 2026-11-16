@@ -12,8 +12,8 @@ import {
   User,
   Mail,
   FileText,
-  DollarSign,
   AlertCircle,
+  Link2,
 } from 'lucide-react';
 import type { Application, Status } from '../../lib/pb-types';
 import { salary } from '../../lib/utils';
@@ -310,12 +310,41 @@ export const ApplicationDrawer: React.FC<ApplicationDrawerProps> = ({
               {/* Properties table in Twenty CRM style */}
               <div className="border border-zinc-200/80 dark:border-zinc-800/80 rounded-lg overflow-hidden text-xs">
                 <div className="divide-y divide-zinc-100 dark:divide-zinc-800/60">
+                  {a.link && (
+                    <div className="flex items-center justify-between p-2.5 hover:bg-zinc-50 dark:hover:bg-zinc-900/40">
+                      <span className="text-zinc-500 flex items-center gap-2">
+                        <Link2 size={13} className="text-zinc-400" /> Tautan Lowongan (Link)
+                      </span>
+                      <a
+                        href={a.link.startsWith('http') ? a.link : `https://${a.link}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="font-mono text-zinc-800 dark:text-zinc-200 underline decoration-zinc-300 dark:decoration-zinc-700 hover:decoration-zinc-900 flex items-center gap-1 truncate max-w-[220px]"
+                        title={a.link}
+                      >
+                        <span className="truncate">{a.link.replace(/^https?:\/\//, '').replace(/\/$/, '')}</span>
+                        <ExternalLink size={10} className="flex-shrink-0 opacity-70" />
+                      </a>
+                    </div>
+                  )}
+
                   <div className="flex items-center justify-between p-2.5 hover:bg-zinc-50 dark:hover:bg-zinc-900/40">
                     <span className="text-zinc-500 flex items-center gap-2">
                       <Clock size={13} className="text-zinc-400" /> Tanggal Kirim
                     </span>
                     <span className="font-mono text-zinc-800 dark:text-zinc-200">{a.sentAt}</span>
                   </div>
+
+                  {a.sent && (
+                    <div className="flex items-center justify-between p-2.5 hover:bg-zinc-50 dark:hover:bg-zinc-900/40">
+                      <span className="text-zinc-500 flex items-center gap-2">
+                        <Send size={13} className="text-zinc-400" /> Materi Terkirim (Sent)
+                      </span>
+                      <span className="font-medium text-zinc-800 dark:text-zinc-200 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded text-[11px] truncate max-w-[220px]" title={a.sent}>
+                        {a.sent}
+                      </span>
+                    </div>
+                  )}
 
                   <div className="flex items-center justify-between p-2.5 hover:bg-zinc-50 dark:hover:bg-zinc-900/40">
                     <span className="text-zinc-500 flex items-center gap-2">
@@ -329,7 +358,7 @@ export const ApplicationDrawer: React.FC<ApplicationDrawerProps> = ({
 
                   <div className="flex items-center justify-between p-2.5 hover:bg-zinc-50 dark:hover:bg-zinc-900/40">
                     <span className="text-zinc-500 flex items-center gap-2">
-                      <User size={13} className="text-zinc-400" /> Kontak HR
+                      <User size={13} className="text-zinc-400" /> Kontak HR (Contact)
                     </span>
                     <span className="font-medium text-zinc-800 dark:text-zinc-200 truncate max-w-[200px]">
                       {a.contactName || 'Belum ada kontak'}

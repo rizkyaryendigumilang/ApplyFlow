@@ -1,7 +1,7 @@
 import React from 'react';
 import { MoreHorizontal } from 'lucide-react';
 import type { Application } from '../../lib/pb-types';
-import { idr, daysSince } from '../../lib/utils';
+import { salary, daysSince } from '../../lib/utils';
 
 export interface ApplicationCardProps {
   application: Application;
@@ -9,10 +9,7 @@ export interface ApplicationCardProps {
 }
 
 export const ApplicationCard: React.FC<ApplicationCardProps> = ({ application: a, onClick }) => {
-  const formattedSalary =
-    a.salaryPeriod === 'monthly'
-      ? idr(a.salaryMax)
-      : `${Math.round(a.salaryMax / 12 / 1000000)}jt/bln`;
+  const formattedSalary = salary(a);
 
   return (
     <article

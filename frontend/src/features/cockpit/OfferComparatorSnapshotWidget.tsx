@@ -38,7 +38,7 @@ export const OfferComparatorSnapshotWidget: React.FC<OfferComparatorSnapshotWidg
     return list.map((app) => {
       const salary = app.salaryMax || app.salaryMin || 15000000;
       const monthlyBase = app.salaryPeriod === 'annual' ? Math.round(salary / 12) : salary;
-      const commuteCost = app.mode === 'On-site' ? 1200000 : app.mode === 'Hybrid' ? 600000 : 0;
+      const commuteCost = (app.mode === 'On-site' || app.mode === 'In-person') ? 1200000 : app.mode === 'Hybrid' ? 600000 : 0;
 
       const pkg: OfferPackage = {
         id: app.id,

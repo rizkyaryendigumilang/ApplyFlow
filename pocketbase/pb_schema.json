@@ -252,9 +252,11 @@
         "options": {
           "maxSelect": 1,
           "values": [
+            "Full-time",
+            "Part-time",
+            "Contract",
             "In-house",
-            "Vendor / Outsource",
-            "Contract"
+            "Vendor / Outsource"
           ]
         }
       },
@@ -266,10 +268,33 @@
         "options": {
           "maxSelect": 1,
           "values": [
-            "On-site",
+            "Remote",
+            "In-person",
             "Hybrid",
-            "Remote"
+            "On-site"
           ]
+        }
+      },
+      {
+        "id": "pay",
+        "name": "pay",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 120,
+          "pattern": ""
+        }
+      },
+      {
+        "id": "sent",
+        "name": "sent",
+        "type": "text",
+        "required": false,
+        "options": {
+          "min": 0,
+          "max": 250,
+          "pattern": ""
         }
       },
       {
@@ -303,7 +328,8 @@
           "maxSelect": 1,
           "values": [
             "monthly",
-            "annual"
+            "annual",
+            "hourly"
           ]
         }
       },

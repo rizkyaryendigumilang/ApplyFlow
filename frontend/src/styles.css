@@ -1130,19 +1130,17 @@ tbody tr:hover {
 .modal input {
   display: block;
   width: 100%;
-  border: 1px solid #d9dbd2;
+  border: 1px solid #e4e4e7;
   background: #fff;
-  padding: 11px 12px;
-  margin-top: 7px;
   outline: 0;
-  font-size: 13px;
-  border-radius: var(--r-sm);
+  font-size: 12px;
+  border-radius: 6px;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .modal input:focus {
-  border-color: var(--accent-olive);
-  box-shadow: 0 0 0 3px rgba(125, 152, 80, 0.2);
+  border-color: #18181b;
+  box-shadow: 0 0 0 2px rgba(24, 24, 27, 0.08);
 }
 
 /* 4 & 8. Functional UX: Shimmer Skeleton Placeholders */

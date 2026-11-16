@@ -14,8 +14,8 @@ export interface OfferPackage {
   name: string;
   company: string;
   position: string;
-  placementType: 'In-house' | 'Vendor / Outsource' | 'Contract';
-  workMode: 'Remote' | 'Hybrid' | 'On-site';
+  placementType: 'Full-time' | 'Part-time' | 'Contract' | 'In-house' | 'Vendor / Outsource';
+  workMode: 'Remote' | 'In-person' | 'Hybrid' | 'On-site';
   baseSalary: number; // Monthly IDR
   fixedAllowance: number; // Transport, makan
   onCallAllowance: number; // Standby / incident allowance
