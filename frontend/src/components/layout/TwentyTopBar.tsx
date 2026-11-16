@@ -84,12 +84,12 @@ export const TwentyTopBar: React.FC<TwentyTopBarProps> = ({
   const moduleTitle = t(meta.labelKey) !== meta.labelKey ? t(meta.labelKey) : meta.fallbackLabel;
 
   return (
-    <header className="twenty-topbar sticky top-0 z-30 h-[52px] bg-white/95 dark:bg-[#121214]/95 backdrop-blur-md border-b border-zinc-200/80 dark:border-zinc-800/80 px-4 flex items-center justify-between gap-4 select-none">
+    <header className="twenty-topbar sticky top-0 z-30 h-[52px] bg-white/80 dark:bg-[#121214]/80 backdrop-blur-xl border-b border-zinc-200/60 dark:border-zinc-800/60 px-4 flex items-center justify-between gap-4 select-none">
       {/* Left side: Mobile menu toggle + View title + Breadcrumbs */}
       <div className="flex items-center gap-3 min-w-0">
         <button
           onClick={onOpenMobileSidebar}
-          className="md:hidden p-1.5 rounded-md text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:text-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+          className="md:hidden p-1.5 rounded-md text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:text-zinc-100 dark:hover:bg-zinc-800 active:scale-[0.95] transition-all"
           aria-label="Open sidebar"
         >
           <Menu size={18} />
@@ -194,13 +194,13 @@ export const TwentyTopBar: React.FC<TwentyTopBarProps> = ({
         {/* Notifications Bell */}
         <button
           onClick={onOpenNotifications}
-          className="relative p-1.5 rounded-md text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+          className="relative p-1.5 rounded-md text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 active:scale-[0.95] transition-all"
           title="Notifikasi"
           aria-label="Open notifications"
         >
           <Bell size={16} />
           {unreadAlertsCount > 0 && (
-            <span className="absolute top-0.5 right-0.5 w-4 h-4 rounded-full bg-rose-500 text-white font-mono text-[9px] font-bold flex items-center justify-center border-2 border-white dark:border-zinc-900">
+            <span className="absolute top-0.5 right-0.5 w-4 h-4 rounded-full bg-rose-500 text-white font-mono text-[9px] font-bold flex items-center justify-center border-2 border-white dark:border-zinc-900 tabular-nums">
               {unreadAlertsCount > 9 ? '9+' : unreadAlertsCount}
             </span>
           )}
@@ -209,7 +209,7 @@ export const TwentyTopBar: React.FC<TwentyTopBarProps> = ({
         {/* Keyboard Shortcuts Trigger */}
         <button
           onClick={onOpenShortcuts}
-          className="hidden sm:flex p-1.5 rounded-md text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+          className="hidden sm:flex p-1.5 rounded-md text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 active:scale-[0.95] transition-all"
           title="Pintasan Keyboard (?)"
           aria-label="Keyboard Shortcuts"
         >
@@ -219,7 +219,7 @@ export const TwentyTopBar: React.FC<TwentyTopBarProps> = ({
         {/* Twenty CRM Signature Primary Action: + New Opportunity */}
         <button
           onClick={onOpenAddModal}
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 rounded-md text-xs font-semibold shadow-2xs transition-all active:scale-[0.98]"
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 rounded-md text-xs font-semibold shadow-2xs active:scale-[0.975] transition-all"
           title="Tambah Peluang Karier Baru (N)"
         >
           <Plus size={14} />

@@ -233,11 +233,11 @@ export function AutoJobScoutView({
 
       {/* KPI Stats Row */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-        <div className="rounded-xl border border-zinc-200/90 bg-white p-4 shadow-2xs dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="rounded-2xl border border-zinc-200/80 bg-white/80 backdrop-blur-md p-4 shadow-2xs hover:shadow-xs transition-shadow dark:border-zinc-800 dark:bg-zinc-900/80">
           <span className="text-[11px] uppercase tracking-wider font-semibold text-zinc-500 dark:text-zinc-400">
             Total Lowongan di Radar
           </span>
-          <div className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mt-1 font-mono">
+          <div className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mt-1 font-mono tabular-nums tracking-tight">
             {filteredVacancies.length}
           </div>
           <span className="text-[11px] text-zinc-400 mt-1 block">
@@ -245,11 +245,11 @@ export function AutoJobScoutView({
           </span>
         </div>
 
-        <div className="rounded-xl border border-zinc-200/90 bg-white p-4 shadow-2xs dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="rounded-2xl border border-zinc-200/80 bg-white/80 backdrop-blur-md p-4 shadow-2xs hover:shadow-xs transition-shadow dark:border-zinc-800 dark:bg-zinc-900/80">
           <span className="text-[11px] uppercase tracking-wider font-semibold text-emerald-600 dark:text-emerald-400">
             Kecocokan Tinggi (&gt;= 80%)
           </span>
-          <div className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mt-1 font-mono">
+          <div className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mt-1 font-mono tabular-nums tracking-tight">
             {highMatchCount}
           </div>
           <span className="text-[11px] text-zinc-400 mt-1 block">
@@ -257,11 +257,11 @@ export function AutoJobScoutView({
           </span>
         </div>
 
-        <div className="rounded-xl border border-zinc-200/90 bg-white p-4 shadow-2xs dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="rounded-2xl border border-zinc-200/80 bg-white/80 backdrop-blur-md p-4 shadow-2xs hover:shadow-xs transition-shadow dark:border-zinc-800 dark:bg-zinc-900/80">
           <span className="text-[11px] uppercase tracking-wider font-semibold text-zinc-500 dark:text-zinc-400">
             Tersimpan ke Pipeline
           </span>
-          <div className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mt-1 font-mono">
+          <div className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mt-1 font-mono tabular-nums tracking-tight">
             {Object.keys(savedVacancyIds).length}
           </div>
           <span className="text-[11px] text-zinc-400 mt-1 block">
@@ -271,7 +271,7 @@ export function AutoJobScoutView({
       </div>
 
       {/* Control Box: Target Role, Platform, Location, and Live Launch */}
-      <div className="rounded-xl border border-zinc-200/90 bg-white p-5 shadow-2xs dark:border-zinc-800 dark:bg-zinc-900 space-y-4">
+      <div className="rounded-2xl border border-zinc-200/80 bg-white/80 backdrop-blur-md p-5 shadow-2xs dark:border-zinc-800 dark:bg-zinc-900/80 space-y-4">
         <div>
           <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
             Pilih Target Posisi dari Profil Anda:
@@ -286,9 +286,9 @@ export function AutoJobScoutView({
                   setCustomQuery('');
                 }}
                 className={cn(
-                  "px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border",
+                  "px-3 py-1.5 rounded-lg text-xs font-medium transition-all active:scale-[0.975] border",
                   selectedRole === role && !customQuery
-                    ? "bg-zinc-900 text-white border-zinc-900 dark:bg-zinc-100 dark:text-zinc-900 dark:border-zinc-100 font-semibold"
+                    ? "bg-zinc-900 text-white border-zinc-900 dark:bg-zinc-100 dark:text-zinc-900 dark:border-zinc-100 font-semibold shadow-2xs"
                     : "bg-zinc-50 text-zinc-700 border-zinc-200 hover:bg-zinc-100 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700"
                 )}
               >
@@ -380,7 +380,7 @@ export function AutoJobScoutView({
             href={liveSearchUrl}
             target="_blank"
             rel="noreferrer noopener"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-lg bg-zinc-900 px-4 py-2 text-xs font-semibold text-white shadow-2xs hover:bg-zinc-800 active:scale-[0.98] transition-all dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-lg bg-zinc-900 px-4 py-2 text-xs font-semibold text-white shadow-2xs hover:bg-zinc-800 active:scale-[0.975] transition-all dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
           >
             <span>Buka Pencarian Live di {selectedPlatform === 'All' ? 'Jobstreet' : selectedPlatform}</span>
             <ExternalLink size={13} />
@@ -389,7 +389,7 @@ export function AutoJobScoutView({
       </div>
 
       {/* Quick Paste URL Bar */}
-      <form onSubmit={handleQuickPaste} className="rounded-xl border border-zinc-200/90 bg-zinc-50/60 p-4 dark:border-zinc-800 dark:bg-zinc-900/40">
+      <form onSubmit={handleQuickPaste} className="rounded-2xl border border-zinc-200/80 bg-zinc-50/70 backdrop-blur-md p-4 dark:border-zinc-800 dark:bg-zinc-900/50">
         <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
           Punya Link Lowongan Spesifik? Tempel Langsung di Sini:
         </label>
@@ -403,7 +403,7 @@ export function AutoJobScoutView({
           />
           <button
             type="submit"
-            className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-4 py-2 text-xs font-semibold text-zinc-800 shadow-2xs hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700 transition-colors"
+            className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-4 py-2 text-xs font-semibold text-zinc-800 shadow-2xs hover:bg-zinc-100 active:scale-[0.975] dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700 transition-all"
           >
             <Zap size={14} className="text-amber-500" />
             <span>Ekstrak & Simpan Cepat</span>
@@ -447,7 +447,7 @@ export function AutoJobScoutView({
               return (
                 <div
                   key={v.id}
-                  className="rounded-xl border border-zinc-200/90 bg-white p-5 shadow-2xs hover:border-zinc-300 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700 transition-all flex flex-col justify-between gap-4"
+                  className="rounded-2xl border border-zinc-200/80 bg-white p-5 shadow-2xs hover:shadow-md hover:-translate-y-0.5 active:scale-[0.99] transition-all duration-150 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700 flex flex-col justify-between gap-4"
                 >
                   <div className="space-y-2.5">
                     {/* Top Row: Platform & Fit Score */}
@@ -455,24 +455,24 @@ export function AutoJobScoutView({
                       <div className="flex items-center gap-2">
                         <span
                           className={cn(
-                            "px-2 py-0.5 rounded-md font-mono text-[10px] font-semibold uppercase border",
+                            "px-2 py-0.5 rounded-md font-mono text-[10px] font-semibold uppercase border backdrop-blur-sm",
                             v.platform === 'Jobstreet'
-                              ? "bg-violet-50 text-violet-700 border-violet-200 dark:bg-violet-950/60 dark:text-violet-300 dark:border-violet-800"
+                              ? "bg-violet-50/80 text-violet-700 border-violet-200 dark:bg-violet-950/60 dark:text-violet-300 dark:border-violet-800"
                               : v.platform === 'LinkedIn'
-                              ? "bg-sky-50 text-sky-700 border-sky-200 dark:bg-sky-950/60 dark:text-sky-300 dark:border-sky-800"
-                              : "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800"
+                              ? "bg-sky-50/80 text-sky-700 border-sky-200 dark:bg-sky-950/60 dark:text-sky-300 dark:border-sky-800"
+                              : "bg-amber-50/80 text-amber-700 border-amber-200 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800"
                           )}
                         >
                           {v.platform}
                         </span>
-                        <span className="text-[11px] text-zinc-400 font-mono">
+                        <span className="text-[11px] text-zinc-400 font-mono tabular-nums">
                           {v.postedDate}
                         </span>
                       </div>
 
                       <span
                         className={cn(
-                          "px-2 py-0.5 rounded-md font-mono text-[10px] font-bold border",
+                          "px-2 py-0.5 rounded-md font-mono text-[10px] font-bold border tabular-nums",
                           v.fit.isHighMatch
                             ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800"
                             : "bg-zinc-100 text-zinc-700 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700"
@@ -484,7 +484,7 @@ export function AutoJobScoutView({
 
                     {/* Title & Company */}
                     <div>
-                      <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                      <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">
                         {v.title}
                       </h3>
                       <div className="flex items-center gap-2 mt-1 text-xs text-zinc-600 dark:text-zinc-400">
@@ -504,7 +504,7 @@ export function AutoJobScoutView({
                     </div>
 
                     {/* Salary Range */}
-                    <div className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 font-mono">
+                    <div className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 font-mono tabular-nums">
                       {idr(v.salaryMin)} - {idr(v.salaryMax)} <span className="text-[10px] font-normal text-zinc-400 font-sans">/ bulan</span>
                     </div>
 
@@ -540,7 +540,7 @@ export function AutoJobScoutView({
                       href={v.url}
                       target="_blank"
                       rel="noreferrer noopener"
-                      className="inline-flex items-center gap-1 text-xs font-semibold text-zinc-700 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-100"
+                      className="inline-flex items-center gap-1 text-xs font-semibold text-zinc-700 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-100 active:scale-[0.975] transition-all"
                     >
                       <span>Buka & Lamar</span>
                       <ArrowUpRight size={13} />
@@ -551,10 +551,10 @@ export function AutoJobScoutView({
                       disabled={isSaved || isSaving}
                       onClick={() => handleSaveToPipeline(v)}
                       className={cn(
-                        "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shadow-2xs",
+                        "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shadow-2xs active:scale-[0.975]",
                         isSaved
                           ? "bg-zinc-100 text-zinc-400 border border-zinc-200 dark:bg-zinc-800 dark:text-zinc-500 dark:border-zinc-700 cursor-default"
-                          : "bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200 active:scale-[0.98]"
+                          : "bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
                       )}
                     >
                       {isSaved ? (

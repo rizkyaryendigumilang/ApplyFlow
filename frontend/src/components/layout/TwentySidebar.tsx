@@ -203,7 +203,7 @@ export const TwentySidebar: React.FC<TwentySidebarProps> = ({
 
   const sidebarContent = (
     <aside
-      className={`twenty-sidebar flex flex-col h-full bg-[#fafafa] dark:bg-[#121214] border-r border-zinc-200/80 dark:border-zinc-800/80 transition-all duration-200 select-none ${
+      className={`twenty-sidebar flex flex-col h-full bg-[#fafafa]/80 dark:bg-[#121214]/80 backdrop-blur-xl border-r border-zinc-200/60 dark:border-zinc-800/60 transition-all duration-200 select-none ${
         isCollapsed ? 'w-[68px]' : 'w-[240px]'
       }`}
     >
@@ -246,7 +246,7 @@ export const TwentySidebar: React.FC<TwentySidebarProps> = ({
       <div className="px-2.5 pt-2.5 pb-1 flex items-center gap-1.5">
         <button
           onClick={onOpenSearch}
-          className={`flex items-center gap-2 px-2.5 py-1.5 text-xs text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200 bg-white dark:bg-zinc-800/60 border border-zinc-200/80 dark:border-zinc-700/60 rounded-md transition-colors shadow-2xs ${
+          className={`flex items-center gap-2 px-2.5 py-1.5 text-xs text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200 bg-white dark:bg-zinc-800/60 border border-zinc-200/80 dark:border-zinc-700/60 rounded-md transition-all active:scale-[0.985] shadow-2xs ${
             isCollapsed ? 'w-full justify-center px-0' : 'flex-1'
           }`}
           title="Pencarian Global (⌘K)"
@@ -265,7 +265,7 @@ export const TwentySidebar: React.FC<TwentySidebarProps> = ({
         {!isCollapsed && (
           <button
             onClick={onOpenAddModal}
-            className="w-7 h-7 flex items-center justify-center rounded-md bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-900 shadow-2xs transition-colors flex-shrink-0"
+            className="w-7 h-7 flex items-center justify-center rounded-md bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-900 shadow-2xs active:scale-[0.95] transition-all flex-shrink-0"
             title="Tambah Lamaran Baru (N)"
             aria-label="Tambah Lamaran Baru"
           >
@@ -295,7 +295,7 @@ export const TwentySidebar: React.FC<TwentySidebarProps> = ({
                     onNavigate(item.id);
                     onCloseMobile();
                   }}
-                  className={`w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-xs transition-colors duration-150 ${
+                  className={`w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-xs transition-all duration-150 active:scale-[0.98] ${
                     isCollapsed ? 'justify-center px-0' : ''
                   } ${
                     isActive
@@ -317,7 +317,7 @@ export const TwentySidebar: React.FC<TwentySidebarProps> = ({
                       <span className="truncate flex-1 text-left">{label}</span>
                       {item.badge !== undefined && item.badge !== 0 && (
                         <span
-                          className={`text-[10px] font-mono font-medium px-1.5 py-0.2 rounded-full border ${
+                          className={`text-[10px] font-mono tabular-nums font-medium px-1.5 py-0.2 rounded-full border ${
                             item.badgeVariant === 'accent'
                               ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800'
                               : item.badgeVariant === 'warning'
