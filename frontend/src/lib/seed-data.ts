@@ -9,4 +9,8 @@ export const seedApplications: Application[] = [
  {id:'a7',company:'PT Lintas Media Danawa',position:'DevOps Engineer',location:'Jakarta',type:'In-house',mode:'Hybrid',salaryMin:15000000,salaryMax:20000000,salaryPeriod:'monthly',sent:'JobStreet Easy Apply',status:'Viewed',sentAt:'2026-11-08',nextFollowUp:'2026-11-15',contactName:'Recruitment Team',contact:'hr@lintasmediadanawa.com',cvVersion:'CV-Infra-v3',jobSource:'JobStreet',applicationMethod:'JobStreet Apply',autoCreated:true,notes:'Company viewed application on JobStreet.',link:'https://lintasmediadanawa.com'}
 ];
 export const seedInterviews: Interview[] = [{id:'i1',application:'a1',round:'System design',scheduledAt:'2026-11-14T10:00',status:'Scheduled',questions:['Design a multi-region incident response platform','Tell us about an outage you owned']}];
-export const seedCVs: CVArtifact[] = [{id:'c1',version:'CV-Infra-v3',label:'Infrastructure / SRE',applications:18,responses:7,offers:2},{id:'c2',version:'CV-Cloud-v2',label:'Cloud architecture',applications:11,responses:5,offers:1},{id:'c3',version:'CV-Leadership-v1',label:'People leadership',applications:9,responses:2,offers:0}];
+export const seedCVs: CVArtifact[] = [
+ {id:'c1',version:'CV-DataAnalyst-v1',label:'Data Analyst & Tableau BI (Rizky)',targetRole:'Data Analyst / BI Specialist',atsScore:94,applications:18,responses:7,offers:2,isMaster:true},
+ {id:'c2',version:'CV-TechConsultant-APM-v2',label:'Technical Consultant Analyst & APM (Dynatrace)',targetRole:'Technical Consultant Analyst / APM Engineer',atsScore:91,applications:11,responses:5,offers:1,isMaster:false},
+ {id:'c3',version:'CV-SysAdmin-Cloud-v1',label:'System Engineer & Cloud Infrastructure',targetRole:'System Administrator / Cloud Infrastructure',atsScore:88,applications:9,responses:2,offers:0,isMaster:false}
+];
