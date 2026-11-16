@@ -109,33 +109,25 @@ export function SystemPagesView({
   const IconComponent = current.icon;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+    <div className="flex flex-col gap-6">
       {/* Interactive Switcher Bar for Demonstration & Verification */}
-      <div
-        style={{
-          background: '#fbfbf8',
-          border: '1px solid #dedfd8',
-          padding: '16px 20px',
-          display: 'flex',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '12px',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Sparkles size={16} style={{ color: '#18181b' }} />
-          <span style={{ fontSize: '12px', fontWeight: 600 }}>System State Simulator:</span>
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-zinc-200/90 bg-white p-4 shadow-2xs dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="flex items-center gap-2">
+          <Sparkles size={16} className="text-zinc-900 dark:text-zinc-100" />
+          <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">System State Simulator:</span>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+        <div className="flex flex-wrap gap-1.5">
           {(['404', '403', '500', 'maintenance', 'offline', 'session-expired'] as const).map(
             (code) => (
               <button
                 key={code}
                 onClick={() => setSelectedCode(code)}
-                className={selectedCode === code ? 'primary compact-btn' : 'secondary compact-btn'}
-                style={{ fontSize: '11px', textTransform: 'uppercase' }}
+                className={`rounded-md px-2.5 py-1 text-[11px] font-mono uppercase transition-colors ${
+                  selectedCode === code
+                    ? 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 font-semibold shadow-2xs'
+                    : 'border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800'
+                }`}
               >
                 {code}
               </button>
@@ -145,96 +137,38 @@ export function SystemPagesView({
       </div>
 
       {/* Rendered System Page Card */}
-      <div
-        style={{
-          background: '#fbfbf8',
-          border: '1px solid #dedfd8',
-          padding: '60px 24px',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          textAlign: 'center',
-          maxWidth: '680px',
-          margin: '0 auto',
-          width: '100%',
-        }}
-      >
-        <div
-          style={{
-            width: '64px',
-            height: '64px',
-            borderRadius: '50%',
-            background: '#f5f5f0',
-            border: '1px solid #dedfd8',
-            display: 'grid',
-            placeItems: 'center',
-            marginBottom: '20px',
-            color: current.accentColor,
-          }}
-        >
-          <IconComponent size={30} />
+      <div className="mx-auto flex w-full max-w-2xl flex-col items-center rounded-2xl border border-zinc-200/90 bg-white px-6 py-16 text-center shadow-2xs dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="mb-5 grid h-16 w-16 place-items-center rounded-2xl border border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-800/80 text-zinc-800 dark:text-zinc-200 shadow-2xs">
+          <IconComponent size={28} />
         </div>
 
-        <span
-          style={{
-            font: "11px 'DM Mono'",
-            letterSpacing: '0.12em',
-            textTransform: 'uppercase',
-            color: '#888d82',
-            marginBottom: '8px',
-          }}
-        >
+        <span className="mb-2 font-mono text-[11px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
           {current.codeLabel}
         </span>
 
-        <h1
-          style={{
-            fontSize: '32px',
-            margin: '0 0 10px',
-            letterSpacing: '-0.04em',
-            fontWeight: 600,
-          }}
-        >
+        <h1 className="mb-2.5 text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 sm:text-3xl">
           {current.title}
         </h1>
 
-        <p
-          style={{
-            fontSize: '15px',
-            color: '#555e50',
-            maxWidth: '480px',
-            margin: '0 0 16px',
-            lineHeight: 1.5,
-          }}
-        >
+        <p className="mb-4 max-w-lg text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed font-medium">
           {current.subtitle}
         </p>
 
-        <p
-          style={{
-            fontSize: '12px',
-            color: '#888d82',
-            maxWidth: '460px',
-            margin: '0 0 28px',
-            lineHeight: 1.6,
-          }}
-        >
+        <p className="mb-8 max-w-md text-xs text-zinc-400 dark:text-zinc-500 leading-relaxed">
           {current.description}
         </p>
 
-        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
+        <div className="flex flex-wrap justify-center gap-3">
           <button
             onClick={onNavigateHome}
-            className="primary"
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+            className="inline-flex items-center gap-2 rounded-lg bg-zinc-900 px-4 py-2 text-xs font-semibold text-white shadow-2xs hover:bg-zinc-800 active:scale-[0.98] transition-all dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
           >
             <ArrowLeft size={14} /> {current.actionText}
           </button>
           {current.secondaryText && (
             <button
               onClick={() => location.reload()}
-              className="secondary"
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+              className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-4 py-2 text-xs font-semibold text-zinc-700 shadow-2xs hover:bg-zinc-50 active:scale-[0.98] transition-all dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
             >
               <RotateCcw size={14} /> {current.secondaryText}
             </button>

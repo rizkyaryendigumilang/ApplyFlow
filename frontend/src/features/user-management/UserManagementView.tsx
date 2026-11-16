@@ -7,7 +7,6 @@ import {
   Check,
   X,
   Mail,
-  MoreVertical,
   Trash2,
 } from 'lucide-react';
 
@@ -24,8 +23,8 @@ export function UserManagementView() {
   const [members, setMembers] = useState<TeamMember[]>([
     {
       id: 'usr-1',
-      name: 'Rizky Alamsyah',
-      email: 'rizky@junction.local',
+      name: 'Rizky Aryendi Gumilang',
+      email: 'admin@applyflow.local',
       role: 'Admin',
       status: 'Active',
       joinedAt: '2026-01-10',
@@ -33,7 +32,7 @@ export function UserManagementView() {
     {
       id: 'usr-2',
       name: 'Mentor Budi (Career Coach)',
-      email: 'coach.budi@junction.local',
+      email: 'coach.budi@applyflow.local',
       role: 'Career Coach',
       status: 'Active',
       joinedAt: '2026-02-15',
@@ -50,245 +49,162 @@ export function UserManagementView() {
 
   const [activeTab, setActiveTab] = useState<'members' | 'roles' | 'security'>('members');
   const [isInviteOpen, setIsInviteOpen] = useState(false);
-  const [inviteEmail, setInviteEmail] = useState('');
   const [inviteName, setInviteName] = useState('');
+  const [inviteEmail, setInviteEmail] = useState('');
   const [inviteRole, setInviteRole] = useState<TeamMember['role']>('Career Coach');
   const [notice, setNotice] = useState<string | null>(null);
 
   const handleSendInvite = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inviteEmail.trim() || !inviteName.trim()) return;
+    if (!inviteName || !inviteEmail) return;
 
     const newMember: TeamMember = {
       id: `usr-${Date.now()}`,
-      name: inviteName.trim(),
-      email: inviteEmail.trim(),
+      name: inviteName,
+      email: inviteEmail,
       role: inviteRole,
       status: 'Invited',
       joinedAt: new Date().toISOString().slice(0, 10),
     };
 
     setMembers([...members, newMember]);
-    setInviteEmail('');
-    setInviteName('');
     setIsInviteOpen(false);
-    setNotice(`Undangan berhasil dikirim ke ${newMember.email} dengan peran ${newMember.role}.`);
+    setInviteName('');
+    setInviteEmail('');
+    setNotice(`Undangan kolaborasi berhasil dikirim ke ${inviteEmail}`);
+    setTimeout(() => setNotice(null), 5000);
   };
 
   const handleRemoveMember = (id: string) => {
-    setMembers(members.filter((m) => m.id !== id));
+    if (confirm('Hapus akses anggota tim ini?')) {
+      setMembers(members.filter((m) => m.id !== id));
+    }
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+    <div className="flex flex-col gap-6">
       {/* Header */}
-      <div
-        style={{
-          background: '#fbfbf8',
-          border: '1px solid #dedfd8',
-          padding: '24px',
-          display: 'flex',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '16px',
-        }}
-      >
+      <div className="flex flex-wrap items-center justify-between gap-4 p-6 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-[#18181b] shadow-2xs">
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span
-              style={{
-                background: '#f4f4f5',
-                color: '#18181b',
-                padding: '6px',
-                borderRadius: '6px',
-                display: 'inline-grid',
-                placeItems: 'center',
-              }}
-            >
-              <Users size={18} />
-            </span>
-            <h1 style={{ fontSize: '20px', margin: 0, fontWeight: 600 }}>
-              User Management & Access Control
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 flex items-center justify-center">
+              <Users size={17} />
+            </div>
+            <h1 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">
+              Manajemen Pengguna & Hak Akses
             </h1>
-            <span
-              style={{
-                font: "10px 'DM Mono'",
-                textTransform: 'uppercase',
-                background: '#e8eedd',
-                color: '#4e622b',
-                padding: '4px 8px',
-                borderRadius: '3px',
-                border: '1px solid #d4dec3',
-              }}
-            >
+            <span className="text-[10px] font-mono uppercase font-semibold px-2 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">
               Multi-Tenant RBAC
             </span>
           </div>
-          <p style={{ fontSize: '13px', color: '#777c73', margin: '8px 0 0' }}>
-            Manage team members, coach reviews, recruiter access permissions, and account delegations.
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1.5 leading-relaxed">
+            Kelola anggota tim, sesi review mentor karir, hak akses headhunter, dan izin delegasi akun.
           </p>
         </div>
 
         <button
           onClick={() => setIsInviteOpen(true)}
-          className="primary compact-btn"
-          style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+          className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium rounded-lg bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-100 active:scale-[0.98] transition-all cursor-pointer shadow-2xs"
         >
-          <UserPlus size={14} /> Invite Team Member
+          <UserPlus size={14} /> Undang Anggota Baru
         </button>
       </div>
 
       {notice && (
-        <div
-          style={{
-            padding: '12px 16px',
-            background: '#edf2e3',
-            border: '1px solid #cfddbe',
-            color: '#455928',
-            fontSize: '12px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
+        <div className="flex items-center justify-between px-4 py-2.5 rounded-lg border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 text-xs">
           <span>{notice}</span>
-          <button onClick={() => setNotice(null)} style={{ color: '#455928', fontWeight: 'bold' }}>
-            ✕
+          <button onClick={() => setNotice(null)} className="text-emerald-800 dark:text-emerald-300 hover:opacity-75 font-bold cursor-pointer">
+            <X size={14} />
           </button>
         </div>
       )}
 
       {/* Tabs */}
-      <div
-        style={{
-          display: 'flex',
-          gap: '24px',
-          borderBottom: '1px solid #dedfd8',
-          fontSize: '13px',
-        }}
-      >
+      <div className="flex gap-6 border-b border-zinc-200/80 dark:border-zinc-800 text-xs font-medium">
         <button
           onClick={() => setActiveTab('members')}
-          style={{
-            paddingBottom: '12px',
-            fontWeight: 600,
-            borderBottom: activeTab === 'members' ? '2px solid #18181b' : '2px solid transparent',
-            color: activeTab === 'members' ? '#09090b' : '#71717a',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-          }}
+          className={`pb-3 flex items-center gap-2 border-b-2 transition-colors cursor-pointer ${
+            activeTab === 'members'
+              ? 'border-zinc-900 text-zinc-900 dark:border-zinc-100 dark:text-zinc-100 font-semibold'
+              : 'border-transparent text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200'
+          }`}
         >
-          <Users size={15} /> Members ({members.length})
+          <Users size={14} /> Anggota Tim ({members.length})
         </button>
         <button
           onClick={() => setActiveTab('roles')}
-          style={{
-            paddingBottom: '12px',
-            fontWeight: 600,
-            borderBottom: activeTab === 'roles' ? '2px solid #18181b' : '2px solid transparent',
-            color: activeTab === 'roles' ? '#09090b' : '#71717a',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-          }}
+          className={`pb-3 flex items-center gap-2 border-b-2 transition-colors cursor-pointer ${
+            activeTab === 'roles'
+              ? 'border-zinc-900 text-zinc-900 dark:border-zinc-100 dark:text-zinc-100 font-semibold'
+              : 'border-transparent text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200'
+          }`}
         >
-          <Shield size={15} /> Roles & Permissions Matrix
+          <Shield size={14} /> Matriks Peran & Izin
         </button>
         <button
           onClick={() => setActiveTab('security')}
-          style={{
-            paddingBottom: '12px',
-            fontWeight: 600,
-            borderBottom: activeTab === 'security' ? '2px solid #18181b' : '2px solid transparent',
-            color: activeTab === 'security' ? '#09090b' : '#71717a',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-          }}
+          className={`pb-3 flex items-center gap-2 border-b-2 transition-colors cursor-pointer ${
+            activeTab === 'security'
+              ? 'border-zinc-900 text-zinc-900 dark:border-zinc-100 dark:text-zinc-100 font-semibold'
+              : 'border-transparent text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200'
+          }`}
         >
-          <Key size={15} /> Security & Active Sessions
+          <Key size={14} /> Keamanan & Sesi Aktif
         </button>
       </div>
 
       {/* Tab: Members */}
       {activeTab === 'members' && (
-        <div style={{ background: '#fbfbf8', border: '1px solid #dedfd8', overflow: 'hidden' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
+        <div className="rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-[#18181b] overflow-hidden shadow-2xs">
+          <table className="w-full text-left text-xs">
             <thead>
-              <tr style={{ background: '#f5f5f0', borderBottom: '1px solid #dedfd8' }}>
-                <th style={{ padding: '12px 16px', font: "10px 'DM Mono'", color: '#888d82', textTransform: 'uppercase' }}>User</th>
-                <th style={{ padding: '12px 16px', font: "10px 'DM Mono'", color: '#888d82', textTransform: 'uppercase' }}>Role</th>
-                <th style={{ padding: '12px 16px', font: "10px 'DM Mono'", color: '#888d82', textTransform: 'uppercase' }}>Status</th>
-                <th style={{ padding: '12px 16px', font: "10px 'DM Mono'", color: '#888d82', textTransform: 'uppercase' }}>Joined</th>
-                <th style={{ padding: '12px 16px', font: "10px 'DM Mono'", color: '#888d82', textTransform: 'uppercase', textAlign: 'right' }}>Actions</th>
+              <tr className="bg-zinc-50/70 dark:bg-zinc-900/50 border-b border-zinc-200/80 dark:border-zinc-800 text-[10px] font-mono uppercase text-zinc-400">
+                <th className="py-2.5 px-4 font-semibold">Pengguna</th>
+                <th className="py-2.5 px-4 font-semibold">Peran (Role)</th>
+                <th className="py-2.5 px-4 font-semibold">Status</th>
+                <th className="py-2.5 px-4 font-semibold">Bergabung</th>
+                <th className="py-2.5 px-4 font-semibold text-right">Aksi</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800/70">
               {members.map((member) => (
-                <tr key={member.id} style={{ borderBottom: '1px solid #ecece7' }}>
-                  <td style={{ padding: '14px 16px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <span
-                        style={{
-                          width: '32px',
-                          height: '32px',
-                          borderRadius: '50%',
-                          background: '#d9e5c1',
-                          color: '#455928',
-                          display: 'grid',
-                          placeItems: 'center',
-                          font: "12px 'DM Mono'",
-                          fontWeight: 600,
-                        }}
-                      >
+                <tr key={member.id} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-900/30 transition-colors">
+                  <td className="py-3 px-4">
+                    <div className="flex items-center gap-2.5">
+                      <span className="w-7 h-7 rounded-full bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-950 font-mono text-[10px] font-bold flex items-center justify-center shrink-0">
                         {member.name.slice(0, 2).toUpperCase()}
                       </span>
                       <div>
-                        <strong style={{ display: 'block', fontSize: '13px', color: '#202320' }}>{member.name}</strong>
-                        <span style={{ fontSize: '11px', color: '#888d82' }}>{member.email}</span>
+                        <strong className="text-zinc-900 dark:text-zinc-100 font-semibold block">{member.name}</strong>
+                        <span className="text-zinc-500 text-[11px] block">{member.email}</span>
                       </div>
                     </div>
                   </td>
-                  <td style={{ padding: '14px 16px' }}>
-                    <span
-                      style={{
-                        font: "10px 'DM Mono'",
-                        textTransform: 'uppercase',
-                        padding: '3px 8px',
-                        borderRadius: '3px',
-                        background: member.role === 'Admin' ? '#e2e7d7' : '#f0f2ea',
-                        color: member.role === 'Admin' ? '#202320' : '#555e50',
-                        fontWeight: 600,
-                      }}
-                    >
+                  <td className="py-3 px-4">
+                    <span className="inline-block px-2 py-0.5 rounded text-[10px] font-mono font-medium border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-850 text-zinc-700 dark:text-zinc-300">
                       {member.role}
                     </span>
                   </td>
-                  <td style={{ padding: '14px 16px' }}>
+                  <td className="py-3 px-4">
                     <span
-                      style={{
-                        font: "10px 'DM Mono'",
-                        padding: '3px 8px',
-                        borderRadius: '3px',
-                        background: member.status === 'Active' ? '#edf2e3' : '#fcf6e6',
-                        color: member.status === 'Active' ? '#455928' : '#8c6b1e',
-                      }}
+                      className={`inline-block px-2 py-0.5 rounded text-[10px] font-mono font-semibold border ${
+                        member.status === 'Active'
+                          ? 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800'
+                          : 'border-amber-200 bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800'
+                      }`}
                     >
                       {member.status}
                     </span>
                   </td>
-                  <td style={{ padding: '14px 16px', font: "11px 'DM Mono'", color: '#888d82' }}>
+                  <td className="py-3 px-4 font-mono text-zinc-500 text-[11px]">
                     {member.joinedAt}
                   </td>
-                  <td style={{ padding: '14px 16px', textAlign: 'right' }}>
+                  <td className="py-3 px-4 text-right">
                     {member.role !== 'Admin' && (
                       <button
                         onClick={() => handleRemoveMember(member.id)}
-                        className="secondary compact-btn"
-                        style={{ padding: '4px 8px', color: '#b43d3d' }}
-                        title="Remove member"
+                        className="p-1.5 rounded text-zinc-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors cursor-pointer"
+                        title="Hapus anggota"
                       >
                         <Trash2 size={13} />
                       </button>
@@ -303,101 +219,76 @@ export function UserManagementView() {
 
       {/* Tab: Roles Matrix */}
       {activeTab === 'roles' && (
-        <div style={{ background: '#fbfbf8', border: '1px solid #dedfd8', padding: '24px' }}>
-          <h3 style={{ fontSize: '16px', margin: '0 0 8px', fontWeight: 600 }}>
-            Role Permissions Matrix
+        <div className="p-6 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-[#18181b] shadow-2xs">
+          <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-1 tracking-tight">
+            Matriks Hak Akses & Kewenangan
           </h3>
-          <p className="muted" style={{ margin: '0 0 20px' }}>
-            Multi-tenant security guarantees that OAuth credentials remain isolated to the primary user, while coaches can review feedback notes.
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-4 leading-relaxed">
+            Keamanan multi-tenant memastikan kredensial OAuth terisolasi penuh, sementara coach hanya membaca catatan evaluasi.
           </p>
 
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px' }}>
-            <thead>
-              <tr style={{ borderBottom: '1px solid #dedfd8', background: '#f5f5f0' }}>
-                <th style={{ padding: '10px 14px', textAlign: 'left', font: "10px 'DM Mono'", color: '#888d82' }}>PERMISSION</th>
-                <th style={{ padding: '10px 14px', textAlign: 'center', font: "10px 'DM Mono'", color: '#888d82' }}>ADMIN</th>
-                <th style={{ padding: '10px 14px', textAlign: 'center', font: "10px 'DM Mono'", color: '#888d82' }}>CANDIDATE</th>
-                <th style={{ padding: '10px 14px', textAlign: 'center', font: "10px 'DM Mono'", color: '#888d82' }}>CAREER COACH</th>
-                <th style={{ padding: '10px 14px', textAlign: 'center', font: "10px 'DM Mono'", color: '#888d82' }}>RECRUITER</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[
-                ['View Applications & Stages', true, true, true, false],
-                ['Create & Advance Opportunities', true, true, false, false],
-                ['View Salary & THP Simulator', true, true, false, false],
-                ['Generate Follow-Up Letters', true, true, true, false],
-                ['Add Coach Feedback & Notes', true, true, true, false],
-                ['Manage OAuth & Email Connections', true, false, false, false],
-                ['Export Data & Backup Archives', true, true, false, false],
-              ].map(([perm, admin, cand, coach, rec], idx) => (
-                <tr key={idx} style={{ borderBottom: '1px solid #ecece7' }}>
-                  <td style={{ padding: '12px 14px', fontWeight: 500 }}>{perm as string}</td>
-                  <td style={{ padding: '12px 14px', textAlign: 'center' }}>{admin ? <Check size={16} style={{ color: '#10b981', margin: 'auto' }} /> : <span style={{ color: '#94a3b8' }}>-</span>}</td>
-                  <td style={{ padding: '12px 14px', textAlign: 'center' }}>{cand ? <Check size={16} style={{ color: '#10b981', margin: 'auto' }} /> : <span style={{ color: '#94a3b8' }}>-</span>}</td>
-                  <td style={{ padding: '12px 14px', textAlign: 'center' }}>{coach ? <Check size={16} style={{ color: '#10b981', margin: 'auto' }} /> : <span style={{ color: '#94a3b8' }}>-</span>}</td>
-                  <td style={{ padding: '12px 14px', textAlign: 'center' }}>{rec ? <Check size={16} style={{ color: '#10b981', margin: 'auto' }} /> : <span style={{ color: '#94a3b8' }}>-</span>}</td>
+          <div className="rounded-lg border border-zinc-200/70 dark:border-zinc-800/70 overflow-hidden">
+            <table className="w-full text-left text-xs">
+              <thead>
+                <tr className="bg-zinc-50/70 dark:bg-zinc-900/50 border-b border-zinc-200/80 dark:border-zinc-800 text-[10px] font-mono uppercase text-zinc-400">
+                  <th className="py-2 px-3.5 font-semibold">Kewenangan</th>
+                  <th className="py-2 px-3.5 font-semibold text-center">Admin</th>
+                  <th className="py-2 px-3.5 font-semibold text-center">Kandidat</th>
+                  <th className="py-2 px-3.5 font-semibold text-center">Coach Karir</th>
+                  <th className="py-2 px-3.5 font-semibold text-center">Rekruter</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800/70 text-xs">
+                {[
+                  { perm: 'Kelola Lamaran & Gaji', adm: true, cand: true, coach: false, rec: false },
+                  { perm: 'Lihat Ringkasan CV ATS', adm: true, cand: true, coach: true, rec: true },
+                  { perm: 'Beri Catatan & Feedback STAR', adm: true, cand: true, coach: true, rec: false },
+                  { perm: 'Akses Token OAuth Gmail', adm: true, cand: false, coach: false, rec: false },
+                  { perm: 'Tambah Rekomendasi Lead Baru', adm: true, cand: true, coach: false, rec: true },
+                  { perm: 'Ekspor Data CSV & Backup', adm: true, cand: true, coach: false, rec: false },
+                ].map((row) => (
+                  <tr key={row.perm} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-900/30">
+                    <td className="py-2.5 px-3.5 font-medium text-zinc-800 dark:text-zinc-200">{row.perm}</td>
+                    <td className="py-2.5 px-3.5 text-center">{row.adm ? <Check size={14} className="text-emerald-600 mx-auto" /> : <span className="text-zinc-300">-</span>}</td>
+                    <td className="py-2.5 px-3.5 text-center">{row.cand ? <Check size={14} className="text-emerald-600 mx-auto" /> : <span className="text-zinc-300">-</span>}</td>
+                    <td className="py-2.5 px-3.5 text-center">{row.coach ? <Check size={14} className="text-emerald-600 mx-auto" /> : <span className="text-zinc-300">-</span>}</td>
+                    <td className="py-2.5 px-3.5 text-center">{row.rec ? <Check size={14} className="text-emerald-600 mx-auto" /> : <span className="text-zinc-300">-</span>}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
       {/* Tab: Security */}
       {activeTab === 'security' && (
-        <div style={{ background: '#fbfbf8', border: '1px solid #dedfd8', padding: '24px' }}>
-          <h3 style={{ fontSize: '16px', margin: '0 0 8px', fontWeight: 600 }}>
-            Active Sessions & Device Activity
+        <div className="p-6 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-[#18181b] shadow-2xs">
+          <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-1 tracking-tight">
+            Sesi Login & Aktivitas Perangkat
           </h3>
-          <p className="muted" style={{ margin: '0 0 20px' }}>
-            Revoke unrecognized sessions or review logged IP addresses.
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-4 leading-relaxed">
+            Hentikan sesi login yang tidak dikenal dan periksa jejak alamat IP terdaftar.
           </p>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '14px',
-                background: '#f5f5f0',
-                border: '1px solid #dedfd8',
-              }}
-            >
+          <div className="flex flex-col gap-2.5">
+            <div className="flex items-center justify-between p-3.5 rounded-lg border border-zinc-200/70 dark:border-zinc-800/70 bg-zinc-50/50 dark:bg-zinc-900/30 text-xs">
               <div>
-                <strong style={{ fontSize: '13px', display: 'block' }}>Windows 11 · Chrome 133 (Current Session)</strong>
-                <span style={{ fontSize: '11px', color: '#888d82' }}>Jakarta, Indonesia · IP: 182.253.110.12 · Last active: Just now</span>
+                <strong className="text-zinc-900 dark:text-zinc-100 font-semibold block">Windows 11 · Chrome 133 (Sesi Saat Ini)</strong>
+                <span className="text-zinc-500 text-[11px] block mt-0.5">Jakarta, Indonesia · IP: 182.253.110.12 · Aktif: Sekarang</span>
               </div>
-              <span
-                style={{
-                  font: "10px 'DM Mono'",
-                  background: '#edf2e3',
-                  color: '#455928',
-                  padding: '3px 8px',
-                  borderRadius: '3px',
-                }}
-              >
-                Active Now
+              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800">
+                Sesi Ini
               </span>
             </div>
 
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '14px',
-                background: '#fff',
-                border: '1px solid #dedfd8',
-              }}
-            >
+            <div className="flex items-center justify-between p-3.5 rounded-lg border border-zinc-200/70 dark:border-zinc-800/70 bg-zinc-50/50 dark:bg-zinc-900/30 text-xs">
               <div>
-                <strong style={{ fontSize: '13px', display: 'block' }}>iOS 18.2 · Safari Mobile</strong>
-                <span style={{ fontSize: '11px', color: '#888d82' }}>Bandung, Indonesia · IP: 36.85.22.40 · Last active: 2 hours ago</span>
+                <strong className="text-zinc-900 dark:text-zinc-100 font-semibold block">iOS 18.2 · Safari Mobile</strong>
+                <span className="text-zinc-500 text-[11px] block mt-0.5">Bandung, Indonesia · IP: 36.85.22.40 · Aktif: 2 jam lalu</span>
               </div>
-              <button className="secondary compact-btn" style={{ fontSize: '11px', color: '#b43d3d' }}>
-                Revoke Session
+              <button className="px-2.5 py-1 text-[11px] font-medium rounded border border-rose-200 text-rose-700 hover:bg-rose-50 dark:border-rose-900/50 dark:text-rose-400 dark:hover:bg-rose-950/30 transition-colors cursor-pointer">
+                Hentikan Sesi
               </button>
             </div>
           </div>
@@ -406,74 +297,89 @@ export function UserManagementView() {
 
       {/* Invite Modal */}
       {isInviteOpen && (
-        <div className="overlay" role="dialog" aria-modal="true" aria-label="Invite Team Member">
-          <div className="modal" style={{ maxWidth: '480px', width: '100%' }}>
-            <div className="drawer-head">
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <Mail size={18} style={{ color: '#18181b' }} />
-                <span className="eyebrow" style={{ margin: 0 }}>INVITE TEAM MEMBER</span>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/40 backdrop-blur-xs animate-in fade-in duration-150" role="dialog" aria-modal="true">
+          <div className="w-full max-w-md rounded-2xl border border-zinc-200/90 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-6 shadow-2xl text-zinc-900 dark:text-zinc-100 flex flex-col gap-4">
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 flex items-center justify-center">
+                  <Mail size={13} />
+                </div>
+                <span className="text-[10px] font-mono uppercase tracking-wider font-semibold text-zinc-400">
+                  UNDANG REKAN KOLABORASI
+                </span>
               </div>
-              <button onClick={() => setIsInviteOpen(false)} aria-label="Close modal">
-                <X size={18} />
+              <button onClick={() => setIsInviteOpen(false)} aria-label="Tutup modal" className="p-1 rounded text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200">
+                <X size={16} />
               </button>
             </div>
 
-            <h2 style={{ fontSize: '22px', margin: '14px 0 6px' }}>Invite collaborator</h2>
-            <p className="muted" style={{ margin: '0 0 16px', lineHeight: 1.5 }}>
-              Send an invitation link with specified role permissions.
-            </p>
+            <div>
+              <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
+                Undang Rekan Tim atau Mentor
+              </h2>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 leading-relaxed">
+                Kirimkan tautan undangan dengan tingkat kewenangan peran yang ditentukan.
+              </p>
+            </div>
 
-            <form onSubmit={handleSendInvite} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            <form onSubmit={handleSendInvite} className="flex flex-col gap-3 text-xs">
               <div>
-                <label style={{ fontSize: '11px', textTransform: 'uppercase', color: '#888d82', display: 'block', marginBottom: '6px' }}>
-                  Full Name *
+                <label className="block text-[10px] font-mono uppercase font-semibold text-zinc-400 mb-1">
+                  Nama Lengkap *
                 </label>
                 <input
                   type="text"
                   value={inviteName}
                   onChange={(e) => setInviteName(e.target.value)}
-                  placeholder="e.g. Mentor Budi"
-                  style={{ width: '100%', padding: '9px 12px', border: '1px solid #dedfd8', background: '#fff', fontSize: '13px' }}
+                  placeholder="Contoh: Mentor Budi"
+                  className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-900 dark:focus:border-zinc-100"
                   required
                 />
               </div>
 
               <div>
-                <label style={{ fontSize: '11px', textTransform: 'uppercase', color: '#888d82', display: 'block', marginBottom: '6px' }}>
-                  Email Address *
+                <label className="block text-[10px] font-mono uppercase font-semibold text-zinc-400 mb-1">
+                  Alamat Email *
                 </label>
                 <input
                   type="email"
                   value={inviteEmail}
                   onChange={(e) => setInviteEmail(e.target.value)}
-                  placeholder="name@company.com"
-                  style={{ width: '100%', padding: '9px 12px', border: '1px solid #dedfd8', background: '#fff', fontSize: '13px' }}
+                  placeholder="nama@perusahaan.com"
+                  className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-900 dark:focus:border-zinc-100"
                   required
                 />
               </div>
 
               <div>
-                <label style={{ fontSize: '11px', textTransform: 'uppercase', color: '#888d82', display: 'block', marginBottom: '6px' }}>
-                  Assigned Role
+                <label className="block text-[10px] font-mono uppercase font-semibold text-zinc-400 mb-1">
+                  Peran yang Ditugaskan
                 </label>
                 <select
                   value={inviteRole}
                   onChange={(e) => setInviteRole(e.target.value as TeamMember['role'])}
-                  style={{ width: '100%', padding: '9px 12px', border: '1px solid #dedfd8', background: '#fff', fontSize: '13px' }}
+                  className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-900 dark:focus:border-zinc-100"
                 >
-                  <option value="Career Coach">Career Coach (Can review CVs and leave feedback)</option>
-                  <option value="Candidate">Candidate (Can view and edit applications)</option>
-                  <option value="Recruiter">Recruiter (Can submit job leads)</option>
-                  <option value="Admin">Admin (Full system access)</option>
+                  <option value="Career Coach">Career Coach (Dapat meninjau CV dan memberi feedback)</option>
+                  <option value="Candidate">Candidate (Dapat mengelola daftar lamaran)</option>
+                  <option value="Recruiter">Recruiter (Dapat mengirim rekomendasi lead)</option>
+                  <option value="Admin">Admin (Akses penuh sistem)</option>
                 </select>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '12px', paddingTop: '14px', borderTop: '1px solid #dedfd8' }}>
-                <button type="button" className="secondary compact-btn" onClick={() => setIsInviteOpen(false)}>
-                  Cancel
+              <div className="flex justify-end gap-2 pt-2 border-t border-zinc-100 dark:border-zinc-800 mt-2">
+                <button
+                  type="button"
+                  onClick={() => setIsInviteOpen(false)}
+                  className="px-3.5 py-1.5 text-xs font-medium rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 cursor-pointer"
+                >
+                  Batal
                 </button>
-                <button type="submit" className="primary compact-btn">
-                  Send Invitation
+                <button
+                  type="submit"
+                  className="px-4 py-1.5 text-xs font-medium rounded-lg bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-100 active:scale-[0.98] transition-all cursor-pointer"
+                >
+                  Kirim Undangan
                 </button>
               </div>
             </form>

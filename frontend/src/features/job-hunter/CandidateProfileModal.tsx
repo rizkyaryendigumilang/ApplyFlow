@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { X, Target, Save } from 'lucide-react';
 import type { CandidateProfile } from '../../lib/pb-types';
+import { idr } from '../../lib/utils';
 
 interface CandidateProfileModalProps {
   isOpen: boolean;
@@ -37,8 +38,8 @@ export function CandidateProfileModal({
       ? profile.languages
       : ''
   );
-  const [minSalary, setMinSalary] = useState(
-    profile.minSalary ? String(profile.minSalary) : '15000000'
+  const [minSalary, setMinSalary] = useState<number>(
+    profile.minSalary || 15000000
   );
   const [preferredModes, setPreferredModes] = useState<string[]>(profile.preferredModes);
   const [dealbreakers, setDealbreakers] = useState(profile.dealbreakers.join('\n'));
@@ -119,7 +120,7 @@ export function CandidateProfileModal({
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
             <div>
-              <label style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#888d82' }}>
+              <label style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#71717a' }}>
                 Full Name (Header ATS Resume)
               </label>
               <input
@@ -127,11 +128,11 @@ export function CandidateProfileModal({
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="e.g. Rizky Alamsyah"
-                style={{ width: '100%', padding: '10px 12px', border: '1px solid #dedfd8', background: '#fff', fontSize: '13px' }}
+                style={{ width: '100%', padding: '10px 12px', border: '1px solid #e4e4e7', background: '#fff', fontSize: '13px' }}
               />
             </div>
             <div>
-              <label style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#888d82' }}>
+              <label style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#71717a' }}>
                 Phone Number (WhatsApp)
               </label>
               <input
@@ -141,13 +142,13 @@ export function CandidateProfileModal({
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="+62 812-3456-7890"
-                style={{ width: '100%', padding: '10px 12px', border: '1px solid #dedfd8', background: '#fff', fontSize: '13px' }}
+                style={{ width: '100%', padding: '10px 12px', border: '1px solid #e4e4e7', background: '#fff', fontSize: '13px' }}
               />
             </div>
           </div>
 
           <div>
-            <label style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#888d82' }}>
+            <label style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#71717a' }}>
               Headline / Professional Focus
             </label>
             <input
@@ -155,13 +156,13 @@ export function CandidateProfileModal({
               value={headline}
               onChange={(e) => setHeadline(e.target.value)}
               placeholder="e.g. Senior DevOps / Platform Engineer (Kubernetes, AWS)"
-              style={{ width: '100%', padding: '10px 12px', border: '1px solid #dedfd8', background: '#fff', fontSize: '13px' }}
+              style={{ width: '100%', padding: '10px 12px', border: '1px solid #e4e4e7', background: '#fff', fontSize: '13px' }}
             />
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
             <div>
-              <label style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#888d82' }}>
+              <label style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#71717a' }}>
                 Target Roles (comma-separated)
               </label>
               <input
@@ -169,30 +170,39 @@ export function CandidateProfileModal({
                 value={targetRoles}
                 onChange={(e) => setTargetRoles(e.target.value)}
                 placeholder="DevOps Engineer, SRE, Platform"
-                style={{ width: '100%', padding: '10px 12px', border: '1px solid #dedfd8', background: '#fff', fontSize: '13px' }}
+                style={{ width: '100%', padding: '10px 12px', border: '1px solid #e4e4e7', background: '#fff', fontSize: '13px' }}
                 required
               />
             </div>
             <div>
-              <label style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#888d82' }}>
-                Minimum Base Salary (IDR / Month)
+              <label style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#71717a' }}>
+                Gaji Pokok Minimum Bulanan (IDR)
               </label>
-              <input
-                type="number"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                min="0"
-                step="500000"
-                value={minSalary}
-                onChange={(e) => setMinSalary(e.target.value.replace(/^0+(?=\d)/, ''))}
-                placeholder="15000000"
-                style={{ width: '100%', padding: '10px 12px', border: '1px solid #dedfd8', background: '#fff', fontSize: '13px' }}
-              />
+              <div style={{ position: 'relative', marginTop: '4px' }}>
+                <span style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', fontSize: '12px', fontWeight: 700, color: '#71717a', fontFamily: 'monospace', pointerEvents: 'none' }}>
+                  Rp
+                </span>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9.]*"
+                  value={minSalary > 0 ? minSalary.toLocaleString('id-ID') : ''}
+                  onChange={(e) => {
+                    const digits = e.target.value.replace(/\D/g, '').replace(/^0+(?=\d)/, '');
+                    setMinSalary(digits === '' ? 0 : parseInt(digits, 10));
+                  }}
+                  placeholder="15.000.000"
+                  style={{ width: '100%', padding: '10px 12px 10px 36px', border: '1px solid #e4e4e7', background: '#fff', fontSize: '13px', fontFamily: 'monospace', borderRadius: '6px' }}
+                />
+              </div>
+              <small style={{ fontSize: '11px', color: '#71717a', marginTop: '4px', display: 'block', fontFamily: 'monospace' }}>
+                Format: {idr(minSalary)} / bulan
+              </small>
             </div>
           </div>
 
           <div>
-            <label style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#888d82' }}>
+            <label style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#71717a' }}>
               Core Technical Skills (comma-separated)
             </label>
             <input
@@ -200,14 +210,14 @@ export function CandidateProfileModal({
               value={skills}
               onChange={(e) => setSkills(e.target.value)}
               placeholder="Kubernetes, Docker, Terraform, AWS, Go, CI/CD"
-              style={{ width: '100%', padding: '10px 12px', border: '1px solid #dedfd8', background: '#fff', fontSize: '13px' }}
+              style={{ width: '100%', padding: '10px 12px', border: '1px solid #e4e4e7', background: '#fff', fontSize: '13px' }}
               required
             />
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
             <div>
-              <label style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#888d82' }}>
+              <label style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#71717a' }}>
                 Certifications (comma-separated)
               </label>
               <input
@@ -215,11 +225,11 @@ export function CandidateProfileModal({
                 value={certifications}
                 onChange={(e) => setCertifications(e.target.value)}
                 placeholder="AWS Certified Solutions Architect, CKA, Terraform"
-                style={{ width: '100%', padding: '10px 12px', border: '1px solid #dedfd8', background: '#fff', fontSize: '13px' }}
+                style={{ width: '100%', padding: '10px 12px', border: '1px solid #e4e4e7', background: '#fff', fontSize: '13px' }}
               />
             </div>
             <div>
-              <label style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#888d82' }}>
+              <label style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#71717a' }}>
                 Languages (comma-separated)
               </label>
               <input
@@ -227,14 +237,14 @@ export function CandidateProfileModal({
                 value={languages}
                 onChange={(e) => setLanguages(e.target.value)}
                 placeholder="Indonesian (Native), English (Professional)"
-                style={{ width: '100%', padding: '10px 12px', border: '1px solid #dedfd8', background: '#fff', fontSize: '13px' }}
+                style={{ width: '100%', padding: '10px 12px', border: '1px solid #e4e4e7', background: '#fff', fontSize: '13px' }}
               />
             </div>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
             <div>
-              <label style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#888d82' }}>
+              <label style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#71717a' }}>
                 Location / City
               </label>
               <input
@@ -242,11 +252,11 @@ export function CandidateProfileModal({
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 placeholder="Jakarta, Indonesia"
-                style={{ width: '100%', padding: '10px 12px', border: '1px solid #dedfd8', background: '#fff', fontSize: '13px' }}
+                style={{ width: '100%', padding: '10px 12px', border: '1px solid #e4e4e7', background: '#fff', fontSize: '13px' }}
               />
             </div>
             <div>
-              <label style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#888d82' }}>
+              <label style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#71717a' }}>
                 LinkedIn Profile URL
               </label>
               <input
@@ -258,11 +268,11 @@ export function CandidateProfileModal({
                 value={linkedinUrl}
                 onChange={(e) => setLinkedinUrl(e.target.value)}
                 placeholder="https://linkedin.com/in/username"
-                style={{ width: '100%', padding: '10px 12px', border: '1px solid #dedfd8', background: '#fff', fontSize: '13px' }}
+                style={{ width: '100%', padding: '10px 12px', border: '1px solid #e4e4e7', background: '#fff', fontSize: '13px' }}
               />
             </div>
             <div>
-              <label style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#888d82' }}>
+              <label style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#71717a' }}>
                 GitHub Profile URL
               </label>
               <input
@@ -274,13 +284,13 @@ export function CandidateProfileModal({
                 value={githubUrl}
                 onChange={(e) => setGithubUrl(e.target.value)}
                 placeholder="https://github.com/username"
-                style={{ width: '100%', padding: '10px 12px', border: '1px solid #dedfd8', background: '#fff', fontSize: '13px' }}
+                style={{ width: '100%', padding: '10px 12px', border: '1px solid #e4e4e7', background: '#fff', fontSize: '13px' }}
               />
             </div>
           </div>
 
           <div>
-            <label style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#888d82' }}>
+            <label style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#71717a' }}>
               Work Mode Preferences
             </label>
             <div style={{ display: 'flex', gap: '16px', marginTop: '6px' }}>
@@ -299,7 +309,7 @@ export function CandidateProfileModal({
           </div>
 
           <div>
-            <label style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#888d82' }}>
+            <label style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#71717a' }}>
               Strict Dealbreakers (one per line)
             </label>
             <textarea
@@ -307,12 +317,12 @@ export function CandidateProfileModal({
               value={dealbreakers}
               onChange={(e) => setDealbreakers(e.target.value)}
               placeholder="Full on-site outside Jabodetabek&#10;Unpaid overtime / standby tanpa lembur&#10;Penalti kontrak & ijazah ditahan"
-              style={{ width: '100%', padding: '10px 12px', border: '1px solid #dedfd8', background: '#fff', fontSize: '12px', fontFamily: 'monospace' }}
+              style={{ width: '100%', padding: '10px 12px', border: '1px solid #e4e4e7', background: '#fff', fontSize: '12px', fontFamily: 'monospace' }}
             />
           </div>
 
           <div>
-            <label style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#888d82' }}>
+            <label style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#71717a' }}>
               Brief Experience Summary
             </label>
             <textarea
@@ -320,7 +330,7 @@ export function CandidateProfileModal({
               value={experienceSummary}
               onChange={(e) => setExperienceSummary(e.target.value)}
               placeholder="Ringkasan pengalaman teknis, migrasi cloud, atau sistem high-availability..."
-              style={{ width: '100%', padding: '10px 12px', border: '1px solid #dedfd8', background: '#fff', fontSize: '12px' }}
+              style={{ width: '100%', padding: '10px 12px', border: '1px solid #e4e4e7', background: '#fff', fontSize: '12px' }}
             />
           </div>
 

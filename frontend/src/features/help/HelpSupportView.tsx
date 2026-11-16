@@ -3,213 +3,158 @@ import {
   HelpCircle,
   Search,
   BookOpen,
-  MessageSquare,
-  Send,
   ChevronDown,
   ChevronUp,
-  FileText,
-  Star,
+  MessageSquare,
   CheckCircle2,
+  Send,
 } from 'lucide-react';
 
-interface FAQItem {
+interface FaqItem {
   id: string;
-  category: string;
+  category: 'tax' | 'sync' | 'architecture' | 'ai';
   question: string;
   answer: string;
 }
+
+const FAQS: FaqItem[] = [
+  {
+    id: 'faq-1',
+    category: 'tax',
+    question: 'Bagaimana Take Home Pay (THP) dan PPh 21 dihitung?',
+    answer:
+      'Perhitungan menggunakan tarif efektif rata-rata (TER) PP 58/2023 & PMK 168/2023. Kategori PTKP (TK/0, K/1, dsb.) menentukan tabel TER (A, B, atau C). Iuran BPJS Ketenagakerjaan (JHT 2%, JP 1%) dan BPJS Kesehatan (1%) dipotong sesuai batas upah maksimum resmi 2024.',
+  },
+  {
+    id: 'faq-2',
+    category: 'sync',
+    question: 'Bagaimana sistem keamanan membaca email JobStreet?',
+    answer:
+      'Sinkronisasi menggunakan OAuth 2.0 Gmail dengan izin read-only terbatas. Token akses dienkripsi menggunakan AES-256 pada database server dan dihapus dari respon HTTP ke browser demi privasi penuh.',
+  },
+  {
+    id: 'faq-3',
+    category: 'architecture',
+    question: 'Apakah status lamaran bisa turun atau mundur?',
+    answer:
+      'Tidak. State machine mengikuti hierarki monotonik (Wishlist < Applied < Viewed < Screening < Interview < Offer). Notifikasi atau email susulan tidak akan menurunkan progress lamaran yang sudah dicapai.',
+  },
+  {
+    id: 'faq-4',
+    category: 'ai',
+    question: 'Bagaimana AI Job Hunter menyaring dan menilai kecocokan lowongan?',
+    answer:
+      'AI Job Hunter melakukan eliminasi bertingkat: menyaring kriteria dealbreaker (misal: industri perjudian, tanpa BPJS, atau batas gaji di bawah minimum), kemudian menghitung fit score berbasis kata kunci keahlian dari CV master Anda.',
+  },
+];
 
 export function HelpSupportView() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [openFaq, setOpenFaq] = useState<string | null>('faq-1');
-  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+
+  // Support ticket form state
   const [ticketSubject, setTicketSubject] = useState('');
   const [ticketMessage, setTicketMessage] = useState('');
   const [ticketSubmitted, setTicketSubmitted] = useState(false);
 
-  const faqs: FAQItem[] = [
-    {
-      id: 'faq-1',
-      category: 'tax',
-      question: 'Bagaimana Junction menghitung PPh 21 TER 2024 dan Take Home Pay (THP)?',
-      answer:
-        'Kalkulator THP Junction menerapkan skema Tarif Efektif Rata-Rata (TER) resmi sesuai PMK 168/2023. Perhitungan mencakup batas maksimal upah dasar untuk BPJS Ketenagakerjaan (JP cap Rp 10.042.300) dan BPJS Kesehatan (cap Rp 12.000.000), serta memperhitungkan potongan biaya komuter riil (bensin/kos/tol).',
-    },
-    {
-      id: 'faq-2',
-      category: 'sync',
-      question: 'Bagaimana cara kerja sinkronisasi notifikasi JobStreet?',
-      answer:
-        'Junction membaca teks email notifikasi JobStreet tanpa mengekspos token OAuth (Zero-Token Leakage). Parser regex otomatis mendeteksi baris subjek ("PT X telah melihat lamaranmu") dan memperbarui status aplikasi ke "Viewed" dengan bukti riwayat.',
-    },
-    {
-      id: 'faq-3',
-      category: 'architecture',
-      question: 'Mengapa status aplikasi tidak bisa diturunkan (Monotonic State Safety)?',
-      answer:
-        'Berdasarkan ADR-0002, status kemajuan CRM bersifat monoton (Wishlist < Applied < Viewed < Screening < Interview < Offer). Hal ini mencegah email lama atau delayed webhooks secara tidak sengaja menurunkan status wawancara yang sudah aktif ke tahapan sebelumnya.',
-    },
-    {
-      id: 'faq-4',
-      category: 'ai',
-      question: 'Bagaimana Job Hunter AI menyaring lowongan kerja?',
-      answer:
-        'Job Hunter menggunakan deterministic two-tier triage. Pertama, lowongan diperiksa terhadap strict dealbreakers (misal: lokasi di luar preferensi, lembur tak berbayar). Jika lolos, algoritma menghitung weighted fit score berdasarkan grafik ekuivalensi teknologi.',
-    },
-    {
-      id: 'faq-5',
-      category: 'data',
-      question: 'Apakah data lamaran saya aman saat offline?',
-      answer:
-        'Ya. Ketika mode offline atau PocketBase belum tersambung, Junction secara otomatis menyimpan seluruh draf aplikasi, event, dan catatan ke enkripsi lokal browser (localStorage) dan menyinkronkan kembali saat online.',
-    },
-  ];
-
-  const filteredFaqs = faqs.filter((faq) => {
-    const matchesCategory = activeCategory === 'all' || faq.category === activeCategory;
-    const matchesSearch =
+  const filteredFaqs = FAQS.filter((faq) => {
+    const matchesCat = activeCategory === 'all' || faq.category === activeCategory;
+    const matchesQuery =
+      searchQuery.trim() === '' ||
       faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
       faq.answer.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
+    return matchesCat && matchesQuery;
   });
 
   const handleSendTicket = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!ticketSubject.trim() || !ticketMessage.trim()) return;
+    if (!ticketSubject || !ticketMessage) return;
     setTicketSubmitted(true);
     setTicketSubject('');
     setTicketMessage('');
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+    <div className="flex flex-col gap-6">
       {/* Header */}
-      <div
-        style={{
-          background: '#fbfbf8',
-          border: '1px solid #dedfd8',
-          padding: '24px',
-          display: 'flex',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '16px',
-        }}
-      >
+      <div className="flex flex-wrap items-center justify-between gap-4 p-6 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-[#18181b] shadow-2xs">
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span
-              style={{
-                background: '#f4f4f5',
-                color: '#18181b',
-                padding: '6px',
-                borderRadius: '6px',
-                display: 'inline-grid',
-                placeItems: 'center',
-              }}
-            >
-              <HelpCircle size={18} />
-            </span>
-            <h1 style={{ fontSize: '20px', margin: 0, fontWeight: 600 }}>Help & Knowledge Center</h1>
-            <span
-              style={{
-                font: "10px 'DM Mono'",
-                textTransform: 'uppercase',
-                background: '#e8eedd',
-                color: '#4e622b',
-                padding: '4px 8px',
-                borderRadius: '3px',
-                border: '1px solid #d4dec3',
-              }}
-            >
-              Support & Docs
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 flex items-center justify-center">
+              <HelpCircle size={17} />
+            </div>
+            <h1 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">
+              Pusat Bantuan & Panduan Sistem
+            </h1>
+            <span className="text-[10px] font-mono uppercase font-semibold px-2 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700">
+              Dokumentasi
             </span>
           </div>
-          <p style={{ fontSize: '13px', color: '#777c73', margin: '8px 0 0' }}>
-            Find answers regarding Indonesian tax calculations, JobStreet sync, negotiation playbooks, or contact engineering support.
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1.5 leading-relaxed">
+            Panduan kalkulasi pajak PPh 21, integrasi email rekrutmen, playbook negosiasi, dan dukungan teknis.
           </p>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', border: '1px solid #dedfd8', background: '#fff', padding: '6px 12px', width: '260px' }}>
-          <Search size={14} style={{ color: '#888d82' }} />
+        <div className="flex items-center gap-2 border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-900/40 rounded-lg px-3 py-1.5 w-full sm:w-64">
+          <Search size={14} className="text-zinc-400 shrink-0" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search questions or keywords..."
-            style={{ border: 0, outline: 0, fontSize: '12px', width: '100%', background: 'transparent' }}
+            placeholder="Cari pertanyaan atau topik..."
+            className="w-full text-xs bg-transparent border-0 outline-none text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400"
           />
         </div>
       </div>
 
       {/* Main Content Grid: FAQ & Playbooks */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '24px' }}>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left: Searchable FAQ */}
-        <div style={{ background: '#fbfbf8', border: '1px solid #dedfd8', padding: '24px' }}>
-          <h2 style={{ fontSize: '16px', fontWeight: 600, margin: '0 0 16px' }}>
-            Frequently Asked Questions
+        <div className="p-6 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-[#18181b] shadow-2xs">
+          <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-3.5 tracking-tight">
+            Pertanyaan yang Sering Diajukan (FAQ)
           </h2>
 
-          <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
+          <div className="flex gap-1.5 mb-4 flex-wrap">
             {[
-              { id: 'all', label: 'All' },
+              { id: 'all', label: 'Semua' },
               { id: 'tax', label: 'PPh 21 & THP' },
-              { id: 'sync', label: 'JobStreet & Sync' },
-              { id: 'architecture', label: 'State Safety' },
+              { id: 'sync', label: 'Sinkronisasi' },
+              { id: 'architecture', label: 'Keamanan Data' },
               { id: 'ai', label: 'AI Hunter' },
             ].map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.id)}
-                className={activeCategory === cat.id ? 'primary compact-btn' : 'secondary compact-btn'}
-                style={{ fontSize: '11px', padding: '4px 10px' }}
+                className={`px-2.5 py-1 text-xs font-medium rounded-md border transition-colors cursor-pointer ${
+                  activeCategory === cat.id
+                    ? 'border-zinc-900 bg-zinc-900 text-white dark:border-white dark:bg-white dark:text-zinc-950 font-semibold'
+                    : 'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-850'
+                }`}
               >
                 {cat.label}
               </button>
             ))}
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <div className="flex flex-col gap-2">
             {filteredFaqs.map((faq) => {
               const isOpen = openFaq === faq.id;
               return (
                 <div
                   key={faq.id}
-                  style={{
-                    background: '#fff',
-                    border: '1px solid #dedfd8',
-                    overflow: 'hidden',
-                  }}
+                  className="rounded-lg border border-zinc-200/70 dark:border-zinc-800/70 bg-white dark:bg-zinc-900/50 overflow-hidden"
                 >
                   <button
                     onClick={() => setOpenFaq(isOpen ? null : faq.id)}
-                    style={{
-                      width: '100%',
-                      padding: '14px',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      textAlign: 'left',
-                      fontWeight: 600,
-                      fontSize: '13px',
-                      color: '#202320',
-                    }}
+                    className="w-full p-3.5 flex justify-between items-center text-left text-xs font-medium text-zinc-800 dark:text-zinc-200 hover:bg-zinc-50/70 dark:hover:bg-zinc-850/50 transition-colors cursor-pointer"
                   >
                     <span>{faq.question}</span>
-                    {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                    {isOpen ? <ChevronUp size={15} className="text-zinc-400 shrink-0 ml-2" /> : <ChevronDown size={15} className="text-zinc-400 shrink-0 ml-2" />}
                   </button>
                   {isOpen && (
-                    <div
-                      style={{
-                        padding: '0 14px 14px',
-                        fontSize: '12px',
-                        lineHeight: 1.6,
-                        color: '#555e50',
-                        borderTop: '1px solid #f0f2eb',
-                        paddingTop: '10px',
-                      }}
-                    >
+                    <div className="px-3.5 pb-3.5 text-xs leading-relaxed text-zinc-600 dark:text-zinc-400 border-t border-zinc-100 dark:border-zinc-800/60 pt-2.5">
                       {faq.answer}
                     </div>
                   )}
@@ -220,95 +165,89 @@ export function HelpSupportView() {
         </div>
 
         {/* Right: Career Playbooks & Support Form */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <div className="flex flex-col gap-6">
           {/* Career Playbooks */}
-          <div style={{ background: '#fbfbf8', border: '1px solid #dedfd8', padding: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-              <h3 style={{ fontSize: '15px', margin: 0, fontWeight: 600 }}>
-                Career Negotiation Playbook
+          <div className="p-6 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-[#18181b] shadow-2xs">
+            <div className="flex items-center justify-between mb-3.5">
+              <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">
+                Playbook & Strategi Negosiasi
               </h3>
-              <BookOpen size={16} style={{ color: '#18181b' }} />
+              <BookOpen size={16} className="text-zinc-400" />
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <div style={{ padding: '12px', background: '#f5f5f0', border: '1px solid #dedfd8' }}>
-                <strong style={{ fontSize: '13px', display: 'block' }}>
-                  The 3-Email Anti-Ghosting Protocol
+            <div className="flex flex-col gap-3 text-xs">
+              <div className="p-3.5 rounded-lg border border-zinc-200/70 dark:border-zinc-800/70 bg-zinc-50/50 dark:bg-zinc-900/30">
+                <strong className="text-zinc-900 dark:text-zinc-100 font-semibold block">
+                  Protokol Follow-up 3 Tahap (Anti-Ghosting)
                 </strong>
-                <p style={{ fontSize: '11px', color: '#666b62', margin: '4px 0 0', lineHeight: 1.5 }}>
-                  Cadence: Day +4 soft value check, Day +9 project milestone update, Day +16 gracious break-up email that triggers immediate recruiter replies.
+                <p className="text-zinc-500 dark:text-zinc-400 text-[11px] mt-1 leading-relaxed">
+                  Jadwal pengingat bertahap: Hari +4 evaluasi singkat, Hari +9 pembaruan portofolio, Hari +16 penegasan kesiapan posisi.
                 </p>
               </div>
 
-              <div style={{ padding: '12px', background: '#f5f5f0', border: '1px solid #dedfd8' }}>
-                <strong style={{ fontSize: '13px', display: 'block' }}>
-                  Gross vs. Nett: Protecting Your Severance Rights
+              <div className="p-3.5 rounded-lg border border-zinc-200/70 dark:border-zinc-800/70 bg-zinc-50/50 dark:bg-zinc-900/30">
+                <strong className="text-zinc-900 dark:text-zinc-100 font-semibold block">
+                  Gross vs Nett: Perlindungan Hak JHT BPJS
                 </strong>
-                <p style={{ fontSize: '11px', color: '#666b62', margin: '4px 0 0', lineHeight: 1.5 }}>
-                  Why contracts written as "Gaji Bersih / Nett" often under-report your base salary in BPJS JHT calculations, and how to negotiate a statutory Gross equivalent.
+                <p className="text-zinc-500 dark:text-zinc-400 text-[11px] mt-1 leading-relaxed">
+                  Memahami alasan kontrak berstatus nett sering kali memotong basis pelaporan upah BPJS Ketenagakerjaan ke ambang minimum.
                 </p>
               </div>
             </div>
           </div>
 
           {/* Contact Support Ticket */}
-          <div style={{ background: '#fbfbf8', border: '1px solid #dedfd8', padding: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-              <h3 style={{ fontSize: '15px', margin: 0, fontWeight: 600 }}>
-                Contact Engineering Support
+          <div className="p-6 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-[#18181b] shadow-2xs">
+            <div className="flex items-center justify-between mb-3.5">
+              <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">
+                Hubungi Dukungan Rekayasa Sistem
               </h3>
-              <MessageSquare size={16} style={{ color: '#18181b' }} />
+              <MessageSquare size={16} className="text-zinc-400" />
             </div>
 
             {ticketSubmitted ? (
-              <div
-                style={{
-                  padding: '16px',
-                  background: '#edf2e3',
-                  border: '1px solid #cfddbe',
-                  color: '#455928',
-                  fontSize: '12px',
-                  textAlign: 'center',
-                }}
-              >
-                <CheckCircle2 size={24} style={{ margin: '0 auto 8px' }} />
-                <b>Support Ticket Received</b>
-                <p style={{ margin: '4px 0 0' }}>
-                  Our engineering team has received your ticket and will respond via email within 4 hours.
+              <div className="p-4 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs text-center space-y-1">
+                <CheckCircle2 size={22} className="mx-auto mb-1 text-emerald-600 dark:text-emerald-400" />
+                <b className="block">Tiket Dukungan Berhasil Dikirim</b>
+                <p className="text-[11px] text-emerald-700 dark:text-emerald-300/80">
+                  Tim teknis kami telah menerima pertanyaan Anda dan akan menindaklanjutinya dalam 4 jam kerja.
                 </p>
               </div>
             ) : (
-              <form onSubmit={handleSendTicket} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <form onSubmit={handleSendTicket} className="flex flex-col gap-3 text-xs">
                 <div>
-                  <label style={{ fontSize: '10px', textTransform: 'uppercase', color: '#888d82', display: 'block', marginBottom: '4px' }}>
-                    Subject *
+                  <label className="block text-[10px] font-mono uppercase font-semibold text-zinc-400 mb-1">
+                    Topik / Subjek
                   </label>
                   <input
                     type="text"
                     value={ticketSubject}
                     onChange={(e) => setTicketSubject(e.target.value)}
-                    placeholder="e.g. Question about PPh 21 TER Category B calculation"
-                    style={{ width: '100%', padding: '8px 10px', border: '1px solid #dedfd8', background: '#fff', fontSize: '12px' }}
+                    placeholder="Contoh: Pertanyaan seputar perhitungan BPJS atau PPh 21"
+                    className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-900 dark:focus:border-zinc-100"
                     required
                   />
                 </div>
 
                 <div>
-                  <label style={{ fontSize: '10px', textTransform: 'uppercase', color: '#888d82', display: 'block', marginBottom: '4px' }}>
-                    Issue or Question Details *
+                  <label className="block text-[10px] font-mono uppercase font-semibold text-zinc-400 mb-1">
+                    Rincian Pertanyaan
                   </label>
                   <textarea
                     rows={3}
                     value={ticketMessage}
                     onChange={(e) => setTicketMessage(e.target.value)}
-                    placeholder="Describe what you observed or what help you require..."
-                    style={{ width: '100%', padding: '8px 10px', border: '1px solid #dedfd8', background: '#fff', fontSize: '12px' }}
+                    placeholder="Tuliskan kendala atau pertanyaan yang ingin Anda konsultasikan..."
+                    className="w-full px-3 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-900 dark:focus:border-zinc-100 resize-none"
                     required
                   />
                 </div>
 
-                <button type="submit" className="primary compact-btn" style={{ justifyContent: 'center' }}>
-                  <Send size={13} /> Submit Ticket
+                <button
+                  type="submit"
+                  className="inline-flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-medium rounded-lg bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-100 active:scale-[0.98] transition-all cursor-pointer mt-1"
+                >
+                  <Send size={13} /> Kirim Tiket Dukungan
                 </button>
               </form>
             )}

@@ -981,7 +981,7 @@ export function SettingsView({
                         type="text"
                         inputMode="numeric"
                         pattern="[0-9.]*"
-                        value={profile.minSalary ? profile.minSalary.toLocaleString('id-ID') : '15.000.000'}
+                        value={typeof profile.minSalary === 'number' ? (profile.minSalary > 0 ? profile.minSalary.toLocaleString('id-ID') : '') : '15.000.000'}
                         onChange={e => {
                           const digits = e.target.value.replace(/\D/g, '').replace(/^0+(?=\d)/, '');
                           saveProfile({ minSalary: digits === '' ? 0 : parseInt(digits, 10) });

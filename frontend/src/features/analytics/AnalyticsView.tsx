@@ -3,12 +3,7 @@ import {
   BarChart3,
   TrendingUp,
   Download,
-  Calendar,
   FileText,
-  Clock,
-  PieChart,
-  ArrowUpRight,
-  Filter,
 } from 'lucide-react';
 import type { Application, CVArtifact } from '../../lib/pb-types';
 import { idr, responseRate } from '../../lib/utils';
@@ -20,8 +15,6 @@ export interface AnalyticsViewProps {
 }
 
 export function AnalyticsView({ applications, cvs }: AnalyticsViewProps) {
-  const [filterPeriod, setFilterPeriod] = useState<'all' | '30d' | '90d'>('all');
-
   // Stage conversion counts
   const stageCounts = useMemo(() => {
     return {
@@ -36,8 +29,7 @@ export function AnalyticsView({ applications, cvs }: AnalyticsViewProps) {
     };
   }, [applications]);
 
-  const totalSubmitted =
-    applications.length - stageCounts.Wishlist;
+  const totalSubmitted = applications.length - stageCounts.Wishlist;
 
   const responseCount =
     stageCounts.Viewed +
@@ -80,161 +72,119 @@ export function AnalyticsView({ applications, cvs }: AnalyticsViewProps) {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+    <div className="flex flex-col gap-6">
       {/* Header */}
-      <div
-        style={{
-          background: '#fbfbf8',
-          border: '1px solid #dedfd8',
-          padding: '24px',
-          display: 'flex',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '16px',
-        }}
-      >
+      <div className="flex flex-wrap items-center justify-between gap-4 p-6 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-[#18181b] shadow-2xs">
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span
-              style={{
-                background: '#f4f4f5',
-                color: '#18181b',
-                padding: '6px',
-                borderRadius: '6px',
-                display: 'inline-grid',
-                placeItems: 'center',
-              }}
-            >
-              <BarChart3 size={18} />
-            </span>
-            <h1 style={{ fontSize: '20px', margin: 0, fontWeight: 600 }}>
-              Analytics & Funnel Insights
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 flex items-center justify-center">
+              <BarChart3 size={17} />
+            </div>
+            <h1 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">
+              Statistik Funnel & Performa Peluang
             </h1>
-            <span
-              style={{
-                font: "10px 'DM Mono'",
-                textTransform: 'uppercase',
-                background: '#e8eedd',
-                color: '#4e622b',
-                padding: '4px 8px',
-                borderRadius: '3px',
-                border: '1px solid #d4dec3',
-              }}
-            >
-              Real-time Metrics
+            <span className="text-[10px] font-mono uppercase font-semibold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800">
+              Real-time
             </span>
           </div>
-          <p style={{ fontSize: '13px', color: '#777c73', margin: '8px 0 0' }}>
-            Full funnel progression, stage drop-offs, CV variant performance, and salary distribution.
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1.5 leading-relaxed">
+            Metrik konversi tiap tahapan, rasio respon rekruter, efektivitas CV, dan distribusi penawaran gaji.
           </p>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div className="flex items-center gap-2">
           <button
             onClick={handleExportCSV}
-            className="secondary compact-btn"
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 active:scale-[0.98] transition-all cursor-pointer"
           >
-            <Download size={13} /> Export CSV
+            <Download size={13} /> Ekspor CSV
           </button>
           <button
             onClick={handleExportJSON}
-            className="secondary compact-btn"
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 active:scale-[0.98] transition-all cursor-pointer"
           >
-            <Download size={13} /> Export JSON
+            <Download size={13} /> Ekspor JSON
           </button>
         </div>
       </div>
 
       {/* KPI Cards */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-          gap: '16px',
-        }}
-      >
-        <div style={{ background: '#fbfbf8', border: '1px solid #dedfd8', padding: '20px' }}>
-          <span style={{ font: "10px 'DM Mono'", color: '#888d82', textTransform: 'uppercase' }}>
-            Submitted Roles
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="p-5 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-[#18181b] shadow-2xs space-y-1">
+          <span className="text-[10px] font-mono uppercase font-semibold text-zinc-400 tracking-wider block">
+            Lamaran Terkirim
           </span>
-          <b style={{ display: 'block', font: "32px 'DM Mono'", margin: '6px 0 2px', color: '#202320' }}>
+          <b className="font-mono text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 block">
             {totalSubmitted}
           </b>
-          <small style={{ color: '#777c73', fontSize: '11px' }}>
-            Excluding {stageCounts.Wishlist} unapplied wishlists
-          </small>
+          <span className="text-[11px] text-zinc-500 block">
+            Di luar {stageCounts.Wishlist} posisi wishlist
+          </span>
         </div>
 
-        <div style={{ background: '#fbfbf8', border: '1px solid #dedfd8', padding: '20px' }}>
-          <span style={{ font: "10px 'DM Mono'", color: '#888d82', textTransform: 'uppercase' }}>
-            Employer Response Rate
+        <div className="p-5 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-[#18181b] shadow-2xs space-y-1">
+          <span className="text-[10px] font-mono uppercase font-semibold text-zinc-400 tracking-wider block">
+            Rasio Respon Rekruter
           </span>
-          <b style={{ display: 'block', font: "32px 'DM Mono'", margin: '6px 0 2px', color: '#09090b' }}>
+          <b className="font-mono text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 block">
             {overallResponseRate}%
           </b>
-          <small style={{ color: '#777c73', fontSize: '11px' }}>
-            {responseCount} roles viewed or contacted
-          </small>
+          <span className="text-[11px] text-zinc-500 block">
+            {responseCount} lamaran dilihat atau dikontak
+          </span>
         </div>
 
-        <div style={{ background: '#fbfbf8', border: '1px solid #dedfd8', padding: '20px' }}>
-          <span style={{ font: "10px 'DM Mono'", color: '#888d82', textTransform: 'uppercase' }}>
-            Interview Conversion
+        <div className="p-5 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-[#18181b] shadow-2xs space-y-1">
+          <span className="text-[10px] font-mono uppercase font-semibold text-zinc-400 tracking-wider block">
+            Konversi Wawancara
           </span>
-          <b style={{ display: 'block', font: "32px 'DM Mono'", margin: '6px 0 2px', color: '#202320' }}>
+          <b className="font-mono text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 block">
             {interviewConversionRate}%
           </b>
-          <small style={{ color: '#777c73', fontSize: '11px' }}>
-            {interviewCount} moved to technical/HR rounds
-          </small>
+          <span className="text-[11px] text-zinc-500 block">
+            {interviewCount} lolos ke tahap wawancara
+          </span>
         </div>
 
-        <div style={{ background: '#fbfbf8', border: '1px solid #dedfd8', padding: '20px' }}>
-          <span style={{ font: "10px 'DM Mono'", color: '#888d82', textTransform: 'uppercase' }}>
-            Offer Win Rate
+        <div className="p-5 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-[#18181b] shadow-2xs space-y-1">
+          <span className="text-[10px] font-mono uppercase font-semibold text-zinc-400 tracking-wider block">
+            Konversi Penawaran (Offer)
           </span>
-          <b style={{ display: 'block', font: "32px 'DM Mono'", margin: '6px 0 2px', color: '#09090b' }}>
+          <b className="font-mono text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 block">
             {offerConversionRate}%
           </b>
-          <small style={{ color: '#777c73', fontSize: '11px' }}>
-            {stageCounts.Offer} official offers received
-          </small>
+          <span className="text-[11px] text-zinc-500 block">
+            {stageCounts.Offer} penawaran resmi diterima
+          </span>
         </div>
       </div>
 
       {/* Visual Funnel Progression */}
-      <div style={{ background: '#fbfbf8', border: '1px solid #dedfd8', padding: '24px' }}>
-        <h3 style={{ fontSize: '16px', margin: '0 0 16px', fontWeight: 600 }}>
-          Recruitment Stage Conversion Funnel
+      <div className="p-6 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-[#18181b] shadow-2xs">
+        <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-4 tracking-tight">
+          Progresi Konversi Tiap Tahap Seleksi
         </h3>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div className="flex flex-col gap-3">
           {[
-            { label: 'Wishlist', count: stageCounts.Wishlist, color: '#a6aa9f', max: applications.length },
-            { label: 'Applied', count: stageCounts.Applied, color: '#d7b454', max: applications.length },
-            { label: 'Viewed', count: stageCounts.Viewed, color: '#0ea5e9', max: applications.length },
-            { label: 'Screening', count: stageCounts.Screening, color: '#98b768', max: applications.length },
-            { label: 'Interview', count: stageCounts.Interview, color: '#83a8b4', max: applications.length },
-            { label: 'Offer', count: stageCounts.Offer, color: '#bd8a67', max: applications.length },
+            { label: 'Wishlist', count: stageCounts.Wishlist, color: 'bg-zinc-400' },
+            { label: 'Applied', count: stageCounts.Applied, color: 'bg-blue-500' },
+            { label: 'Viewed', count: stageCounts.Viewed, color: 'bg-teal-500' },
+            { label: 'Screening', count: stageCounts.Screening, color: 'bg-purple-500' },
+            { label: 'Interview', count: stageCounts.Interview, color: 'bg-amber-500' },
+            { label: 'Offer', count: stageCounts.Offer, color: 'bg-emerald-500' },
           ].map((stage) => {
             const pct = applications.length > 0 ? Math.round((stage.count / applications.length) * 100) : 0;
             return (
-              <div key={stage.label} style={{ display: 'grid', gridTemplateColumns: '120px 1fr 80px', alignItems: 'center', gap: '16px' }}>
-                <span style={{ font: "12px 'DM Mono'", fontWeight: 500 }}>{stage.label}</span>
-                <div style={{ background: '#ecece7', height: '22px', borderRadius: '2px', overflow: 'hidden' }}>
+              <div key={stage.label} className="grid grid-cols-[100px_1fr_80px] items-center gap-4 text-xs font-mono">
+                <span className="text-zinc-700 dark:text-zinc-300 font-medium">{stage.label}</span>
+                <div className="h-5 rounded bg-zinc-100 dark:bg-zinc-800 overflow-hidden p-0.5">
                   <div
-                    style={{
-                      background: stage.color,
-                      height: '100%',
-                      width: `${Math.max(pct, 2)}%`,
-                      transition: 'width 0.4s ease',
-                    }}
+                    className={`h-full rounded-xs ${stage.color} transition-all duration-300`}
+                    style={{ width: `${Math.max(pct, stage.count > 0 ? 3 : 0)}%` }}
                   />
                 </div>
-                <span style={{ font: "12px 'DM Mono'", textAlign: 'right', color: '#555e50' }}>
+                <span className="text-right text-zinc-500 dark:text-zinc-400 tabular-nums">
                   {stage.count} ({pct}%)
                 </span>
               </div>
@@ -244,77 +194,72 @@ export function AnalyticsView({ applications, cvs }: AnalyticsViewProps) {
       </div>
 
       {/* Two Column Section: CV Variant Experiments + Salary Insights */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '20px' }}>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* CV Variant Performance */}
-        <div style={{ background: '#fbfbf8', border: '1px solid #dedfd8', padding: '24px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-            <h3 style={{ fontSize: '15px', margin: 0, fontWeight: 600 }}>
-              CV Story & Angle Performance
+        <div className="p-6 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-[#18181b] shadow-2xs">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">
+              Efektivitas Sudut Pandang & Varian CV
             </h3>
-            <FileText size={16} style={{ color: '#18181b' }} />
+            <FileText size={16} className="text-zinc-400" />
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div className="flex flex-col gap-2.5">
             {cvs.map((cv) => (
               <div
                 key={cv.id}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '12px',
-                  background: '#f5f5f0',
-                  border: '1px solid #dedfd8',
-                }}
+                className="flex items-center justify-between p-3.5 rounded-lg border border-zinc-200/70 dark:border-zinc-800/70 bg-zinc-50/50 dark:bg-zinc-900/30 text-xs"
               >
                 <div>
-                  <strong style={{ fontSize: '13px', display: 'block', color: '#202320' }}>{cv.label}</strong>
-                  <span style={{ fontSize: '11px', color: '#888d82' }}>
-                    {cv.version} · {cv.applications} sent
+                  <strong className="text-zinc-900 dark:text-zinc-100 font-medium block">
+                    {cv.label}
+                  </strong>
+                  <span className="text-[11px] text-zinc-500 block mt-0.5">
+                    {cv.version} · {cv.applications} lamaran dikirim
                   </span>
                 </div>
-                <div style={{ textAlign: 'right' }}>
-                  <b style={{ font: "16px 'DM Mono'", color: '#09090b', display: 'block' }}>
+                <div className="text-right">
+                  <b className="font-mono text-sm font-bold text-zinc-900 dark:text-zinc-100 block tabular-nums">
                     {responseRate(cv.responses, cv.applications)}%
                   </b>
-                  <small style={{ fontSize: '10px', color: '#888d82' }}>response</small>
+                  <span className="text-[10px] text-zinc-400 block font-mono">respon</span>
                 </div>
               </div>
             ))}
             {cvs.length === 0 && (
-              <p style={{ fontSize: '12px', color: '#888d82', fontStyle: 'italic' }}>
-                No CV variants registered.
+              <p className="text-xs text-zinc-400 italic py-2">
+                Belum ada varian CV yang terdaftar.
               </p>
             )}
           </div>
         </div>
 
         {/* Salary & Take-Home-Pay Insights */}
-        <div style={{ background: '#fbfbf8', border: '1px solid #dedfd8', padding: '24px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-            <h3 style={{ fontSize: '15px', margin: 0, fontWeight: 600 }}>
-              Compensation Distribution
+        <div className="p-6 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-[#18181b] shadow-2xs">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">
+              Distribusi Kompensasi & Gaji
             </h3>
-            <TrendingUp size={16} style={{ color: '#18181b' }} />
+            <TrendingUp size={16} className="text-zinc-400" />
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ecece7' }}>
-              <span style={{ fontSize: '12px', color: '#777c73' }}>Median Target Compensation</span>
-              <b style={{ font: "13px 'DM Mono'", color: '#202320' }}>{idr(salaryStats.median)} / mo</b>
+          <div className="divide-y divide-zinc-100 dark:divide-zinc-800/80 text-xs">
+            <div className="flex items-center justify-between py-2.5">
+              <span className="text-zinc-600 dark:text-zinc-400">Median Ekspektasi Gaji</span>
+              <b className="font-mono text-zinc-900 dark:text-zinc-100">{idr(salaryStats.median)} / bln</b>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ecece7' }}>
-              <span style={{ fontSize: '12px', color: '#777c73' }}>Average Listed Max Salary</span>
-              <b style={{ font: "13px 'DM Mono'", color: '#202320' }}>{idr(salaryStats.avg)} / mo</b>
+            <div className="flex items-center justify-between py-2.5">
+              <span className="text-zinc-600 dark:text-zinc-400">Rata-rata Batas Gaji Maksimal</span>
+              <b className="font-mono text-zinc-900 dark:text-zinc-100">{idr(salaryStats.avg)} / bln</b>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ecece7' }}>
-              <span style={{ fontSize: '12px', color: '#777c73' }}>Peak Opportunity Ceiling</span>
-              <b style={{ font: "13px 'DM Mono'", color: '#09090b' }}>{idr(salaryStats.max)} / mo</b>
+            <div className="flex items-center justify-between py-2.5">
+              <span className="text-zinc-600 dark:text-zinc-400">Puncak Peluang Tertinggi</span>
+              <b className="font-mono text-emerald-600 dark:text-emerald-400 font-bold">{idr(salaryStats.max)} / bln</b>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0' }}>
-              <span style={{ fontSize: '12px', color: '#777c73' }}>Total Roles with Disclosed Pay</span>
-              <b style={{ font: "13px 'DM Mono'", color: '#202320' }}>
-                {applications.filter((a) => a.salaryMax > 0).length} of {applications.length}
+            <div className="flex items-center justify-between py-2.5">
+              <span className="text-zinc-600 dark:text-zinc-400">Total Peluang dengan Informasi Gaji</span>
+              <b className="font-mono text-zinc-800 dark:text-zinc-200">
+                {applications.filter((a) => a.salaryMax > 0).length} dari {applications.length} posisi
               </b>
             </div>
           </div>

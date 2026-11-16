@@ -289,64 +289,109 @@ Thank you for your consideration, and I look forward to your thoughts.`;
                 <div className="form-row-compact">
                   <label>
                     Gaji Pokok (Base Salary)
-                    <input
-                      type="number"
-                      inputMode="numeric"
-                      pattern="[0-9]*"
-                      step={500000}
-                      value={pkg.baseSalary}
-                      onChange={e => updateOffer(pkg.id, { baseSalary: parseInt(e.target.value) || 0 })}
-                    />
+                    <div className="relative">
+                      <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-zinc-400 font-mono pointer-events-none">
+                        Rp
+                      </span>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        pattern="[0-9.]*"
+                        value={pkg.baseSalary > 0 ? pkg.baseSalary.toLocaleString('id-ID') : ''}
+                        onChange={e => {
+                          const digits = e.target.value.replace(/\D/g, '').replace(/^0+(?=\d)/, '');
+                          updateOffer(pkg.id, { baseSalary: digits === '' ? 0 : parseInt(digits, 10) });
+                        }}
+                        placeholder="25.000.000"
+                        className="!pl-8 font-mono"
+                      />
+                    </div>
                   </label>
                   <label>
                     Tunjangan Tetap
-                    <input
-                      type="number"
-                      inputMode="numeric"
-                      pattern="[0-9]*"
-                      step={250000}
-                      value={pkg.fixedAllowance}
-                      onChange={e => updateOffer(pkg.id, { fixedAllowance: parseInt(e.target.value) || 0 })}
-                    />
+                    <div className="relative">
+                      <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-zinc-400 font-mono pointer-events-none">
+                        Rp
+                      </span>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        pattern="[0-9.]*"
+                        value={pkg.fixedAllowance > 0 ? pkg.fixedAllowance.toLocaleString('id-ID') : ''}
+                        onChange={e => {
+                          const digits = e.target.value.replace(/\D/g, '').replace(/^0+(?=\d)/, '');
+                          updateOffer(pkg.id, { fixedAllowance: digits === '' ? 0 : parseInt(digits, 10) });
+                        }}
+                        placeholder="1.000.000"
+                        className="!pl-8 font-mono"
+                      />
+                    </div>
                   </label>
                 </div>
 
                 <div className="form-row-compact">
                   <label>
                     On-Call Standby Piket
-                    <input
-                      type="number"
-                      inputMode="numeric"
-                      pattern="[0-9]*"
-                      step={500000}
-                      value={pkg.onCallAllowance}
-                      onChange={e => updateOffer(pkg.id, { onCallAllowance: parseInt(e.target.value) || 0 })}
-                    />
+                    <div className="relative">
+                      <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-zinc-400 font-mono pointer-events-none">
+                        Rp
+                      </span>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        pattern="[0-9.]*"
+                        value={pkg.onCallAllowance > 0 ? pkg.onCallAllowance.toLocaleString('id-ID') : ''}
+                        onChange={e => {
+                          const digits = e.target.value.replace(/\D/g, '').replace(/^0+(?=\d)/, '');
+                          updateOffer(pkg.id, { onCallAllowance: digits === '' ? 0 : parseInt(digits, 10) });
+                        }}
+                        placeholder="2.000.000"
+                        className="!pl-8 font-mono"
+                      />
+                    </div>
                   </label>
                   <label>
                     Tunjangan WFH / Internet
-                    <input
-                      type="number"
-                      inputMode="numeric"
-                      pattern="[0-9]*"
-                      step={250000}
-                      value={pkg.wfhAllowance}
-                      onChange={e => updateOffer(pkg.id, { wfhAllowance: parseInt(e.target.value) || 0 })}
-                    />
+                    <div className="relative">
+                      <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-zinc-400 font-mono pointer-events-none">
+                        Rp
+                      </span>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        pattern="[0-9.]*"
+                        value={pkg.wfhAllowance > 0 ? pkg.wfhAllowance.toLocaleString('id-ID') : ''}
+                        onChange={e => {
+                          const digits = e.target.value.replace(/\D/g, '').replace(/^0+(?=\d)/, '');
+                          updateOffer(pkg.id, { wfhAllowance: digits === '' ? 0 : parseInt(digits, 10) });
+                        }}
+                        placeholder="1.500.000"
+                        className="!pl-8 font-mono"
+                      />
+                    </div>
                   </label>
                 </div>
 
                 <div className="form-row-compact">
                   <label>
                     Estimasi Biaya WFO / Komuter (Bln)
-                    <input
-                      type="number"
-                      inputMode="numeric"
-                      pattern="[0-9]*"
-                      step={100000}
-                      value={pkg.monthlyCommuteCost}
-                      onChange={e => updateOffer(pkg.id, { monthlyCommuteCost: parseInt(e.target.value) || 0 })}
-                    />
+                    <div className="relative">
+                      <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-zinc-400 font-mono pointer-events-none">
+                        Rp
+                      </span>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        pattern="[0-9.]*"
+                        value={pkg.monthlyCommuteCost > 0 ? pkg.monthlyCommuteCost.toLocaleString('id-ID') : ''}
+                        onChange={e => {
+                          const digits = e.target.value.replace(/\D/g, '').replace(/^0+(?=\d)/, '');
+                          updateOffer(pkg.id, { monthlyCommuteCost: digits === '' ? 0 : parseInt(digits, 10) });
+                        }}
+                        placeholder="500.000"
+                        className="!pl-8 font-mono"
+                      />
+                    </div>
                   </label>
                   <label>
                     Kategori PTKP Pajak
