@@ -18,6 +18,7 @@ import {
   Printer,
   Smartphone,
   Settings,
+  Plus,
 } from 'lucide-react';
 import type { Application, Status } from './lib/pb-types';
 import { useApplications } from './hooks/useApplications';
@@ -29,6 +30,10 @@ import { useJobLeads } from './hooks/useJobLeads';
 import { usePWAInstall } from './hooks/usePWAInstall';
 import { useI18n } from './lib/i18n';
 import { daysSince, responseRate } from './lib/utils';
+
+// Twenty CRM layout shell components
+import { TwentySidebar } from './components/layout/TwentySidebar';
+import { TwentyTopBar } from './components/layout/TwentyTopBar';
 
 // Core feature views
 import { JobSeekerCockpitView } from './features/cockpit/JobSeekerCockpitView';
@@ -136,6 +141,25 @@ function App() {
       return false;
     }
   });
+
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
+    try {
+      return localStorage.getItem('twenty_sidebar_collapsed') === 'true';
+    } catch {
+      return false;
+    }
+  });
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
+  const toggleSidebarCollapse = () => {
+    setIsSidebarCollapsed((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem('twenty_sidebar_collapsed', String(next));
+      } catch {}
+      return next;
+    });
+  };
 
   const { canInstall, promptInstall } = usePWAInstall();
 
@@ -322,773 +346,470 @@ function App() {
 
   const navigateTo = (mod: Module) => {
     setModule(mod);
+    setIsMobileSidebarOpen(false);
     setIsMoreMenuOpen(false);
   };
 
   return (
-    <div className="app-shell">
-      <header>
-        <div
-          className="brand"
-          onClick={() => navigateTo('pipeline')}
-          style={{ cursor: 'pointer' }}
-        >
-          <div className="brand-mark">J</div>
-          <div>
-            <strong>Junction</strong>
-            <span>Career CRM</span>
-          </div>
-        </div>
+    <div className="twenty-app-shell flex h-screen w-screen overflow-hidden bg-[#fafafa] dark:bg-[#0c0c0e] text-zinc-900 dark:text-zinc-100 font-sans antialiased">
+      {/* 1. Twenty CRM Collapsible Left Navigation Sidebar */}
+      <TwentySidebar
+        currentModule={module}
+        onNavigate={navigateTo}
+        counts={{
+          pipeline: applications.filter((a) => !['Rejected', 'Ghosted'].includes(a.status)).length,
+          jobHunter: jobLeads.filter((l) => l.matchScore >= 80).length,
+          inbox: applications.filter((a) => a.status === 'Viewed').length,
+          offers: applications.filter((a) => a.status === 'Offer').length,
+        }}
+        isCollapsed={isSidebarCollapsed}
+        onToggleCollapse={toggleSidebarCollapse}
+        isMobileOpen={isMobileSidebarOpen}
+        onCloseMobile={() => setIsMobileSidebarOpen(false)}
+        onOpenSearch={() => setIsGlobalSearchOpen(true)}
+        onOpenOnboarding={() => setIsOnboardingOpen(true)}
+        onOpenAddModal={() => setShowAdd(true)}
+        canInstallPWA={canInstall}
+        onInstallPWA={promptInstall}
+      />
 
-        <nav>
-          <button
-            className={module === 'cockpit' ? 'active font-semibold' : ''}
-            onClick={() => navigateTo('cockpit')}
-          >
-            {t('nav.cockpit')}
-          </button>
-          <button
-            className={module === 'pipeline' ? 'active' : ''}
-            onClick={() => navigateTo('pipeline')}
-          >
-            {t('nav.pipeline')}
-          </button>
-          <button
-            className={module === 'jobhunter' ? 'active' : ''}
-            onClick={() => navigateTo('jobhunter')}
-          >
-            {t('nav.jobhunter')}
-          </button>
-          <button
-            className={module === 'applyflow' ? 'active applyflow-nav' : 'applyflow-nav'}
-            onClick={() => navigateTo('applyflow')}
-          >
-            {t('nav.applyflow')}
-          </button>
-          <button
-            className={module === 'inbox' ? 'active' : ''}
-            onClick={() => navigateTo('inbox')}
-          >
-            {t('nav.inbox')}
-          </button>
-          <button
-            className={module === 'networking' ? 'active' : ''}
-            onClick={() => navigateTo('networking')}
-          >
-            {t('nav.networking')}
-          </button>
-          <button
-            className={module === 'linkedin' ? 'active' : ''}
-            onClick={() => navigateTo('linkedin')}
-          >
-            {t('nav.linkedin')}
-          </button>
-          <button
-            className={module === 'offers' ? 'active' : ''}
-            onClick={() => navigateTo('offers')}
-          >
-            {t('nav.offers')}
-          </button>
-          <button
-            className={module === 'ai-studio' ? 'active' : ''}
-            onClick={() => navigateTo('ai-studio')}
-          >
-            {t('nav.aistudio')}
-          </button>
-          <button
-            className={module === 'analytics' ? 'active' : ''}
-            onClick={() => navigateTo('analytics')}
-          >
-            {t('nav.analytics')}
-          </button>
+      {/* 2. Twenty CRM Main Canvas Area (TopBar + Content View) */}
+      <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden bg-[#fcfcfd] dark:bg-[#09090b]">
+        <TwentyTopBar
+          currentModule={module}
+          onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
+          view={view}
+          onViewChange={setView}
+          query={query}
+          onQueryChange={setQuery}
+          searchInputRef={searchInputRef}
+          onOpenAddModal={() => setShowAdd(true)}
+          onOpenNotifications={() => setIsNotificationOpen(true)}
+          onOpenShortcuts={() => setIsShortcutsOpen(true)}
+          unreadAlertsCount={unreadAlertsCount}
+          loading={loading}
+        />
 
-          {/* More SaaS enterprise sections dropdown */}
-          <div style={{ position: 'relative', height: '100%', display: 'flex', alignItems: 'center' }}>
-            <button
-              onClick={() => setIsMoreMenuOpen(!isMoreMenuOpen)}
-              className={['users', 'help', 'system'].includes(module) ? 'active' : ''}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}
-            >
-              {t('nav.enterprise')} <ChevronDown size={13} />
-            </button>
-
-            {isMoreMenuOpen && (
-              <div
-                className="absolute top-16 left-0 bg-[#fbfbf8]/95 backdrop-blur-md border border-[#dedfd8] rounded-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.8),0_12px_32px_rgba(32,35,32,0.1)] z-20 min-w-[200px] flex flex-col py-1.5 animate-in fade-in-50 zoom-in-95 duration-150"
-              >
-                <button
-                  onClick={() => navigateTo('users')}
-                  className={`mx-1.5 px-3.5 py-2 text-left text-xs rounded-xl transition-colors duration-150 ${
-                    module === 'users'
-                      ? 'bg-[#eef1e5] text-[#7d9850] font-semibold'
-                      : 'text-[#202320] hover:bg-[#f0eee8]'
-                  }`}
-                >
-                  {t('nav.users')}
-                </button>
-                <button
-                  onClick={() => navigateTo('help')}
-                  className={`mx-1.5 px-3.5 py-2 text-left text-xs rounded-xl transition-colors duration-150 ${
-                    module === 'help'
-                      ? 'bg-[#eef1e5] text-[#7d9850] font-semibold'
-                      : 'text-[#202320] hover:bg-[#f0eee8]'
-                  }`}
-                >
-                  {t('nav.help')}
-                </button>
-                <button
-                  onClick={() => navigateTo('system')}
-                  className={`mx-1.5 px-3.5 py-2 text-left text-xs rounded-xl transition-colors duration-150 ${
-                    module === 'system'
-                      ? 'bg-[#eef1e5] text-[#7d9850] font-semibold'
-                      : 'text-[#202320] hover:bg-[#f0eee8]'
-                  }`}
-                >
-                  {t('nav.system')}
-                </button>
-                <div className="h-px bg-[#dedfd8]/80 my-1 mx-2" />
-                <button
-                  onClick={() => {
-                    setIsOnboardingOpen(true);
-                    setIsMoreMenuOpen(false);
-                  }}
-                  className="mx-1.5 px-3.5 py-2 text-left text-xs rounded-xl text-[#202320] hover:bg-[#f0eee8] font-medium flex items-center gap-2 transition-colors duration-150"
-                >
-                  <Sparkles size={13} className="text-amber-600" /> {t('nav.onboardingTour')}
-                </button>
-                {canInstall && (
-                  <button
-                    onClick={() => {
-                      promptInstall();
-                      setIsMoreMenuOpen(false);
-                    }}
-                    className="mx-1.5 px-3.5 py-2 text-left text-xs rounded-xl text-[#202320] hover:bg-[#f0eee8] font-medium flex items-center gap-2 transition-colors duration-150"
-                  >
-                    <Smartphone size={13} className="text-emerald-600" /> Pasang Aplikasi (PWA)
+        <main className="twenty-main flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-5">
+          {/* Module View Routers */}
+          {module === 'cockpit' ? (
+            <JobSeekerCockpitView
+              applications={applications}
+              interviews={interviews}
+              jobLeads={jobLeads}
+              onNavigateTo={(m) => navigateTo(m as Module)}
+              onSelectApplication={(app) => {
+                setDrawer(app);
+                navigateTo('pipeline');
+              }}
+              onOpenAddModal={() => setShowAdd(true)}
+              onOpenStarCoach={(comp, pos) => setStarCoachParams({ company: comp, position: pos })}
+              onAddInterview={addInterview}
+              onPromoteLead={(lead) => {
+                setPromotedLead({
+                  title: lead.title,
+                  company: lead.company,
+                  rawJd: lead.rawJd,
+                  url: lead.url,
+                  source: lead.source,
+                });
+                navigateTo('applyflow');
+              }}
+            />
+          ) : module === 'linkedin' ? (
+            <LinkedInAssistantView applications={applications} />
+          ) : module === 'ai-studio' ? (
+            <AiAgentStudioView
+              onPromoteApplication={add}
+              onNavigateToPipeline={() => navigateTo('pipeline')}
+            />
+          ) : module === 'analytics' ? (
+            <AnalyticsView applications={applications} cvs={cvs} />
+          ) : module === 'users' ? (
+            <UserManagementView />
+          ) : module === 'help' ? (
+            <HelpSupportView />
+          ) : module === 'system' ? (
+            <SystemPagesView onNavigateHome={() => navigateTo('pipeline')} />
+          ) : module === 'offers' ? (
+            <OfferComparatorView applications={applications} />
+          ) : module === 'settings' ? (
+            <SettingsView
+              applications={applications}
+              cvs={cvs}
+              interviews={interviews}
+              onImportApplications={async (imported) => {
+                for (const item of imported) {
+                  await add({
+                    company: item.company || 'Unknown Company',
+                    position: item.position || 'Engineer',
+                    location: item.location || 'Jakarta',
+                    type: item.type || 'In-house',
+                    mode: item.mode || 'Hybrid',
+                    salaryMin: item.salaryMin || 0,
+                    salaryMax: item.salaryMax || 0,
+                    salaryPeriod: item.salaryPeriod || 'monthly',
+                    status: item.status || 'Wishlist',
+                    sentAt: item.sentAt || new Date().toISOString().slice(0, 10),
+                    cvVersion: item.cvVersion || 'CV-General-v1',
+                    link: item.link,
+                    contactName: item.contactName,
+                    contact: item.contact,
+                    jobSource: item.jobSource || 'Other',
+                    applicationMethod: item.applicationMethod || 'Manual',
+                    notes: item.notes,
+                  });
+                }
+              }}
+              onResetToSeed={() => {
+                localStorage.removeItem('career_crm_mock_applications');
+                location.reload();
+              }}
+              onNavigateTab={(tab) => navigateTo(tab as Module)}
+            />
+          ) : module === 'jobhunter' ? (
+            <JobHunterView
+              onPromoteToApplyFlow={(lead) => {
+                setPromotedLead(lead);
+                navigateTo('applyflow');
+              }}
+            />
+          ) : module === 'inbox' ? (
+            <RecruitmentInboxView
+              applications={applications}
+              addApplication={add}
+              onSelectApplication={(app) => {
+                setDrawer(app);
+                navigateTo('pipeline');
+              }}
+            />
+          ) : module === 'networking' ? (
+            <NetworkingView />
+          ) : module === 'applyflow' ? (
+            <ApplyFlowView cvs={cvs} add={add} initialData={promotedLead} />
+          ) : (
+            <div className="space-y-6">
+              {hasDataError && (
+                <div className="p-3 bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800 rounded-lg text-xs text-rose-700 dark:text-rose-300 flex items-center justify-between">
+                  <span>Gagal memuat beberapa data dari PocketBase.</span>
+                  <button onClick={() => location.reload()} className="font-semibold underline">
+                    Muat Ulang
                   </button>
+                </div>
+              )}
+
+              {/* 1. Twenty CRM KPI Summary Cards */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                {metrics.map(([label, value, detail], i) => (
+                  <div
+                    key={label}
+                    className="bg-white dark:bg-[#18181b] border border-zinc-200/90 dark:border-zinc-800/90 rounded-lg p-3.5 shadow-2xs hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors"
+                  >
+                    <div className="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400 mb-1.5">
+                      <span className="font-medium">{label}</span>
+                      {i === 0 ? (
+                        <Target size={14} className="text-zinc-400" />
+                      ) : i === 1 ? (
+                        <Activity size={14} className="text-zinc-400" />
+                      ) : i === 2 ? (
+                        <Eye size={14} className="text-zinc-400" />
+                      ) : (
+                        <Sparkles size={14} className="text-zinc-400" />
+                      )}
+                    </div>
+                    <div className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 font-mono">
+                      {value}
+                    </div>
+                    <div className="text-[11px] text-zinc-400 mt-1 truncate">{detail}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* 2. Main Workspace (Kanban Board or Table View) in Twenty CRM style */}
+              <div className="bg-white dark:bg-[#18181b] border border-zinc-200/90 dark:border-zinc-800/90 rounded-xl p-4 shadow-2xs">
+                {/* Header bar within workspace */}
+                <div className="flex items-center justify-between mb-4 pb-3 border-b border-zinc-100 dark:border-zinc-800/80">
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">
+                      Pipa Peluang Karier
+                    </h2>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-medium border border-zinc-200/60 dark:border-zinc-700/60">
+                      {filtered.length} posisi
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setShowAdd(true)}
+                      className="flex items-center gap-1.5 px-3 py-1 bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 rounded-md text-xs font-semibold shadow-2xs transition-all active:scale-[0.98]"
+                    >
+                      <Plus size={13} />
+                      <span>Tambah Posisi</span>
+                    </button>
+                  </div>
+                </div>
+
+                {loading ? (
+                  <div className="flex gap-3.5 overflow-x-auto pb-4 scrollbar-thin">
+                    {statuses.slice(0, 5).map((status) => (
+                      <div
+                        key={status}
+                        className="w-[280px] min-w-[280px] flex-shrink-0 bg-zinc-50/70 dark:bg-zinc-900/30 rounded-xl border border-zinc-200/60 dark:border-zinc-800/60 p-3"
+                      >
+                        <div className="flex items-center gap-2 mb-3">
+                          <span className={`dot ${status.toLowerCase()}`} />
+                          <span className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">
+                            {status}
+                          </span>
+                        </div>
+                        <div className="space-y-2">
+                          <div className="h-24 bg-white dark:bg-zinc-800 rounded-lg animate-pulse" />
+                          <div className="h-24 bg-white dark:bg-zinc-800 rounded-lg animate-pulse" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : filtered.length === 0 && query ? (
+                  <EmptyState
+                    icon={Search}
+                    title={`Tidak Ditemukan Hasil untuk "${query}"`}
+                    description="Tidak ada peluang karier yang cocok dengan kata kunci pencarian. Coba ubah ejaan atau bersihkan filter."
+                    actionLabel="Reset Filter Pencarian"
+                    onAction={() => setQuery('')}
+                  />
+                ) : applications.length === 0 ? (
+                  <EmptyState
+                    icon={Target}
+                    title="Papan Pipeline Lamaran Masih Kosong"
+                    description="Mulai langkah pencarian karir terstruktur Anda. Catat peluang kerja pertama untuk memantau status seleksi, follow-up, dan penawaran gaji."
+                    actionLabel="+ Tambah Peluang Pertama (N)"
+                    onAction={() => setShowAdd(true)}
+                  />
+                ) : view === 'board' ? (
+                  <div className="flex gap-3.5 overflow-x-auto pb-4 scrollbar-thin">
+                    {statuses.slice(0, 6).map((status) => {
+                      const colApps = filtered.filter((a) => a.status === status);
+                      return (
+                        <div
+                          key={status}
+                          className="w-[280px] min-w-[280px] flex-shrink-0 flex flex-col bg-zinc-50/70 dark:bg-zinc-900/30 rounded-xl border border-zinc-200/60 dark:border-zinc-800/60 p-2.5 min-h-[480px]"
+                        >
+                          <div className="flex items-center justify-between px-1 pb-2.5 mb-2 border-b border-zinc-200/60 dark:border-zinc-800/60 select-none">
+                            <div className="flex items-center gap-2">
+                              <span className={`dot ${status.toLowerCase()}`} />
+                              <span className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">
+                                {status}
+                              </span>
+                              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-zinc-200/60 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-medium border border-zinc-200/50 dark:border-zinc-700/50">
+                                {colApps.length}
+                              </span>
+                            </div>
+
+                            <button
+                              onClick={() => setShowAdd(true)}
+                              className="text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 p-1 rounded hover:bg-zinc-200/60 dark:hover:bg-zinc-800 transition-colors"
+                              title={`Tambah lamaran di tahap ${status}`}
+                            >
+                              <Plus size={13} />
+                            </button>
+                          </div>
+
+                          <div className="flex-1 flex flex-col gap-2.5">
+                            {colApps.map((a) => (
+                              <ApplicationCard
+                                key={a.id}
+                                application={a}
+                                onClick={() => setDrawer(a)}
+                              />
+                            ))}
+
+                            {colApps.length === 0 && (
+                              <div className="h-24 border border-dashed border-zinc-200 dark:border-zinc-800 rounded-lg flex flex-col items-center justify-center p-3 text-center text-[11px] text-zinc-400">
+                                <span>Belum ada lamaran</span>
+                                <button
+                                  onClick={() => setShowAdd(true)}
+                                  className="mt-1 text-[10px] font-medium text-zinc-600 dark:text-zinc-300 hover:underline flex items-center gap-1"
+                                >
+                                  <Plus size={10} /> Tambah
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <JobTable
+                    applications={filtered}
+                    onSelectApplication={setDrawer}
+                    onResetFilters={() => setQuery('')}
+                  />
                 )}
               </div>
-            )}
-          </div>
 
-          <button
-            className={module === 'settings' ? 'active' : ''}
-            onClick={() => navigateTo('settings')}
-          >
-            {t('nav.settings')}
-          </button>
-        </nav>
-
-        <div className="header-actions">
-          {/* Global Search & Discovery Trigger (Cmd+K) */}
-          <button
-            type="button"
-            onClick={() => setIsGlobalSearchOpen(true)}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              padding: '5px 10px',
-              borderRadius: '8px',
-              background: '#f0f2ea',
-              border: '1px solid #dcdfd5',
-              color: '#555d4e',
-              fontSize: '12px',
-              cursor: 'pointer',
-            }}
-            title="Pencarian Global (Ctrl+K / Cmd+K)"
-            aria-label="Pencarian Global"
-          >
-            <Search size={14} />
-            <span style={{ fontSize: '11px', fontWeight: 500 }}>{t('nav.search')}</span>
-            <kbd
-              style={{
-                fontFamily: 'monospace',
-                fontSize: '10px',
-                background: '#fff',
-                border: '1px solid #d5d8cd',
-                borderRadius: '4px',
-                padding: '1px 4px',
-                color: '#777e70',
-              }}
-            >
-              ⌘K
-            </kbd>
-          </button>
-
-          {/* Notification Center Trigger */}
-          <button
-            onClick={() => setIsNotificationOpen(true)}
-            style={{
-              position: 'relative',
-              display: 'grid',
-              placeItems: 'center',
-              width: '32px',
-              height: '32px',
-              borderRadius: '50%',
-              background: '#f0f2ea',
-              color: '#4e5548',
-            }}
-            aria-label="Open notifications"
-          >
-            <Bell size={16} />
-            {unreadAlertsCount > 0 && (
-              <span
-                style={{
-                  position: 'absolute',
-                  top: '-2px',
-                  right: '-2px',
-                  width: '16px',
-                  height: '16px',
-                  borderRadius: '50%',
-                  background: '#e27357',
-                  color: '#fff',
-                  font: "bold 9px 'DM Mono'",
-                  display: 'grid',
-                  placeItems: 'center',
-                }}
-              >
-                {unreadAlertsCount}
-              </span>
-            )}
-          </button>
-
-          {/* Keyboard Shortcuts Trigger */}
-          <button
-            type="button"
-            onClick={() => setIsShortcutsOpen(true)}
-            style={{
-              display: 'grid',
-              placeItems: 'center',
-              width: '32px',
-              height: '32px',
-              borderRadius: '50%',
-              background: '#f0f2ea',
-              color: '#4e5548',
-              border: 'none',
-              cursor: 'pointer',
-            }}
-            title="Pintasan Keyboard (?)"
-            aria-label="Pintasan Keyboard"
-          >
-            <Command size={14} />
-          </button>
-
-          <span className="sync">
-            <i /> {loading ? 'Syncing…' : 'PocketBase ready'}
-          </span>
-
-          {/* Bilingual Switcher */}
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              background: '#eef1e5',
-              padding: '2px',
-              borderRadius: '8px',
-              border: '1px solid #dedfd8',
-              fontSize: '11px',
-              fontWeight: 600,
-            }}
-          >
-            <button
-              type="button"
-              onClick={() => setLocale('id')}
-              style={{
-                padding: '2px 8px',
-                borderRadius: '6px',
-                border: 'none',
-                background: locale === 'id' ? '#7d9850' : 'transparent',
-                color: locale === 'id' ? '#fff' : '#494f45',
-                cursor: 'pointer',
-                fontWeight: locale === 'id' ? 700 : 500,
-              }}
-            >
-              ID
-            </button>
-            <button
-              type="button"
-              onClick={() => setLocale('en')}
-              style={{
-                padding: '2px 8px',
-                borderRadius: '6px',
-                border: 'none',
-                background: locale === 'en' ? '#7d9850' : 'transparent',
-                color: locale === 'en' ? '#fff' : '#494f45',
-                cursor: 'pointer',
-                fontWeight: locale === 'en' ? 700 : 500,
-              }}
-            >
-              EN
-            </button>
-          </div>
-
-          <button
-            className="avatar"
-            aria-label="Open account settings"
-            onClick={() => navigateTo('settings')}
-          >
-            RA
-          </button>
-        </div>
-      </header>
-
-      {/* Module View Routers */}
-      {module === 'cockpit' ? (
-        <main>
-          <JobSeekerCockpitView
-            applications={applications}
-            interviews={interviews}
-            jobLeads={jobLeads}
-            onNavigateTo={(m) => navigateTo(m as Module)}
-            onSelectApplication={(app) => {
-              setDrawer(app);
-              navigateTo('pipeline');
-            }}
-            onOpenAddModal={() => setShowAdd(true)}
-            onOpenStarCoach={(comp, pos) => setStarCoachParams({ company: comp, position: pos })}
-            onAddInterview={addInterview}
-            onPromoteLead={(lead) => {
-              setPromotedLead({
-                title: lead.title,
-                company: lead.company,
-                rawJd: lead.rawJd,
-                url: lead.url,
-                source: lead.source,
-              });
-              navigateTo('applyflow');
-            }}
-          />
-        </main>
-      ) : module === 'linkedin' ? (
-        <main>
-          <LinkedInAssistantView applications={applications} />
-        </main>
-      ) : module === 'ai-studio' ? (
-        <main>
-          <AiAgentStudioView
-            onPromoteApplication={add}
-            onNavigateToPipeline={() => navigateTo('pipeline')}
-          />
-        </main>
-      ) : module === 'analytics' ? (
-        <main>
-          <AnalyticsView applications={applications} cvs={cvs} />
-        </main>
-      ) : module === 'users' ? (
-        <main>
-          <UserManagementView />
-        </main>
-      ) : module === 'help' ? (
-        <main>
-          <HelpSupportView />
-        </main>
-      ) : module === 'system' ? (
-        <main>
-          <SystemPagesView onNavigateHome={() => navigateTo('pipeline')} />
-        </main>
-      ) : module === 'offers' ? (
-        <main>
-          <OfferComparatorView applications={applications} />
-        </main>
-      ) : module === 'settings' ? (
-        <main>
-          <SettingsView
-            applications={applications}
-            cvs={cvs}
-            interviews={interviews}
-            onImportApplications={async (imported) => {
-              for (const item of imported) {
-                await add({
-                  company: item.company || 'Unknown Company',
-                  position: item.position || 'Engineer',
-                  location: item.location || 'Jakarta',
-                  type: item.type || 'In-house',
-                  mode: item.mode || 'Hybrid',
-                  salaryMin: item.salaryMin || 0,
-                  salaryMax: item.salaryMax || 0,
-                  salaryPeriod: item.salaryPeriod || 'monthly',
-                  status: item.status || 'Wishlist',
-                  sentAt: item.sentAt || new Date().toISOString().slice(0, 10),
-                  cvVersion: item.cvVersion || 'CV-General-v1',
-                  link: item.link,
-                  contactName: item.contactName,
-                  contact: item.contact,
-                  jobSource: item.jobSource || 'Other',
-                  applicationMethod: item.applicationMethod || 'Manual',
-                  notes: item.notes,
-                });
-              }
-            }}
-            onResetToSeed={() => {
-              localStorage.removeItem('career_crm_mock_applications');
-              location.reload();
-            }}
-            onNavigateTab={(tab) => navigateTo(tab as Module)}
-          />
-        </main>
-      ) : module === 'jobhunter' ? (
-        <main>
-          <JobHunterView
-            onPromoteToApplyFlow={(lead) => {
-              setPromotedLead(lead);
-              navigateTo('applyflow');
-            }}
-          />
-        </main>
-      ) : module === 'inbox' ? (
-        <main>
-          <RecruitmentInboxView
-            applications={applications}
-            addApplication={add}
-            onSelectApplication={(app) => {
-              setDrawer(app);
-              navigateTo('pipeline');
-            }}
-          />
-        </main>
-      ) : module === 'networking' ? (
-        <main>
-          <NetworkingView />
-        </main>
-      ) : module === 'applyflow' ? (
-        <main>
-          <ApplyFlowView cvs={cvs} add={add} initialData={promotedLead} />
-        </main>
-      ) : (
-        <main>
-          <section className="hero">
-            <div>
-              <p className="eyebrow">{dateLabel}</p>
-              <h1>
-                Keep the right
-                <br />
-                <em>doors open.</em>
-              </h1>
-              <p className="lede">
-                A focused view of every opportunity, conversation, and next move in your career.
-              </p>
-            </div>
-            <button className="primary" onClick={() => setShowAdd(true)}>
-              <CirclePlus size={18} /> Add opportunity
-            </button>
-          </section>
-
-          {hasDataError && (
-            <div className="data-error">
-              Could not load all your data.{' '}
-              <button onClick={() => location.reload()}>Retry</button>
-            </div>
-          )}
-
-          <section className="metrics">
-            {metrics.map(([label, value, detail], i) => (
-              <div className="metric" key={label}>
-                <div className="metric-top">
-                  <span>{label}</span>
-                  {i === 0 ? (
-                    <Target size={16} />
-                  ) : i === 1 ? (
-                    <Activity size={16} />
-                  ) : i === 2 ? (
-                    <Eye size={16} />
-                  ) : (
-                    <Sparkles size={16} />
-                  )}
-                </div>
-                <b>{value}</b>
-                <small>{detail}</small>
-              </div>
-            ))}
-          </section>
-
-          <section className="workspace">
-            <div className="toolbar">
-              <div className="section-title">
-                <h2>Opportunity pipeline</h2>
-                <span>{filtered.length} roles</span>
-              </div>
-              <div className="tools">
-                <div className="search">
-                  <Search size={16} />
-                  <input
-                    ref={searchInputRef}
-                    placeholder="Search company, role, location (/ to focus)"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                  />
-                </div>
-                <div className="segmented">
-                  <button
-                    className={view === 'board' ? 'selected' : ''}
-                    onClick={() => setView('board')}
-                    aria-label="Board view"
-                  >
-                    <LayoutGrid size={16} />
-                  </button>
-                  <button
-                    className={view === 'table' ? 'selected' : ''}
-                    onClick={() => setView('table')}
-                    aria-label="Table view"
-                  >
-                    <List size={16} />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {loading ? (
-              <div className="board">
-                {statuses.slice(0, 5).map((status) => (
-                  <div className="column" key={status}>
-                    <div className="column-head">
-                      <span className={`dot ${status.toLowerCase()}`} />
-                      <h3>{status}</h3>
+              {/* 3. Twenty CRM Bento Insights & Follow-up Section */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+                {/* Bento Card 1: Follow-Up Radar */}
+                <div className="bg-white dark:bg-[#18181b] border border-zinc-200/90 dark:border-zinc-800/90 rounded-lg p-4 shadow-2xs flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between text-xs text-zinc-400 mb-2">
+                      <span className="font-semibold text-[10px] uppercase tracking-wider text-zinc-500">
+                        Follow-up Radar
+                      </span>
+                      <Activity size={13} className="text-emerald-500" />
                     </div>
-                    <div className="cards">
-                      <div className="skeleton-card">
-                        <div className="skeleton skeleton-text" style={{ width: '45%' }} />
-                        <div className="skeleton skeleton-text" style={{ width: '85%', height: '16px' }} />
-                        <div className="skeleton skeleton-text" style={{ width: '60%' }} />
-                      </div>
-                      <div className="skeleton-card">
-                        <div className="skeleton skeleton-text" style={{ width: '35%' }} />
-                        <div className="skeleton skeleton-text" style={{ width: '75%', height: '16px' }} />
-                      </div>
-                    </div>
+                    <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-2">
+                      Agenda & Anti-Ghosting
+                    </h3>
                   </div>
-                ))}
-              </div>
-            ) : filtered.length === 0 && query ? (
-              <EmptyState
-                icon={Search}
-                title={`Tidak Ditemukan Hasil untuk "${query}"`}
-                description="Tidak ada peluang karier yang cocok dengan kata kunci pencarian. Coba ubah ejaan atau bersihkan filter."
-                actionLabel="Reset Filter Pencarian"
-                onAction={() => setQuery('')}
-              />
-            ) : applications.length === 0 ? (
-              <EmptyState
-                icon={Target}
-                title="Papan Pipeline Lamaran Masih Kosong"
-                description="Mulai langkah pencarian karir terstruktur Anda. Catat peluang kerja pertama untuk memantau status seleksi, follow-up, dan penawaran gaji."
-                actionLabel="+ Tambah Peluang Pertama (N)"
-                onAction={() => setShowAdd(true)}
-              />
-            ) : view === 'board' ? (
-              <div className="board">
-                {statuses.slice(0, 6).map((status) => (
-                  <div className="column" key={status}>
-                    <div className="column-head">
-                      <span className={`dot ${status.toLowerCase()}`} />
-                      <h3>{status}</h3>
-                      <span className="count">
-                        {filtered.filter((a) => a.status === status).length}
+
+                  <div className="space-y-2 mt-2">
+                    {followups.length ? (
+                      followups.map((item, index) => {
+                        const matchingApp = applications.find(
+                          (a) =>
+                            `${a.company} · ${a.position}` === item.title ||
+                            item.title.startsWith(a.company)
+                        );
+                        return (
+                          <div
+                            key={`${item.title}-${index}`}
+                            onClick={() => matchingApp && setFollowUpApp(matchingApp)}
+                            className="p-2 rounded-md bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200/60 dark:border-zinc-700/60 cursor-pointer hover:border-zinc-300 transition-colors text-xs"
+                          >
+                            <div className="font-semibold text-zinc-800 dark:text-zinc-200 truncate">
+                              {item.title}
+                            </div>
+                            <div className="text-[10px] text-zinc-400 truncate">{item.detail}</div>
+                          </div>
+                        );
+                      })
+                    ) : (
+                      <div className="text-xs text-zinc-400 py-3 text-center">
+                        Tidak ada follow-up mendesak hari ini.
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Bento Card 2: CV Lab Experiments */}
+                <div className="bg-white dark:bg-[#18181b] border border-zinc-200/90 dark:border-zinc-800/90 rounded-lg p-4 shadow-2xs flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between text-xs text-zinc-400 mb-2">
+                      <span className="font-semibold text-[10px] uppercase tracking-wider text-zinc-500">
+                        CV Experiment Lab
+                      </span>
+                      <FileText size={13} className="text-blue-500" />
+                    </div>
+                    <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-2">
+                      Performa Varian CV
+                    </h3>
+                  </div>
+
+                  <div className="space-y-2 mt-2">
+                    {cvs.slice(0, 2).map((c) => (
+                      <div
+                        key={c.id}
+                        className="flex items-center justify-between p-2 rounded-md bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200/60 dark:border-zinc-700/60 text-xs"
+                      >
+                        <div className="min-w-0 flex-1">
+                          <div className="font-semibold text-zinc-800 dark:text-zinc-200 truncate">
+                            {c.label}
+                          </div>
+                          <div className="text-[10px] text-zinc-400">
+                            {c.applications} lamaran terkirim
+                          </div>
+                        </div>
+                        <span className="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 ml-2">
+                          {responseRate(c.responses, c.applications)}%
+                        </span>
+                      </div>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={() => setIsAtsResumeOpen(true)}
+                      className="w-full mt-2 py-1.5 text-center text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-md border border-zinc-200/80 dark:border-zinc-700/80 flex items-center justify-center gap-1.5 transition-colors"
+                    >
+                      <Printer size={12} />
+                      <span>Cetak Format ATS</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Bento Card 3: Monotonic Guard Health */}
+                <div className="bg-white dark:bg-[#18181b] border border-zinc-200/90 dark:border-zinc-800/90 rounded-lg p-4 shadow-2xs flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between text-xs text-zinc-400 mb-2">
+                      <span className="font-semibold text-[10px] uppercase tracking-wider text-zinc-500">
+                        Integritas Funnel
+                      </span>
+                      <Zap size={13} className="text-amber-500" />
+                    </div>
+                    <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-1">
+                      Status Terjaga Aman
+                    </h3>
+                    <p className="text-[11px] text-zinc-400">
+                      Hierarki seleksi terlindungi secara otomatis (ADR-0002).
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 mt-3">
+                    <div className="p-2 rounded-md bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200/60 dark:border-zinc-700/60">
+                      <span className="text-[10px] text-zinc-400 block">Posisi Aktif</span>
+                      <span className="text-lg font-bold font-mono text-zinc-900 dark:text-zinc-100">
+                        {applications.filter((a) => !['Rejected', 'Ghosted'].includes(a.status)).length}
                       </span>
                     </div>
-                    <div className="cards">
-                      {filtered
-                        .filter((a) => a.status === status)
-                        .map((a) => (
-                          <ApplicationCard
-                            key={a.id}
-                            application={a}
-                            onClick={() => setDrawer(a)}
-                          />
-                        ))}
-                      <button className="ghost-add" onClick={() => setShowAdd(true)}>
-                        <CirclePlus size={15} /> Add role
-                      </button>
+                    <div className="p-2 rounded-md bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200/60 dark:border-zinc-700/60">
+                      <span className="text-[10px] text-zinc-400 block">Interview Rate</span>
+                      <span className="text-lg font-bold font-mono text-emerald-600 dark:text-emerald-400">
+                        {applications.length > 0
+                          ? Math.round(
+                              (applications.filter((a) => ['Interview', 'Offer'].includes(a.status)).length /
+                                applications.length) *
+                                100
+                            )
+                          : 0}
+                        %
+                      </span>
                     </div>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <JobTable
-                applications={filtered}
-                onSelectApplication={setDrawer}
-                onResetFilters={() => setQuery('')}
-              />
-            )}
-          </section>
+                </div>
 
-          {/* 2. Bento Grid & Modular Layout: Asymmetrical, characterful information hierarchy */}
-          <section className="bento-grid">
-            {/* Bento Card 1: Large Primary Feature Card - Follow-Up Radar */}
-            <div className="bento-card bento-card-primary">
-              <div className="card-heading">
-                <div>
-                  <p className="eyebrow">
-                    <Activity size={12} /> FOLLOW-UP RADAR
-                  </p>
-                  <h2>
-                    Small moves,
-                    <br />
-                    <em>better odds.</em>
-                  </h2>
-                </div>
-                <ArrowUpRight size={18} />
-              </div>
-              {followups.length ? (
-                followups.map((item, index) => {
-                  const matchingApp = applications.find(
-                    (a) =>
-                      `${a.company} · ${a.position}` === item.title ||
-                      item.title.startsWith(a.company)
-                  );
-                  return (
-                    <FollowUp
-                      key={`${item.title}-${index}`}
-                      item={item}
-                      onClick={() => {
-                        if (matchingApp) {
-                          setFollowUpApp(matchingApp);
-                        }
-                      }}
-                    />
-                  );
-                })
-              ) : (
-                <div className="empty-card">No follow-ups scheduled yet.</div>
-              )}
-            </div>
-
-            {/* Bento Card 2: Medium Analytical Story Card - CV Lab Experiments */}
-            <div className="bento-card bento-card-story">
-              <div className="card-heading">
-                <div>
-                  <p className="eyebrow">
-                    <FileText size={12} /> CV LAB
-                  </p>
-                  <h2>
-                    Which story
-                    <br />
-                    <em>travels furthest?</em>
-                  </h2>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <button
-                    type="button"
-                    className="secondary compact-btn"
-                    onClick={() => setIsAtsResumeOpen(true)}
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', fontSize: '11px', padding: '4px 8px' }}
-                    title="Open 1-Click Printable ATS Resume Formatter"
-                  >
-                    <Printer size={12} /> ATS Resume
-                  </button>
-                  <FileText size={18} />
-                </div>
-              </div>
-              {cvs.length ? (
-                cvs.map((c) => (
-                  <div className="cv-row" key={c.id}>
-                    <span className="cv-icon">
-                      {c.version.split('-')[1]?.slice(0, 2).toUpperCase()}
-                    </span>
-                    <div className="cv-name">
-                      <b>{c.label}</b>
-                      <small>
-                        {c.version} · {c.applications} applications
-                      </small>
+                {/* Bento Card 4: Autonomous Telegram Briefing */}
+                <div className="bg-white dark:bg-[#18181b] border border-zinc-200/90 dark:border-zinc-800/90 rounded-lg p-4 shadow-2xs flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between text-xs text-zinc-400 mb-2">
+                      <span className="font-semibold text-[10px] uppercase tracking-wider text-zinc-500">
+                        Telegram Bot
+                      </span>
+                      <Send size={13} className="text-sky-500" />
                     </div>
-                    <div className="rate">
-                      <b>{responseRate(c.responses, c.applications)}%</b>
-                      <small>response</small>
-                    </div>
+                    <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-1">
+                      Morning Briefing 08:30
+                    </h3>
+                    <p className="text-[11px] text-zinc-400">
+                      Ringkasan lamaran harian dan agenda wawancara terkirim otomatis.
+                    </p>
                   </div>
-                ))
-              ) : (
-                <div className="empty-card">No CV experiments yet.</div>
-              )}
-            </div>
 
-            {/* Bento Card 3: Small Statistics & Monotonic Integrity Card */}
-            <div className="bento-card bento-card-stat">
-              <div className="card-heading">
-                <div>
-                  <p className="eyebrow">
-                    <Zap size={12} /> {locale === 'id' ? 'PROGRES LAMARAN' : 'PIPELINE VELOCITY'}
-                  </p>
-                  <h3 style={{ fontSize: '18px', margin: '2px 0 0', fontWeight: 600 }}>
-                    {locale === 'id' ? 'Status Lamaran Terjaga' : 'Monotonic Funnel Health'}
-                  </h3>
+                  <div className="mt-3">
+                    <button
+                      type="button"
+                      onClick={() => navigateTo('settings')}
+                      className="w-full py-1.5 text-center text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-md border border-zinc-200/80 dark:border-zinc-700/80 flex items-center justify-center gap-1.5 transition-colors"
+                    >
+                      <Settings size={12} />
+                      <span>Pengaturan Bot</span>
+                    </button>
+                  </div>
                 </div>
-                <span className="status-pill" style={{ background: '#eef2e6', color: '#566e33' }}>
-                  {locale === 'id' ? 'Aman' : 'Protected'}
-                </span>
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px', marginTop: '18px' }}>
-                <div style={{ background: '#f5f6f1', padding: '12px', borderRadius: '3px' }}>
-                  <span style={{ font: "9px 'DM Mono'", color: '#82877c', textTransform: 'uppercase' }}>
-                    {locale === 'id' ? 'Lamaran Berjalan' : 'Active In Flight'}
-                  </span>
-                  <b style={{ display: 'block', fontSize: '20px', color: '#202320', marginTop: '2px', fontVariantNumeric: 'tabular-nums' }}>
-                    {applications.filter((a) => !['Rejected', 'Ghosted'].includes(a.status)).length}
-                  </b>
-                  <small style={{ fontSize: '10px', color: '#888e84' }}>
-                    {locale === 'id' ? 'posisi aktif' : 'roles in motion'}
-                  </small>
-                </div>
-                <div style={{ background: '#f5f6f1', padding: '12px', borderRadius: '3px' }}>
-                  <span style={{ font: "9px 'DM Mono'", color: '#82877c', textTransform: 'uppercase' }}>
-                    {locale === 'id' ? 'Peluang Wawancara' : 'Interview Rate'}
-                  </span>
-                  <b style={{ display: 'block', fontSize: '20px', color: '#7d9850', marginTop: '2px', fontVariantNumeric: 'tabular-nums' }}>
-                    {applications.length > 0
-                      ? Math.round(
-                          (applications.filter((a) => ['Interview', 'Offer'].includes(a.status)).length /
-                            applications.length) *
-                            100
-                        )
-                      : 0}
-                    %
-                  </b>
-                  <small style={{ fontSize: '10px', color: '#888e84' }}>
-                    {locale === 'id' ? 'rasio wawancara' : 'interview ratio'}
-                  </small>
-                </div>
-              </div>
-              <p style={{ fontSize: '11px', color: '#7a8174', margin: '14px 0 0', lineHeight: 1.5 }}>
-                {locale === 'id'
-                  ? 'Status tahap seleksi tersimpan aman dan tidak akan turun jika ada email balasan masuk terlambat.'
-                  : 'Protected against downgrade regressions. Late notifications preserve forward state progression.'}
-              </p>
-            </div>
-
-            {/* Bento Card 4: Interactive Automation Card - Autonomous Telegram Briefing */}
-            <div className="bento-card bento-card-sync">
-              <div className="card-heading">
-                <div>
-                  <p className="eyebrow">
-                    <Send size={12} /> TELEGRAM BOT
-                  </p>
-                  <h3 style={{ fontSize: '18px', margin: '2px 0 0', fontWeight: 600 }}>
-                    {locale === 'id' ? 'Ringkasan Pagi Hari' : 'Morning Briefing'}
-                  </h3>
-                </div>
-                <span className="status-pill" style={{ background: '#e3ebd3', color: '#445826' }}>
-                  08:30 WIB
-                </span>
-              </div>
-              <p style={{ fontSize: '12px', color: '#687063', margin: '14px 0', lineHeight: 1.55 }}>
-                {locale === 'id'
-                  ? 'Ringkasan lamaran harian, agenda wawancara terdekat, dan pengingat tindak lanjut terkirim otomatis ke akun Telegram Anda.'
-                  : 'Daily application summaries, upcoming interviews, and follow-up alerts sent directly to your Telegram.'}
-              </p>
-              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                <button
-                  type="button"
-                  className="secondary compact-btn"
-                  onClick={() => navigateTo('settings')}
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
-                >
-                  <Settings size={12} /> {locale === 'id' ? 'Buka Pengaturan Telegram' : 'Configure Telegram'}
-                </button>
               </div>
             </div>
-          </section>
+          )}
         </main>
-      )}
+      </div>
 
       {/* Extracted Application Detail Drawer with Monotonic Safety Guard */}
       {drawer && (

@@ -31,66 +31,66 @@
 
 :root {
   /* ==========================================================================
-     EDITORIAL NATURAL DESIGN SYSTEM & 2026 MODERN CHARACTERISTICS TOKENS
-     Preserves: #202320 (Charcoal), #f5f5f0 (Linen), #7d9850 (Olive Sage)
+     TWENTY CRM DESIGN SYSTEM TOKENS (twentyhq/twenty inspired)
+     Minimalist, Neutral, World-Class SaaS Workspace Aesthetics
      ========================================================================== */
-  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  color: #202320;
-  background: #f5f5f0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  color: #09090b;
+  background: #fafafa;
   line-height: 1.5;
   font-synthesis: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
   /* Color System */
-  --bg-canvas: #f5f5f0;
-  --bg-surface: #fbfbf8;
+  --bg-canvas: #fafafa;
+  --bg-surface: #ffffff;
   --bg-surface-elevated: #ffffff;
-  --bg-surface-tinted: #eef1e5;
-  --bg-surface-warm: #f0eee8;
-  --bg-header-glass: rgba(247, 247, 243, 0.88);
+  --bg-surface-tinted: #f4f4f5;
+  --bg-surface-warm: #f4f4f5;
+  --bg-header-glass: rgba(255, 255, 255, 0.94);
 
-  --text-main: #202320;
-  --text-body: #494f45;
-  --text-muted: #777c73;
-  --text-subtle: #8e9488;
+  --text-main: #09090b;
+  --text-body: #27272a;
+  --text-muted: #71717a;
+  --text-subtle: #a1a1aa;
 
-  --accent-olive: #7d9850;
-  --accent-olive-dark: #627b3d;
-  --accent-olive-light: #e8edda;
-  --accent-leaf: #9eb564;
-  --accent-lime: #b9cf4b;
+  --accent-olive: #18181b;
+  --accent-olive-dark: #09090b;
+  --accent-olive-light: #f4f4f5;
+  --accent-leaf: #10b981;
+  --accent-lime: #18181b;
 
-  --border-hairline: #dedfd8;
-  --border-card: #e2e3dc;
-  --border-hover: #bac78d;
+  --border-hairline: #e4e4e7;
+  --border-card: #e4e4e7;
+  --border-hover: #d4d4d8;
 
-  /* Depth & Soft Shadows (Restrained Elevation) */
-  --shadow-subtle: 0 1px 3px rgba(32, 35, 32, 0.04), 0 1px 2px rgba(32, 35, 32, 0.02);
-  --shadow-card: 0 2px 8px rgba(32, 35, 32, 0.03), 0 1px 3px rgba(32, 35, 32, 0.02);
-  --shadow-hover: 0 8px 24px rgba(32, 35, 32, 0.07), 0 2px 6px rgba(32, 35, 32, 0.04);
-  --shadow-drawer: -12px 0 36px rgba(32, 35, 32, 0.08);
-  --shadow-modal: 0 24px 64px rgba(32, 35, 32, 0.12), 0 4px 16px rgba(32, 35, 32, 0.05);
+  /* Depth & Soft Shadows (Twenty CRM Elevation) */
+  --shadow-subtle: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+  --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+  --shadow-drawer: -8px 0 24px rgba(0, 0, 0, 0.08);
+  --shadow-modal: 0 20px 48px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.04);
 
-  /* Ignara-inspired Tactile Physics & Neat Curvature System */
+  /* Twenty CRM Precise Micro-curves & Motion */
   --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-ignara: cubic-bezier(0.22, 1, 0.36, 1);
-  --transition-fast: 0.15s ease;
-  --transition-smooth: 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-  --transition-ignara: 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-ignara: cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-fast: 0.12s ease;
+  --transition-smooth: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-ignara: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 
-  /* Squircle Radius Hierarchy */
-  --r-xs: 6px;
-  --r-sm: 10px;
-  --r-md: 14px;
-  --r-lg: 18px;
-  --r-xl: 24px;
+  /* Radius Hierarchy */
+  --r-xs: 4px;
+  --r-sm: 6px;
+  --r-md: 8px;
+  --r-lg: 12px;
+  --r-xl: 16px;
 
-  /* Dual-border Lighting & Ambient Layering */
-  --top-light: rgba(255, 255, 255, 0.08);
-  --line-subtle: rgba(255, 255, 255, 0.07);
-  --shadow-ignara-card: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 1px 2px rgba(0, 0, 0, 0.25), 0 18px 36px -18px rgba(0, 0, 0, 0.55);
-  --shadow-ignara-hover: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 4px 14px rgba(0, 0, 0, 0.3), 0 24px 48px -18px rgba(0, 0, 0, 0.7);
+  /* Lighting & Ambience */
+  --top-light: rgba(255, 255, 255, 0.6);
+  --line-subtle: rgba(0, 0, 0, 0.04);
+  --shadow-ignara-card: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-ignara-hover: 0 4px 14px rgba(0, 0, 0, 0.08);
 }
 
 * {
@@ -147,8 +147,8 @@ textarea:focus-visible,
   flex-direction: column;
 }
 
-/* 6. Glassmorphism & Translucent Header with Blur */
-header {
+/* 6. Legacy Header fallback */
+header:not(.twenty-topbar) {
   height: 72px;
   position: sticky;
   top: 0;
@@ -294,12 +294,17 @@ nav button.active:after {
   box-shadow: var(--shadow-subtle);
 }
 
-main {
+main:not(.twenty-main) {
   max-width: 1400px;
   width: 100%;
   margin: auto;
   padding: 52px 5.5vw 70px;
   flex: 1;
+}
+
+.twenty-main {
+  width: 100%;
+  min-height: 0;
 }
 
 /* 1 & 3. Modern Visual Language & Sophisticated Typography */

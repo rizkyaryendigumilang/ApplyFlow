@@ -1,5 +1,20 @@
-import { useState } from 'react';
-import { X, ShieldAlert, Send, Printer, Award, Scale } from 'lucide-react';
+import React, { useState } from 'react';
+import {
+  X,
+  ShieldAlert,
+  Send,
+  Printer,
+  Award,
+  ExternalLink,
+  Briefcase,
+  MapPin,
+  Clock,
+  User,
+  Mail,
+  FileText,
+  DollarSign,
+  AlertCircle,
+} from 'lucide-react';
 import type { Application, Status } from '../../lib/pb-types';
 import { salary } from '../../lib/utils';
 import { useApplicationEvents } from '../../hooks/useApplicationEvents';
@@ -37,12 +52,13 @@ export interface ApplicationDrawerProps {
   onOpenFollowUp: (a: Application) => void;
 }
 
-export function ApplicationDrawer({
+export const ApplicationDrawer: React.FC<ApplicationDrawerProps> = ({
   application: a,
   onClose,
   onUpdateStatus,
   onOpenFollowUp,
-}: ApplicationDrawerProps) {
+}) => {
+  const [activeTab, setActiveTab] = useState<'properties' | 'activity' | 'notes'>('properties');
   const [error, setError] = useState('');
   const [showVendorRisk, setShowVendorRisk] = useState(false);
   const [showAtsResume, setShowAtsResume] = useState(false);
@@ -77,185 +93,336 @@ export function ApplicationDrawer({
     try {
       await onUpdateStatus(a.id, newStatus);
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : 'Could not save status');
+      setError(cause instanceof Error ? cause.message : 'Gagal menyimpan status');
     }
   };
 
   return (
-    <div className="overlay" role="dialog" aria-modal="true" aria-label="Opportunity Detail">
-      <aside className="drawer">
-        <div className="drawer-head">
-          <span className="eyebrow">OPPORTUNITY DETAIL</span>
-          <button onClick={onClose} aria-label="Close drawer">
-            <X size={18} />
-          </button>
-        </div>
+    <div
+      className="fixed inset-0 z-50 flex justify-end bg-black/40 backdrop-blur-xs animate-in fade-in duration-150 select-none"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Detail Peluang Karier"
+    >
+      <div
+        className="fixed inset-0"
+        onClick={onClose}
+        aria-hidden="true"
+      />
 
-        <div className="drawer-title">
-          <span className="company-logo big">{a.company[0]}</span>
-          <div>
-            <h2>{a.position}</h2>
-            <p>
-              {a.company} · {a.location}
-            </p>
+      <aside className="relative z-10 w-full max-w-xl h-full bg-white dark:bg-[#121214] border-l border-zinc-200 dark:border-zinc-800 shadow-2xl flex flex-col animate-in slide-in-from-right duration-200">
+        {/* 1. Header Toolbar (Twenty CRM style) */}
+        <div className="flex items-center justify-between px-6 py-3.5 border-b border-zinc-200/80 dark:border-zinc-800/80 text-xs">
+          <div className="flex items-center gap-2 text-zinc-500">
+            <Briefcase size={14} className="text-zinc-400" />
+            <span className="font-semibold text-zinc-700 dark:text-zinc-300">Peluang Karier</span>
           </div>
-        </div>
 
-        {/* Stage selection with monotonic guards */}
-        <div className="drawer-section">
-          <label htmlFor="status-select">Stage</label>
-          <select
-            id="status-select"
-            value={a.status}
-            onChange={(e) => handleStatusChange(e.target.value as Status)}
-          >
-            {allStatuses.map((s) => {
-              const targetRank = STATUS_RANKS[s];
-              const isTargetTerminal = ['Rejected', 'Ghosted'].includes(s);
-              const isCurrentTerminal = ['Rejected', 'Ghosted'].includes(a.status);
-              
-              // Monotonic safe state check
-              const isDowngrade =
-                !isTargetTerminal && !isCurrentTerminal && targetRank < curRank;
-              const isOfferToRejected = a.status === 'Offer' && s === 'Rejected';
-              const isDisabled = isDowngrade || isOfferToRejected;
-
-              return (
-                <option key={s} value={s} disabled={isDisabled}>
-                  {s}
-                  {isDowngrade ? ' (Downgrade blocked)' : ''}
-                  {isOfferToRejected ? ' (Offer locked)' : ''}
-                </option>
-              );
-            })}
-          </select>
-          {error && <p className="auth-error mt-2">{error}</p>}
-        </div>
-
-        <div className="drawer-section">
-          <label>Source & Tracking</label>
-          <p className="muted">
-            Origin: <b>{a.jobSource || 'Direct Entry'}</b>
-            {a.applicationMethod && ` via ${a.applicationMethod}`}
-            {a.autoCreated && ' (Auto-created from verified notification)'}
-          </p>
-        </div>
-
-        <div className="drawer-section">
-          <label>Compensation & Contract</label>
-          <h3>{salary(a)}</h3>
-          <p className="muted">
-            {a.type} · {a.mode}
-          </p>
-          <button
-            type="button"
-            className="secondary compact-btn"
-            style={{ marginTop: 8 }}
-            onClick={() => setShowVendorRisk(true)}
-          >
-            <ShieldAlert size={13} /> Audit Klausul Kontrak ({a.type})
-          </button>
-        </div>
-
-        <div className="drawer-section">
-          <label>Contact & Anti-Ghosting</label>
-          <p>{a.contactName || 'No contact yet'}</p>
-          <p className="muted">
-            {a.contact || 'Add a recruiter contact to unlock follow-up nudges.'}
-          </p>
-          <button
-            type="button"
-            className="secondary compact-btn"
-            style={{ marginTop: 8 }}
-            onClick={() => onOpenFollowUp(a)}
-          >
-            <Send size={13} /> Generate Follow-Up Nudge
-          </button>
-        </div>
-
-        {/* Activity Timeline */}
-        <div className="drawer-section">
-          <label>Activity Timeline (JobStreet & Sync)</label>
-          <div className="activity-timeline">
-            {eventsLoading ? (
-              <p className="muted">Loading activity...</p>
-            ) : events.length > 0 ? (
-              events.map((ev) => (
-                <div className="activity-event" key={ev.id}>
-                  <div className="activity-event-dot" />
-                  <div className="activity-event-body">
-                    <b>{ev.eventType.replace('_', ' ').toUpperCase()}</b>
-                    <small>{ev.rawSubject || ev.evidenceSnippet?.slice(0, 80)}</small>
-                    <small style={{ color: '#64748b' }}>
-                      {new Date(ev.created || Date.now()).toLocaleString('id-ID')} via{' '}
-                      {ev.sourcePlatform || 'system'}
-                    </small>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p className="muted">
-                Belum ada riwayat email/notifikasi yang tercatat untuk lamaran ini.
-              </p>
+          <div className="flex items-center gap-1.5">
+            {a.link && (
+              <a
+                href={a.link}
+                target="_blank"
+                rel="noreferrer"
+                className="p-1.5 rounded-md text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                title="Buka Link Lowongan Asli"
+              >
+                <ExternalLink size={14} />
+              </a>
             )}
+            <button
+              onClick={onClose}
+              className="p-1.5 rounded-md text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+              aria-label="Tutup Panel"
+            >
+              <X size={16} />
+            </button>
           </div>
         </div>
 
-        <div className="drawer-section">
-          <label>Document & ATS Tailoring</label>
-          <p className="muted">
-            CV Target: <b>{a.cvVersion || 'Default Master CV'}</b>
-          </p>
+        {/* 2. Record Header Card */}
+        <div className="px-6 py-5 border-b border-zinc-100 dark:border-zinc-800/60 bg-zinc-50/50 dark:bg-zinc-900/20">
+          <div className="flex items-start gap-3.5">
+            <div className="w-10 h-10 rounded-lg bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 flex items-center justify-center font-bold text-sm shadow-sm flex-shrink-0">
+              {a.company[0]?.toUpperCase() || 'C'}
+            </div>
+            <div className="flex-1 min-w-0">
+              <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-100 tracking-tight truncate">
+                {a.position}
+              </h2>
+              <div className="flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+                <span className="font-medium text-zinc-700 dark:text-zinc-300">{a.company}</span>
+                <span>·</span>
+                <span className="flex items-center gap-1">
+                  <MapPin size={11} /> {a.location}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Status selector pill in Twenty CRM style */}
+          <div className="mt-4 flex items-center justify-between gap-3 pt-3 border-t border-zinc-200/60 dark:border-zinc-800/60">
+            <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Tahap Seleksi:</span>
+            <div className="relative">
+              <select
+                id="status-select"
+                value={a.status}
+                onChange={(e) => handleStatusChange(e.target.value as Status)}
+                className="px-3 py-1 text-xs font-semibold rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-2xs focus:outline-none focus:ring-1 focus:ring-zinc-400 cursor-pointer"
+              >
+                {allStatuses.map((s) => {
+                  const targetRank = STATUS_RANKS[s];
+                  const isTargetTerminal = ['Rejected', 'Ghosted'].includes(s);
+                  const isCurrentTerminal = ['Rejected', 'Ghosted'].includes(a.status);
+                  const isDowngrade =
+                    !isTargetTerminal && !isCurrentTerminal && targetRank < curRank;
+                  const isOfferToRejected = a.status === 'Offer' && s === 'Rejected';
+                  const isDisabled = isDowngrade || isOfferToRejected;
+
+                  return (
+                    <option key={s} value={s} disabled={isDisabled}>
+                      {s}
+                      {isDowngrade ? ' (Regresi diblokir)' : ''}
+                      {isOfferToRejected ? ' (Offer terkunci)' : ''}
+                    </option>
+                  );
+                })}
+              </select>
+            </div>
+          </div>
+
+          {error && (
+            <div className="mt-2.5 p-2 rounded-md bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs flex items-center gap-2">
+              <AlertCircle size={14} className="flex-shrink-0" />
+              <span>{error}</span>
+            </div>
+          )}
+        </div>
+
+        {/* 3. Action Buttons Row (Twenty CRM style) */}
+        <div className="px-6 py-2.5 bg-white dark:bg-[#121214] border-b border-zinc-200/70 dark:border-zinc-800/70 flex items-center gap-2 overflow-x-auto scrollbar-none">
           <button
-            type="button"
-            className="secondary compact-btn"
-            style={{ marginTop: 8, display: 'inline-flex', alignItems: 'center', gap: '6px', background: '#f4f6ed', border: '1px solid #c9d7b5', color: '#3d5223' }}
-            onClick={() => setShowAtsResume(true)}
+            onClick={() => onOpenFollowUp(a)}
+            className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-200 transition-colors flex-shrink-0"
           >
-            <Printer size={13} /> Format Harvard ATS Resume
+            <Send size={12} className="text-emerald-600" />
+            <span>Follow-Up</span>
+          </button>
+
+          <button
+            onClick={() => setShowStarCoach(true)}
+            className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-200 transition-colors flex-shrink-0"
+          >
+            <Award size={12} className="text-amber-500" />
+            <span>STAR Coach</span>
+          </button>
+
+          <button
+            onClick={() => setShowVendorRisk(true)}
+            className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-200 transition-colors flex-shrink-0"
+          >
+            <ShieldAlert size={12} className="text-purple-500" />
+            <span>Audit Vendor ({a.type})</span>
+          </button>
+
+          <button
+            onClick={() => setShowAtsResume(true)}
+            className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-200 transition-colors flex-shrink-0"
+          >
+            <Printer size={12} className="text-blue-500" />
+            <span>Format ATS</span>
+          </button>
+
+          {a.status === 'Offer' && (
+            <button
+              onClick={() => setShowContractInspector(true)}
+              className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100 transition-colors flex-shrink-0"
+            >
+              <ShieldAlert size={12} />
+              <span>Inspeksi Offering</span>
+            </button>
+          )}
+        </div>
+
+        {/* 4. Tab Navigation (Twenty CRM style) */}
+        <div className="flex border-b border-zinc-200/80 dark:border-zinc-800/80 px-6 gap-6 text-xs font-medium">
+          <button
+            onClick={() => setActiveTab('properties')}
+            className={`py-2.5 border-b-2 transition-colors ${
+              activeTab === 'properties'
+                ? 'border-zinc-900 text-zinc-900 dark:border-zinc-100 dark:text-zinc-100 font-semibold'
+                : 'border-transparent text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200'
+            }`}
+          >
+            Properti & Kompensasi
+          </button>
+          <button
+            onClick={() => setActiveTab('activity')}
+            className={`py-2.5 border-b-2 transition-colors flex items-center gap-1.5 ${
+              activeTab === 'activity'
+                ? 'border-zinc-900 text-zinc-900 dark:border-zinc-100 dark:text-zinc-100 font-semibold'
+                : 'border-transparent text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200'
+            }`}
+          >
+            <span>Riwayat Aktivitas</span>
+            {events.length > 0 && (
+              <span className="text-[10px] font-mono px-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">
+                {events.length}
+              </span>
+            )}
+          </button>
+          <button
+            onClick={() => setActiveTab('notes')}
+            className={`py-2.5 border-b-2 transition-colors ${
+              activeTab === 'notes'
+                ? 'border-zinc-900 text-zinc-900 dark:border-zinc-100 dark:text-zinc-100 font-semibold'
+                : 'border-transparent text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200'
+            }`}
+          >
+            Catatan
           </button>
         </div>
 
-        {['Screening', 'Interview'].includes(a.status) && (
-          <div className="drawer-section">
-            <label>Interview Preparation Lab</label>
-            <p className="muted">Latih jawaban wawancara perilaku & teknis dengan skoring otomatis:</p>
-            <button
-              type="button"
-              className="primary compact-btn"
-              style={{ marginTop: 6, display: 'inline-flex', alignItems: 'center', gap: '6px', background: '#202320', color: '#f5f5f0' }}
-              onClick={() => setShowStarCoach(true)}
-            >
-              <Award size={13} /> Buka STAR Answer Coach
-            </button>
-          </div>
-        )}
+        {/* 5. Tab Content Area */}
+        <div className="flex-1 overflow-y-auto px-6 py-5 space-y-6">
+          {activeTab === 'properties' && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div className="p-3 rounded-lg border border-zinc-200/70 dark:border-zinc-800/70 bg-zinc-50/50 dark:bg-zinc-900/30">
+                  <span className="text-[10px] uppercase font-semibold text-zinc-400 tracking-wider block mb-1">
+                    Estimasi Gaji / THP
+                  </span>
+                  <span className="font-mono text-sm font-bold text-zinc-900 dark:text-zinc-100">
+                    {salary(a)}
+                  </span>
+                </div>
 
-        {a.status === 'Offer' && (
-          <div className="drawer-section">
-            <label>Offering & Contract Risk Audit</label>
-            <p className="muted">Deteksi jebakan pinalti resign, ijazah, atau probation PKWT:</p>
-            <button
-              type="button"
-              className="secondary compact-btn"
-              style={{ marginTop: 6, display: 'inline-flex', alignItems: 'center', gap: '6px', background: '#fcf6e6', border: '1px solid #ebd8a8', color: '#8c6b1e' }}
-              onClick={() => setShowContractInspector(true)}
-            >
-              <ShieldAlert size={13} /> Audit Draf Kontrak / Offering
-            </button>
-          </div>
-        )}
+                <div className="p-3 rounded-lg border border-zinc-200/70 dark:border-zinc-800/70 bg-zinc-50/50 dark:bg-zinc-900/30">
+                  <span className="text-[10px] uppercase font-semibold text-zinc-400 tracking-wider block mb-1">
+                    Mode & Penempatan
+                  </span>
+                  <span className="font-medium text-zinc-800 dark:text-zinc-200">
+                    {a.type} · {a.mode}
+                  </span>
+                </div>
+              </div>
 
-        <div className="drawer-section">
-          <label>Notes</label>
-          <p className="note">{a.notes || 'No notes yet.'}</p>
+              {/* Properties table in Twenty CRM style */}
+              <div className="border border-zinc-200/80 dark:border-zinc-800/80 rounded-lg overflow-hidden text-xs">
+                <div className="divide-y divide-zinc-100 dark:divide-zinc-800/60">
+                  <div className="flex items-center justify-between p-2.5 hover:bg-zinc-50 dark:hover:bg-zinc-900/40">
+                    <span className="text-zinc-500 flex items-center gap-2">
+                      <Clock size={13} className="text-zinc-400" /> Tanggal Kirim
+                    </span>
+                    <span className="font-mono text-zinc-800 dark:text-zinc-200">{a.sentAt}</span>
+                  </div>
+
+                  <div className="flex items-center justify-between p-2.5 hover:bg-zinc-50 dark:hover:bg-zinc-900/40">
+                    <span className="text-zinc-500 flex items-center gap-2">
+                      <Briefcase size={13} className="text-zinc-400" /> Asal Sumber
+                    </span>
+                    <span className="font-medium text-zinc-800 dark:text-zinc-200">
+                      {a.jobSource || 'Direct Entry'}
+                      {a.applicationMethod && ` via ${a.applicationMethod}`}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between p-2.5 hover:bg-zinc-50 dark:hover:bg-zinc-900/40">
+                    <span className="text-zinc-500 flex items-center gap-2">
+                      <User size={13} className="text-zinc-400" /> Kontak HR
+                    </span>
+                    <span className="font-medium text-zinc-800 dark:text-zinc-200 truncate max-w-[200px]">
+                      {a.contactName || 'Belum ada kontak'}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between p-2.5 hover:bg-zinc-50 dark:hover:bg-zinc-900/40">
+                    <span className="text-zinc-500 flex items-center gap-2">
+                      <Mail size={13} className="text-zinc-400" /> Email / Telepon
+                    </span>
+                    <span className="text-zinc-700 dark:text-zinc-300 truncate max-w-[200px]">
+                      {a.contact || 'Tidak dicantumkan'}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between p-2.5 hover:bg-zinc-50 dark:hover:bg-zinc-900/40">
+                    <span className="text-zinc-500 flex items-center gap-2">
+                      <FileText size={13} className="text-zinc-400" /> Varian CV
+                    </span>
+                    <span className="font-mono font-medium text-zinc-800 dark:text-zinc-200">
+                      {a.cvVersion || 'CV-Default'}
+                    </span>
+                  </div>
+
+                  {a.nextFollowUp && (
+                    <div className="flex items-center justify-between p-2.5 bg-amber-50/50 dark:bg-amber-950/20">
+                      <span className="text-amber-800 dark:text-amber-300 font-semibold flex items-center gap-2">
+                        <Clock size={13} /> Target Follow-Up
+                      </span>
+                      <span className="font-mono font-bold text-amber-700 dark:text-amber-300">
+                        {a.nextFollowUp}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'activity' && (
+            <div className="space-y-3">
+              {eventsLoading ? (
+                <p className="text-xs text-zinc-400">Memuat riwayat aktivitas…</p>
+              ) : events.length > 0 ? (
+                <div className="space-y-3 border-l-2 border-zinc-200 dark:border-zinc-800 ml-2 pl-4">
+                  {events.map((ev) => (
+                    <div key={ev.id} className="relative group">
+                      <div className="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-zinc-400 dark:bg-zinc-600 group-hover:bg-zinc-800 transition-colors" />
+                      <div className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">
+                        {ev.eventType.replace('_', ' ').toUpperCase()}
+                      </div>
+                      <div className="text-[11px] text-zinc-600 dark:text-zinc-400 mt-0.5">
+                        {ev.rawSubject || ev.evidenceSnippet?.slice(0, 100)}
+                      </div>
+                      <div className="text-[10px] text-zinc-400 font-mono mt-1">
+                        {new Date(ev.created || Date.now()).toLocaleString('id-ID')} via{' '}
+                        {ev.sourcePlatform || 'system'}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="py-8 text-center text-xs text-zinc-400">
+                  Belum ada riwayat email atau notifikasi otomatis yang tercatat.
+                </div>
+              )}
+            </div>
+          )}
+
+          {activeTab === 'notes' && (
+            <div className="space-y-3">
+              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 block">
+                Catatan Wawancara & Peluang
+              </label>
+              <div className="p-3.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/40 text-xs text-zinc-800 dark:text-zinc-200 leading-relaxed min-h-[140px] whitespace-pre-wrap">
+                {a.notes || 'Belum ada catatan untuk lowongan ini.'}
+              </div>
+            </div>
+          )}
         </div>
 
-        <button className="primary full" onClick={onClose}>
-          Done
-        </button>
+        {/* 6. Footer Button */}
+        <div className="p-4 border-t border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-900/20">
+          <button
+            onClick={onClose}
+            className="w-full py-2 bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-xs font-semibold rounded-md shadow-2xs transition-all active:scale-[0.98]"
+          >
+            Selesai
+          </button>
+        </div>
       </aside>
 
+      {/* Sub-modals */}
       {showVendorRisk && (
         <VendorRiskModal
           companyName={a.company}
@@ -290,4 +457,4 @@ export function ApplicationDrawer({
       )}
     </div>
   );
-}
+};
