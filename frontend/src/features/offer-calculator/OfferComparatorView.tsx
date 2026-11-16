@@ -525,15 +525,21 @@ Thank you for your consideration, and I look forward to your thoughts.`;
                 <label style={{ fontSize: '11px', textTransform: 'uppercase', color: '#888d82' }}>
                   Target Base Salary (IDR)
                 </label>
-                <input
-                  type="number"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  step="500000"
-                  value={targetCounterSalary}
-                  onChange={(e) => setTargetCounterSalary(Number(e.target.value) || 0)}
-                  style={{ width: '100%', padding: '8px 10px', border: '1px solid #dedfd8', fontSize: '13px', fontWeight: 600 }}
-                />
+                <div style={{ position: 'relative', marginTop: '4px' }}>
+                  <span style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', fontSize: '11px', fontWeight: 700, color: '#71717a', fontFamily: 'monospace', pointerEvents: 'none' }}>
+                    Rp
+                  </span>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    value={targetCounterSalary ? targetCounterSalary.toLocaleString('id-ID') : ''}
+                    onChange={(e) => {
+                      const digits = e.target.value.replace(/\D/g, '').replace(/^0+(?=\d)/, '');
+                      setTargetCounterSalary(digits === '' ? 0 : parseInt(digits, 10));
+                    }}
+                    style={{ width: '100%', padding: '8px 10px 8px 34px', border: '1px solid #dedfd8', fontSize: '13px', fontWeight: 600, fontFamily: 'monospace' }}
+                  />
+                </div>
               </div>
 
               <div>

@@ -1346,6 +1346,16 @@ tbody tr:hover {
 .spin{animation:spin 1s linear infinite}
 @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 
+/* Remove default spinner buttons on number inputs for cleaner currency/financial UI */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
 .settings-layout{display:grid;grid-template-columns:250px minmax(0,1fr);gap:24px;align-items:start}
 .settings-sidebar{background:#ffffff;border:1px solid #e4e4e7;border-radius:8px;padding:14px;position:sticky;top:20px;box-shadow:0 1px 2px 0 rgba(0,0,0,0.03)}
 .settings-search{display:flex;align-items:center;gap:8px;border:1px solid #e4e4e7;border-radius:6px;background:#f4f4f5;padding:7px 10px;margin-bottom:14px;color:#71717a}

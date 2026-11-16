@@ -108,10 +108,28 @@ export function SettingsView({
   const { canInstall, isInstalled, promptInstall } = usePWAInstall();
 
   // Local account states
-  const [accountName, setAccountName] = useState(pb.authStore.model?.displayName || 'Rizky Alamsyah');
-  const [accountEmail] = useState(pb.authStore.model?.email || 'user@junction.local');
-  const [accountHeadline, setAccountHeadline] = useState(profile.headline || 'Senior DevOps & Cloud Platform Engineer');
-  const [accountPhone, setAccountPhone] = useState('+62 812-3456-7890');
+  const [accountName, setAccountName] = useState(
+    profile.fullName || (pb.authStore.model?.displayName && pb.authStore.model.displayName !== 'Administrator' ? pb.authStore.model.displayName : 'Rizky Aryendi Gumilang')
+  );
+  const [accountEmail] = useState(pb.authStore.model?.email || 'admin@applyflow.local');
+  const [accountHeadline, setAccountHeadline] = useState(profile.headline || 'Technical Consultant Analyst & Junior Engineer');
+  const [accountPhone, setAccountPhone] = useState(profile.phone || '+6289512888017');
+
+  // Synchronize candidate profile updates
+  useEffect(() => {
+    if (profile.fullName) setAccountName(profile.fullName);
+    if (profile.headline) setAccountHeadline(profile.headline);
+    if (profile.phone) setAccountPhone(profile.phone);
+  }, [profile.fullName, profile.headline, profile.phone]);
+
+  const userInitials = (accountName || 'Rizky')
+    .split(' ')
+    .filter(Boolean)
+    .map((s: string) => s[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase() || 'RG';
+
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [passwordMsg, setPasswordMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null);
@@ -472,7 +490,7 @@ export function SettingsView({
           {/* User footer in sidebar */}
           <div className="settings-sidebar-footer">
             <div className="user-badge">
-              <div className="user-avatar">RA</div>
+              <div className="user-avatar">{userInitials}</div>
               <div className="user-info">
                 <strong>{accountName}</strong>
                 <span>{accountEmail}</span>
@@ -497,7 +515,7 @@ export function SettingsView({
               <div className="settings-card">
                 <h3>Informasi Profil</h3>
                 <div className="profile-hero">
-                  <div className="profile-avatar-large">RA</div>
+                  <div className="profile-avatar-large">{userInitials}</div>
                   <div>
                     <button className="secondary compact-btn">Ubah Avatar</button>
                     <p className="micro-note">Format JPG, PNG, atau WebP. Maks 2MB.</p>
@@ -510,7 +528,7 @@ export function SettingsView({
                     <input
                       value={accountName}
                       onChange={e => setAccountName(e.target.value)}
-                      placeholder="e.g. Rizky Alamsyah"
+                      placeholder="e.g. Rizky Aryendi Gumilang"
                     />
                   </label>
                   <label>
@@ -955,12 +973,23 @@ export function SettingsView({
                 <div className="form-grid-2">
                   <label>
                     Gaji Pokok Minimum Bulanan
-                    <input
-                      type="number"
-                      step={1000000}
-                      value={profile.minSalary || 15000000}
-                      onChange={e => saveProfile({ minSalary: parseInt(e.target.value) || 0 })}
-                    />
+                    <div className="relative mt-1.5">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold text-zinc-500 dark:text-zinc-400 font-mono select-none pointer-events-none">
+                        Rp
+                      </span>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        pattern="[0-9.]*"
+                        value={profile.minSalary ? profile.minSalary.toLocaleString('id-ID') : '15.000.000'}
+                        onChange={e => {
+                          const digits = e.target.value.replace(/\D/g, '').replace(/^0+(?=\d)/, '');
+                          saveProfile({ minSalary: digits === '' ? 0 : parseInt(digits, 10) });
+                        }}
+                        placeholder="15.000.000"
+                        className="!pl-10 !mt-0 font-mono"
+                      />
+                    </div>
                     <small className="field-hint">
                       Format: {idr(profile.minSalary || 15000000)} / bulan
                     </small>
