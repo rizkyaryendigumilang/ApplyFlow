@@ -4,17 +4,15 @@ import {
   Clock,
   Video,
   Download,
-  ExternalLink,
   Plus,
   Sparkles,
   CheckCircle2,
   Copy,
   Check,
   Building,
+  X,
 } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../components/ui/card';
-import { Button } from '../../components/ui/button';
-import { Badge } from '../../components/ui/badge';
 import type { Application, Interview } from '../../lib/pb-types';
 import { generateICS, downloadICSFile, getGoogleCalendarUrl } from '../../lib/ics-calendar';
 import { sanitizeUrl } from '../../lib/utils';
@@ -141,170 +139,133 @@ export const InterviewCalendarWidget: React.FC<InterviewCalendarWidgetProps> = (
   };
 
   return (
-    <Card className="border-slate-800 bg-slate-900/90 shadow-2xl relative overflow-hidden">
-      <CardHeader className="pb-4">
+    <Card className="border border-zinc-200/90 dark:border-zinc-800/90 bg-white dark:bg-[#18181b] shadow-2xs">
+      <CardHeader className="pb-3 border-b border-zinc-100 dark:border-zinc-800/60">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="space-y-1">
-            <CardTitle className="text-base font-bold text-slate-100 flex items-center gap-2">
-              <CalendarIcon className="w-4 h-4 text-blue-400" />
+          <div className="space-y-0.5">
+            <CardTitle className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+              <CalendarIcon className="w-4 h-4 text-zinc-500" />
               Kalender Interview & Pengingat (.ics)
             </CardTitle>
-            <CardDescription className="text-xs text-slate-400">
-              Jadwal wawancara aktif dengan ekspor otomatis ke Google Calendar dan Apple Calendar.
+            <CardDescription className="text-xs text-zinc-500 dark:text-zinc-400">
+              Jadwal wawancara aktif dengan ekspor langsung ke Google Calendar dan Apple Calendar.
             </CardDescription>
           </div>
 
-          <Button
-            size="sm"
+          <button
             onClick={() => setShowModal(true)}
-            className="bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs shadow-md shadow-blue-500/20"
+            className="flex items-center gap-1.5 px-3 py-1 bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 rounded-md text-xs font-semibold shadow-2xs transition-all active:scale-[0.98] self-start sm:self-auto"
           >
-            <Plus className="w-3.5 h-3.5 mr-1.5" />
-            Jadwalkan Wawancara
-          </Button>
+            <Plus size={13} />
+            <span>Jadwalkan Wawancara</span>
+          </button>
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-3">
+      <CardContent className="pt-4 space-y-3">
         {upcomingInterviews.length === 0 ? (
-          <div className="p-6 rounded-2xl bg-slate-950/60 border border-slate-800/80 text-center space-y-2">
-            <div className="w-10 h-10 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center mx-auto">
-              <Clock className="w-5 h-5" />
-            </div>
-            <div className="text-xs font-semibold text-slate-200">Belum Ada Jadwal Wawancara Mendatang</div>
-            <p className="text-[11px] text-slate-400 max-w-md mx-auto">
-              Saat lamaran Anda masuk ke tahap interview, catat jadwal di sini untuk mendapatkan reminder kalender otomatis (.ics).
+          <div className="p-6 rounded-lg bg-zinc-50/70 dark:bg-zinc-900/30 border border-dashed border-zinc-200 dark:border-zinc-800 text-center space-y-1.5">
+            <CalendarIcon className="w-6 h-6 text-zinc-400 mx-auto" />
+            <h4 className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+              Belum Ada Jadwal Wawancara Aktif
+            </h4>
+            <p className="text-[11px] text-zinc-400 max-w-md mx-auto">
+              Saat lamaran Anda memasuki tahap screening atau interview, jadwalkan sesi di sini untuk mengaktifkan notifikasi dan file kalender .ics otomatis.
             </p>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowModal(true)}
-              className="mt-2 text-xs border-slate-700 text-slate-300 hover:text-white"
-            >
-              + Buat Jadwal Pertama
-            </Button>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {upcomingInterviews.map((interview) => {
-              const matchedApp = applications.find((a) => a.id === interview.application);
-              const compName = matchedApp?.company || 'Target Company';
-              const posName = matchedApp?.position || 'Target Role';
-
+              const app = applications.find((a) => a.id === interview.application);
               const dateObj = new Date(interview.scheduledAt);
-              const formattedDate = new Intl.DateTimeFormat('id-ID', {
-                weekday: 'long',
+              const dateStr = dateObj.toLocaleDateString('id-ID', {
+                weekday: 'short',
                 day: 'numeric',
                 month: 'short',
-                year: 'numeric',
+              });
+              const timeStr = dateObj.toLocaleTimeString('id-ID', {
                 hour: '2-digit',
                 minute: '2-digit',
-              }).format(dateObj);
+              });
+              const compName = app?.company || 'Perusahaan';
+              const posName = app?.position || 'Posisi';
 
-              const diffHours = Math.round((dateObj.getTime() - Date.now()) / (1000 * 60 * 60));
-              const countdownLabel =
-                diffHours < 0
-                  ? 'Sedang Berlangsung'
-                  : diffHours < 24
-                  ? `${diffHours} Jam Lagi`
-                  : `${Math.round(diffHours / 24)} Hari Lagi`;
-
-              const gcalUrl = getGoogleCalendarUrl({
+              const googleCalUrl = getGoogleCalendarUrl({
                 title: `Interview: ${compName} - ${posName}`,
-                description: `Wawancara tahap ${interview.interviewType || interview.round}.\nLink: ${interview.meetingLink || '-'}\nCatatan: ${interview.prepNotes || '-'}`,
-                location: interview.meetingLink || 'Online',
+                description: `Tahap: ${interview.interviewType || interview.round}\nCatatan: ${interview.prepNotes}`,
                 startDate: interview.scheduledAt,
+                durationMinutes: 60,
+                location: interview.meetingLink || 'Online',
               });
 
               return (
                 <div
                   key={interview.id}
-                  className="p-4 rounded-2xl bg-slate-950/75 border border-slate-800/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_1px_2px_rgba(0,0,0,0.2)] hover:border-slate-700/90 hover:bg-slate-950/90 hover:-translate-y-0.5 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_4px_16px_rgba(0,0,0,0.35)] transition-[transform,border-color,box-shadow,background-color] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] active:scale-[0.99] flex flex-col md:flex-row md:items-center justify-between gap-4"
+                  className="p-3.5 rounded-lg border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50/40 dark:bg-zinc-900/20 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors flex flex-col justify-between gap-3 text-xs"
                 >
-                  <div className="flex items-start gap-3.5 min-w-0">
-                    <div className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800/80 flex items-center justify-center shrink-0 text-blue-400 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
-                      <Building className="w-5 h-5 text-blue-400" />
-                    </div>
-                    <div className="space-y-1.5 min-w-0">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="text-xs font-bold text-slate-100 truncate">{compName}</span>
-                        <span className="text-slate-500 text-xs">•</span>
-                        <span className="text-xs text-slate-300 truncate">{posName}</span>
-                        <Badge variant="interview" className="text-[10px] py-0 px-2 font-medium">
-                          {interview.interviewType || interview.round}
-                        </Badge>
-                        <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                          ⏳ {countdownLabel}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center gap-2 text-xs text-slate-400">
-                        <Clock className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-                        <span>{formattedDate} WIB</span>
-                      </div>
-
-                      {interview.meetingLink && (
-                        <div className="flex items-center gap-2 pt-0.5">
-                          <Video className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                          <a
-                            href={sanitizeUrl(interview.meetingLink)}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-xs text-emerald-400 hover:underline truncate max-w-xs"
-                          >
-                            {interview.meetingLink}
-                          </a>
-                          <button
-                            type="button"
-                            onClick={() => handleCopyLink(interview.meetingLink!, interview.id)}
-                            className="p-1 text-slate-400 hover:text-slate-200 rounded-lg hover:bg-slate-800 active:scale-95 transition-all duration-150"
-                            title="Salin Link Meeting"
-                          >
-                            {copiedId === interview.id ? (
-                              <Check className="w-3 h-3 text-emerald-400" />
-                            ) : (
-                              <Copy className="w-3 h-3" />
-                            )}
-                          </button>
+                  <div className="space-y-1.5">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <div className="w-6 h-6 rounded bg-zinc-200/80 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 font-bold text-[11px] flex items-center justify-center flex-shrink-0">
+                          {compName[0]?.toUpperCase() || 'C'}
                         </div>
-                      )}
+                        <div className="truncate">
+                          <h4 className="font-semibold text-zinc-900 dark:text-zinc-100 truncate">
+                            {compName}
+                          </h4>
+                          <span className="text-[10px] text-zinc-500 truncate block">
+                            {posName}
+                          </span>
+                        </div>
+                      </div>
+
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800 flex-shrink-0">
+                        {interview.interviewType || interview.round}
+                      </span>
                     </div>
+
+                    <div className="flex items-center gap-2 text-[11px] font-mono text-zinc-600 dark:text-zinc-400">
+                      <Clock size={12} className="text-zinc-400" />
+                      <span>{dateStr} · {timeStr} WIB</span>
+                    </div>
+
+                    {interview.prepNotes && (
+                      <p className="text-[11px] text-zinc-500 dark:text-zinc-400 italic line-clamp-2">
+                        &quot;{interview.prepNotes}&quot;
+                      </p>
+                    )}
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-2 shrink-0">
-                    {onOpenStarCoach && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => onOpenStarCoach(compName, posName)}
-                        className="text-xs border-purple-500/30 text-purple-300 hover:bg-purple-950/40 hover:-translate-y-0.5 active:translate-y-0 transition-[transform,background-color,border-color] duration-150 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                  {/* Actions row */}
+                  <div className="flex items-center justify-between pt-2 border-t border-zinc-200/60 dark:border-zinc-800/60 gap-1.5 flex-wrap">
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        onClick={() => handleExportSingleICS(interview, app)}
+                        className="p-1 rounded text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200 hover:bg-zinc-200/60 dark:hover:bg-zinc-800"
+                        title="Unduh file .ics kalender"
                       >
-                        <Sparkles className="w-3 h-3 mr-1 text-purple-400" />
-                        STAR Prep
-                      </Button>
+                        <Download size={13} />
+                      </button>
+
+                      <a
+                        href={googleCalUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-[10px] font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200 hover:underline"
+                      >
+                        + Google Cal
+                      </a>
+                    </div>
+
+                    {onOpenStarCoach && (
+                      <button
+                        onClick={() => onOpenStarCoach(compName, posName)}
+                        className="flex items-center gap-1 px-2 py-0.5 rounded bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 text-[10px] font-semibold shadow-2xs hover:opacity-90"
+                      >
+                        <Sparkles size={10} />
+                        <span>Coach STAR</span>
+                      </button>
                     )}
-
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleExportSingleICS(interview, matchedApp)}
-                      className="text-xs border-slate-700 text-slate-300 hover:text-white hover:-translate-y-0.5 active:translate-y-0 transition-[transform,border-color,color] duration-150 ease-[cubic-bezier(0.22,1,0.36,1)]"
-                      title="Download file kalender universal (.ics) dengan pengingat alarm H-30 menit"
-                    >
-                      <Download className="w-3 h-3 mr-1" />
-                      Unduh .ics
-                    </Button>
-
-                    <a
-                      href={gcalUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-slate-700 text-slate-300 hover:text-white text-xs font-medium hover:bg-slate-800/80 hover:-translate-y-0.5 active:translate-y-0 transition-[transform,background-color,border-color,color] duration-150 ease-[cubic-bezier(0.22,1,0.36,1)]"
-                      title="Simpan langsung ke Google Calendar"
-                    >
-                      <ExternalLink className="w-3 h-3" />
-                      Google Cal
-                    </a>
                   </div>
                 </div>
               );
@@ -313,173 +274,144 @@ export const InterviewCalendarWidget: React.FC<InterviewCalendarWidgetProps> = (
         )}
       </CardContent>
 
-      {/* Modal Jadwalkan Wawancara */}
+      {/* Schedule Interview Modal in Twenty CRM Style */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="bg-slate-900/95 border border-slate-800 rounded-2xl p-6 max-w-lg w-full shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_24px_64px_rgba(0,0,0,0.8)] backdrop-blur-xl animate-in zoom-in-95 ease-[cubic-bezier(0.22,1,0.36,1)] duration-200 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <div>
-                <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
-                  <CalendarIcon className="w-4 h-4 text-blue-400" />
-                  Jadwalkan Wawancara Baru
-                </h3>
-                <p className="text-xs text-slate-400 mt-0.5">
-                  Input jadwal dan dapatkan file pengingat kalender (.ics) dengan alarm otomatis.
-                </p>
-              </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs select-none">
+          <div className="bg-white dark:bg-[#18181b] border border-zinc-200 dark:border-zinc-800 rounded-xl shadow-xl w-full max-w-md p-5 space-y-4 animate-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
+              <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                Jadwalkan Sesi Wawancara
+              </h3>
               <button
-                type="button"
                 onClick={() => setShowModal(false)}
-                className="text-slate-400 hover:text-slate-200 text-lg leading-none p-1 rounded-lg hover:bg-slate-800 transition-colors"
+                className="text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 p-1 rounded"
               >
-                &times;
+                <X size={16} />
               </button>
             </div>
 
-            <form onSubmit={handleCreateInterview} className="space-y-3.5">
+            <form onSubmit={handleCreateInterview} className="space-y-3.5 text-xs">
               <div>
-                <label className="text-xs font-medium text-slate-300 block mb-1">
-                  Pilih Lamaran Terdaftar
+                <label className="block text-[11px] font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
+                  Pilih Lamaran Terkait
                 </label>
                 <select
                   value={selectedAppId}
                   onChange={(e) => setSelectedAppId(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-blue-500/60 focus:ring-2 focus:ring-blue-500/20 transition-[border-color,box-shadow] duration-150"
+                  className="w-full px-3 py-1.5 rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-400"
                 >
-                  <option value="">-- Pilih dari pipeline atau isi manual --</option>
-                  {applications.map((app) => (
-                    <option key={app.id} value={app.id}>
-                      {app.company} - {app.position} ({app.status})
+                  <option value="">(Custom / Tambah Perusahaan Manual)</option>
+                  {applications.map((a) => (
+                    <option key={a.id} value={a.id}>
+                      {a.company} - {a.position} ({a.status})
                     </option>
                   ))}
                 </select>
               </div>
 
               {!selectedAppId && (
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="text-xs font-medium text-slate-300 block mb-1">
+                    <label className="block text-[11px] font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                       Nama Perusahaan
                     </label>
                     <input
                       type="text"
-                      required={!selectedAppId}
                       value={customCompany}
                       onChange={(e) => setCustomCompany(e.target.value)}
-                      placeholder="Contoh: Shopee"
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-blue-500/60 focus:ring-2 focus:ring-blue-500/20 transition-[border-color,box-shadow] duration-150"
+                      placeholder="Contoh: GoTo"
+                      className="w-full px-3 py-1.5 rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-400"
+                      required={!selectedAppId}
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-medium text-slate-300 block mb-1">
-                      Posisi Lamaran
+                    <label className="block text-[11px] font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
+                      Posisi / Role
                     </label>
                     <input
                       type="text"
-                      required={!selectedAppId}
                       value={customPosition}
                       onChange={(e) => setCustomPosition(e.target.value)}
-                      placeholder="Contoh: Senior DevOps"
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-blue-500/60 focus:ring-2 focus:ring-blue-500/20 transition-[border-color,box-shadow] duration-150"
+                      placeholder="Software Engineer"
+                      className="w-full px-3 py-1.5 rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-400"
                     />
                   </div>
                 </div>
               )}
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="text-xs font-medium text-slate-300 block mb-1">
-                    Tahapan Wawancara
+                  <label className="block text-[11px] font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
+                    Tahapan Seleksi
                   </label>
                   <select
                     value={roundType}
                     onChange={(e) => setRoundType(e.target.value as Interview['interviewType'])}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-blue-500/60 focus:ring-2 focus:ring-blue-500/20 transition-[border-color,box-shadow] duration-150"
+                    className="w-full px-3 py-1.5 rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-400"
                   >
                     <option value="HR Screening">HR Screening</option>
+                    <option value="User Interview">User Interview</option>
                     <option value="Technical Interview">Technical Interview</option>
-                    <option value="System Design">System Design</option>
-                    <option value="User / Hiring Manager">User / Hiring Manager</option>
-                    <option value="Cultural Fit">Cultural Fit</option>
-                    <option value="Final / Offering">Final / Offering</option>
+                    <option value="Take-Home Test Review">Take-Home Test Review</option>
+                    <option value="Final / C-Level">Final / C-Level</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="text-xs font-medium text-slate-300 block mb-1">
-                    Tanggal & Jam (WIB)
+                  <label className="block text-[11px] font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
+                    Waktu Sesi
                   </label>
                   <input
                     type="datetime-local"
-                    required
                     value={scheduledAt}
                     onChange={(e) => setScheduledAt(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-blue-500/60 focus:ring-2 focus:ring-blue-500/20 transition-[border-color,box-shadow] duration-150"
+                    className="w-full px-2.5 py-1.5 rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-400 font-mono text-[11px]"
+                    required
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-xs font-medium text-slate-300 block mb-1">
-                  Link Meeting (Opsional)
+                <label className="block text-[11px] font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
+                  Link Meeting (Google Meet / Zoom / Teams)
                 </label>
                 <input
                   type="url"
-                  inputMode="url"
-                  autoCapitalize="none"
-                  autoCorrect="off"
-                  spellCheck={false}
                   value={meetingLink}
                   onChange={(e) => setMeetingLink(e.target.value)}
-                  placeholder="https://meet.google.com/xxx-xxxx-xxx atau Zoom URL"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-blue-500/60 focus:ring-2 focus:ring-blue-500/20 transition-[border-color,box-shadow] duration-150"
+                  placeholder="https://meet.google.com/..."
+                  className="w-full px-3 py-1.5 rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-400"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-medium text-slate-300 block mb-1">
+                <label className="block text-[11px] font-semibold text-zinc-700 dark:text-zinc-300 mb-1">
                   Catatan Persiapan
                 </label>
                 <textarea
-                  rows={2}
                   value={prepNotes}
                   onChange={(e) => setPrepNotes(e.target.value)}
-                  placeholder="Siapkan arsitektur microservices, proyek portfolio..."
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-blue-500/60 focus:ring-2 focus:ring-blue-500/20 transition-[border-color,box-shadow] duration-150 resize-none"
+                  placeholder="Contoh: Siapkan demo sistem arsitektur microservices dan portofolio..."
+                  rows={2}
+                  className="w-full px-3 py-1.5 rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-zinc-400 resize-none"
                 />
               </div>
 
-              <div className="flex items-center gap-2 pt-1">
-                <input
-                  type="checkbox"
-                  id="autoExport"
-                  checked={autoExportICS}
-                  onChange={(e) => setAutoExportICS(e.target.checked)}
-                  className="rounded border-slate-700 bg-slate-950 text-blue-600 focus:ring-0"
-                />
-                <label htmlFor="autoExport" className="text-xs text-slate-300 cursor-pointer">
-                  Langsung unduh file pengingat kalender (<strong>.ics</strong>) setelah disimpan
-                </label>
-              </div>
-
-              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-800">
-                <Button
+              <div className="flex items-center justify-between pt-3 border-t border-zinc-100 dark:border-zinc-800">
+                <button
                   type="button"
-                  variant="outline"
-                  size="sm"
                   onClick={() => setShowModal(false)}
-                  className="text-xs border-slate-700 text-slate-400 hover:text-slate-200"
+                  className="px-3 py-1.5 rounded-md border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
                 >
                   Batal
-                </Button>
-                <Button
+                </button>
+                <button
                   type="submit"
-                  size="sm"
                   disabled={isSubmitting}
-                  className="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-md shadow-blue-500/20"
+                  className="px-4 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 rounded-md font-semibold shadow-2xs transition-all active:scale-[0.98]"
                 >
-                  {isSubmitting ? 'Menyimpan...' : 'Simpan Jadwal'}
-                </Button>
+                  {isSubmitting ? 'Menyimpan…' : 'Simpan Jadwal'}
+                </button>
               </div>
             </form>
           </div>

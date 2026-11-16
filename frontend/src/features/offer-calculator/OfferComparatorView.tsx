@@ -504,7 +504,7 @@ Thank you for your consideration, and I look forward to your thoughts.`;
         <div className="overlay" role="dialog" aria-modal="true" style={{ zIndex: 1050 }}>
           <div className="modal" style={{ maxWidth: '640px', width: '95vw', background: '#fff' }}>
             <div className="drawer-head">
-              <span className="eyebrow" style={{ color: '#556b2f' }}>
+              <span className="eyebrow" style={{ color: '#18181b' }}>
                 TACTICAL SALARY COUNTER-OFFER GENERATOR
               </span>
               <button onClick={() => setNegotiateOffer(null)}>

@@ -551,10 +551,10 @@ export function SettingsView({
               </div>
 
               {/* Harvard ATS Master Resume Card */}
-              <div className="settings-card" style={{ background: '#fcfcf9', border: '1px solid #d5dec4' }}>
+              <div className="settings-card" style={{ background: '#ffffff', border: '1px solid #e4e4e7' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
                   <div>
-                    <span className="eyebrow" style={{ color: '#556b2f' }}>RESUME MASTER ATS</span>
+                    <span className="eyebrow" style={{ color: '#18181b' }}>RESUME MASTER ATS</span>
                     <h3 style={{ margin: '4px 0 6px' }}>1-Click Printable ATS Resume (Harvard Standard)</h3>
                     <p className="setting-desc" style={{ maxWidth: '600px', margin: 0 }}>
                       Format seluruh profil, pengalaman, dan keahlian Anda ke dalam template resume Harvard/Tech 1 kolom siap cetak atau ekspor PDF dengan skor lolos parsing ATS 100%.
@@ -1266,10 +1266,10 @@ export function SettingsView({
               </div>
 
               {/* Real-time Auto-Sync Backup Engine */}
-              <div className="settings-card" style={{ borderLeft: '3px solid #7d9850' }}>
+              <div className="settings-card" style={{ borderLeft: '3px solid #18181b' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
                   <div>
-                    <span className="eyebrow" style={{ color: '#556b2f' }}>SINKRONISASI OTOMATIS</span>
+                    <span className="eyebrow" style={{ color: '#18181b' }}>SINKRONISASI OTOMATIS</span>
                     <h3 style={{ margin: '4px 0 6px' }}>Auto-Sync Backup Snapshot</h3>
                     <p className="setting-desc" style={{ maxWidth: '640px' }}>
                       Sistem secara otomatis membuat dan menyegarkan snapshot cadangan data Anda setiap kali terjadi mutasi lamaran, pembaruan status, atau catatan baru. Anda tidak perlu lagi khawatir lupa mem-backup data secara manual.
@@ -1285,9 +1285,9 @@ export function SettingsView({
                         gap: '6px',
                         padding: '4px 10px',
                         borderRadius: '20px',
-                        background: autoBackupConfig.enabled ? '#edf2e3' : '#f5f5f0',
-                        color: autoBackupConfig.enabled ? '#455928' : '#888d82',
-                        border: `1px solid ${autoBackupConfig.enabled ? '#cfddbe' : '#dedfd8'}`,
+                        background: autoBackupConfig.enabled ? '#f4f4f5' : '#fafafa',
+                        color: autoBackupConfig.enabled ? '#18181b' : '#71717a',
+                        border: `1px solid ${autoBackupConfig.enabled ? '#e4e4e7' : '#e4e4e7'}`,
                       }}
                     >
                       <span
@@ -1295,7 +1295,7 @@ export function SettingsView({
                           width: '7px',
                           height: '7px',
                           borderRadius: '50%',
-                          background: autoBackupConfig.enabled ? '#7d9850' : '#888d82',
+                          background: autoBackupConfig.enabled ? '#10b981' : '#71717a',
                         }}
                       />
                       {autoBackupConfig.enabled ? 'Auto-Sync Aktif' : 'Non-Aktif'}
@@ -1355,7 +1355,7 @@ export function SettingsView({
                         }}
                       >
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <CheckCircle2 size={16} style={{ color: '#7d9850' }} />
+                          <CheckCircle2 size={16} style={{ color: '#10b981' }} />
                           <span style={{ fontSize: '12px', color: '#333730' }}>
                             Snapshot terbaru tersimpan:{' '}
                             <b style={{ font: "12px 'DM Mono'" }}>

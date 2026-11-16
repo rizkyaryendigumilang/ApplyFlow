@@ -1,8 +1,7 @@
 import React from 'react';
-import { Briefcase, Building2, ExternalLink, ChevronRight } from 'lucide-react';
+import { Briefcase, ArrowRight } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
-import { Button } from '../../components/ui/button';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '../../components/ui/table';
 import type { Application } from '../../lib/pb-types';
 import { idr, daysSince } from '../../lib/utils';
@@ -60,25 +59,31 @@ export const PriorityActionList: React.FC<PriorityActionListProps> = ({
   };
 
   return (
-    <Card className="border-slate-800 bg-slate-900/90 shadow-xl">
-      <CardHeader className="pb-3">
+    <Card className="border border-zinc-200/90 dark:border-zinc-800/90 bg-white dark:bg-[#18181b] shadow-2xs">
+      <CardHeader className="pb-3 border-b border-zinc-100 dark:border-zinc-800/60">
         <div className="flex items-center justify-between">
-          <div className="space-y-1">
-            <CardTitle className="text-base font-semibold text-slate-100 flex items-center gap-2">
-              <Briefcase className="w-4 h-4 text-blue-400" />
+          <div className="space-y-0.5">
+            <CardTitle className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+              <Briefcase className="w-4 h-4 text-zinc-500" />
               {t('cockpit.priorityTitle')}
             </CardTitle>
-            <CardDescription>{t('cockpit.prioritySubtitle')}</CardDescription>
+            <CardDescription className="text-xs text-zinc-500 dark:text-zinc-400">
+              {t('cockpit.prioritySubtitle')}
+            </CardDescription>
           </div>
-          <Button size="sm" variant="ghost" onClick={onNavigateToPipeline} className="text-xs text-blue-400 hover:text-blue-300">
-            Lihat Semua Pipeline &rarr;
-          </Button>
+          <button
+            onClick={onNavigateToPipeline}
+            className="flex items-center gap-1 text-xs font-semibold text-zinc-700 hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-zinc-100 transition-colors"
+          >
+            <span>Buka Pipeline</span>
+            <ArrowRight size={13} />
+          </button>
         </div>
       </CardHeader>
 
-      <CardContent className="pt-1">
+      <CardContent className="pt-4">
         {priorityList.length === 0 ? (
-          <div className="text-center py-6 text-xs text-slate-400">
+          <div className="text-center py-6 text-xs text-zinc-400">
             {t('cockpit.noApplications')}
           </div>
         ) : (
@@ -94,34 +99,45 @@ export const PriorityActionList: React.FC<PriorityActionListProps> = ({
             </TableHeader>
             <TableBody>
               {priorityList.map((app) => (
-                <TableRow key={app.id} className="cursor-pointer" onClick={() => onSelectApplication(app)}>
+                <TableRow
+                  key={app.id}
+                  className="cursor-pointer"
+                  onClick={() => onSelectApplication(app)}
+                >
                   <TableCell>
-                    <div className="font-semibold text-slate-100">{app.company}</div>
-                    <div className="text-[11px] text-slate-400">{app.position}</div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-5 h-5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-bold text-[10px] flex items-center justify-center border border-zinc-200/60 dark:border-zinc-700/60 flex-shrink-0">
+                        {app.company[0]?.toUpperCase() || 'C'}
+                      </div>
+                      <div className="truncate">
+                        <div className="font-semibold text-zinc-900 dark:text-zinc-100 truncate">
+                          {app.company}
+                        </div>
+                        <div className="text-[11px] text-zinc-500 truncate">{app.position}</div>
+                      </div>
+                    </div>
                   </TableCell>
                   <TableCell>
                     <Badge variant={mapStatusVariant(app.status)}>
                       {app.status}
                     </Badge>
                   </TableCell>
-                  <TableCell className="hidden sm:table-cell text-slate-300 font-mono text-[11px] tabular-nums">
+                  <TableCell className="hidden sm:table-cell text-zinc-700 dark:text-zinc-300 font-mono text-[11px] tabular-nums">
                     {app.salaryMin > 0 ? `${idr(app.salaryMin)} - ${idr(app.salaryMax)}` : 'Dirahasiakan'}
                   </TableCell>
-                  <TableCell className="hidden md:table-cell text-slate-400 text-xs">
+                  <TableCell className="hidden md:table-cell text-zinc-500 text-xs font-mono">
                     {daysSince(app.sentAt || app.created || new Date().toISOString())} hari lalu
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button
-                      size="sm"
-                      variant="outline"
+                    <button
                       onClick={(e) => {
                         e.stopPropagation();
                         onSelectApplication(app);
                       }}
-                      className="text-xs h-7 px-2.5 text-slate-300 hover:text-white"
+                      className="px-2.5 py-1 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-zinc-100 border border-zinc-200 dark:border-zinc-700 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
                     >
                       Buka &rarr;
-                    </Button>
+                    </button>
                   </TableCell>
                 </TableRow>
               ))}

@@ -116,139 +116,90 @@ export function JobHunterView({ onPromoteToApplyFlow }: JobHunterViewProps) {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
-      {/* Top Banner: Candidate Profile Context */}
-      <div
-        style={{
-          background: '#fbfbf8',
-          border: '1px solid #dedfd8',
-          padding: '24px',
-          display: 'flex',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '16px',
-        }}
-      >
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span
-              style={{
-                background: '#eef2e6',
-                color: '#556b2f',
-                padding: '6px',
-                borderRadius: '50%',
-                display: 'inline-grid',
-                placeItems: 'center',
-              }}
-            >
-              <Target size={18} />
-            </span>
-            <h1 style={{ fontSize: '20px', margin: 0, fontWeight: 600 }}>Job Hunter Engine</h1>
-            <span
-              style={{
-                font: "10px 'DM Mono'",
-                textTransform: 'uppercase',
-                background: '#e8eedd',
-                color: '#4e622b',
-                padding: '4px 8px',
-                borderRadius: '3px',
-                border: '1px solid #d4dec3',
-              }}
-            >
+    <div className="space-y-5">
+      {/* Top Banner: Candidate Profile Context in Twenty CRM Style */}
+      <div className="bg-white dark:bg-[#18181b] border border-zinc-200/90 dark:border-zinc-800/90 rounded-xl p-5 shadow-2xs flex flex-wrap items-center justify-between gap-4">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 flex items-center justify-center">
+              <Target size={15} />
+            </div>
+            <h1 className="text-base font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">
+              Job Hunter Engine
+            </h1>
+            <span className="text-[10px] font-mono font-semibold uppercase px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400 border border-zinc-200/60 dark:border-zinc-700/60">
               Deterministic Triage
             </span>
           </div>
-          <p style={{ fontSize: '13px', color: '#777c73', margin: '8px 0 0' }}>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">
             Target:{' '}
-            <b style={{ color: '#202320' }}>
+            <b className="text-zinc-800 dark:text-zinc-200">
               {profile.targetRoles.slice(0, 3).join(', ') || 'Unset'}
             </b>{' '}
             · Skills:{' '}
-            <span style={{ color: '#556b2f', font: "12px 'DM Mono'" }}>
+            <span className="text-zinc-700 dark:text-zinc-300 font-mono text-[11px]">
               {profile.skills.slice(0, 5).join(', ')}...
             </span>{' '}
             · Min Base:{' '}
-            <b style={{ color: '#202320' }}>
+            <b className="text-zinc-800 dark:text-zinc-200 font-mono">
               Rp {(profile.minSalary || 0).toLocaleString('id-ID')}
             </b>
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div className="flex items-center gap-2">
           <button
             onClick={() => setIsClipperOpen(true)}
-            className="secondary compact-btn"
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-700/80 text-zinc-700 dark:text-zinc-200 transition-colors shadow-2xs"
             title="Klip lowongan kerja dari LinkedIn / Jobstreet"
           >
-            <Bookmark size={14} /> 1-Click Web-Clipper
+            <Bookmark size={13} />
+            <span>Web Clipper</span>
           </button>
           <button
             onClick={() => {
               setSelectedAtsLead(null);
               setIsAtsModalOpen(true);
             }}
-            className="primary compact-btn"
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#202320', color: '#f5f5f0' }}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-md bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 transition-colors shadow-2xs"
           >
-            <Printer size={14} /> 1-Click ATS Resume
+            <Printer size={13} />
+            <span>ATS Resume</span>
           </button>
           <button
             onClick={() => setIsProfileModalOpen(true)}
-            className="secondary compact-btn"
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-700/80 text-zinc-700 dark:text-zinc-200 transition-colors shadow-2xs"
           >
-            <SlidersHorizontal size={14} /> Edit Target Criteria
+            <SlidersHorizontal size={13} />
+            <span>Kriteria Target</span>
           </button>
         </div>
       </div>
 
-      {/* Tabs */}
-      <div
-        style={{
-          display: 'flex',
-          gap: '24px',
-          borderBottom: '1px solid #dedfd8',
-          fontSize: '13px',
-        }}
-      >
+      {/* Twenty CRM Tabs */}
+      <div className="flex border-b border-zinc-200/80 dark:border-zinc-800/80 gap-6 text-xs font-medium">
         <button
           onClick={() => setActiveTab('evaluator')}
-          style={{
-            paddingBottom: '12px',
-            fontWeight: 600,
-            borderBottom: activeTab === 'evaluator' ? '2px solid #7d9850' : '2px solid transparent',
-            color: activeTab === 'evaluator' ? '#202320' : '#888d82',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-          }}
+          className={`pb-2.5 border-b-2 flex items-center gap-2 transition-colors ${
+            activeTab === 'evaluator'
+              ? 'border-zinc-900 text-zinc-900 dark:border-zinc-100 dark:text-zinc-100 font-semibold'
+              : 'border-transparent text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200'
+          }`}
         >
-          <Search size={15} /> Evaluator & Fit Scoring
+          <Search size={14} />
+          <span>Evaluator & Fit Scoring</span>
         </button>
         <button
           onClick={() => setActiveTab('pipeline')}
-          style={{
-            paddingBottom: '12px',
-            fontWeight: 600,
-            borderBottom: activeTab === 'pipeline' ? '2px solid #7d9850' : '2px solid transparent',
-            color: activeTab === 'pipeline' ? '#202320' : '#888d82',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-          }}
+          className={`pb-2.5 border-b-2 flex items-center gap-2 transition-colors ${
+            activeTab === 'pipeline'
+              ? 'border-zinc-900 text-zinc-900 dark:border-zinc-100 dark:text-zinc-100 font-semibold'
+              : 'border-transparent text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200'
+          }`}
         >
-          <FolderKanban size={15} /> Lead Pipeline
-          <span
-            style={{
-              font: "10px 'DM Mono'",
-              background: '#e8ebd8',
-              color: '#495a28',
-              padding: '2px 7px',
-              borderRadius: '12px',
-            }}
-          >
+          <FolderKanban size={14} />
+          <span>Lead Pipeline</span>
+          <span className="text-[10px] font-mono px-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-medium">
             {leads.length}
           </span>
         </button>
@@ -305,7 +256,7 @@ export function JobHunterView({ onPromoteToApplyFlow }: JobHunterViewProps) {
                 gap: '8px',
               }}
             >
-              <FileText size={16} style={{ color: '#7d9850' }} /> Input Vacancy Specification
+              <FileText size={16} style={{ color: '#18181b' }} /> Input Vacancy Specification
             </h2>
 
             <form onSubmit={handleEvaluate} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
@@ -664,7 +615,7 @@ export function JobHunterView({ onPromoteToApplyFlow }: JobHunterViewProps) {
                         marginBottom: '4px',
                       }}
                     >
-                      <Lightbulb size={14} style={{ color: '#7d9850' }} /> Pitching & Positioning Strategy:
+                      <Lightbulb size={14} style={{ color: '#18181b' }} /> Pitching & Positioning Strategy:
                     </span>
                     <p style={{ color: '#555a50', lineHeight: 1.5, margin: 0 }}>
                       {currentLead.evaluation.suggestedAngle}

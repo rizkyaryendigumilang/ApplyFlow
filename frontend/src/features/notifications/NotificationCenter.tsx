@@ -136,7 +136,7 @@ export function NotificationCenter({
       <aside className="drawer" style={{ width: 'min(480px, 100%)' }}>
         <div className="drawer-head">
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Bell size={18} style={{ color: '#7d9850' }} />
+            <Bell size={18} style={{ color: '#18181b' }} />
             <span className="eyebrow" style={{ margin: 0 }}>
               {isId ? 'PUSAT PEMBERITAHUAN' : 'NOTIFICATION CENTER'}
             </span>
@@ -172,8 +172,8 @@ export function NotificationCenter({
             style={{
               paddingBottom: '10px',
               fontWeight: 600,
-              borderBottom: activeTab === 'alerts' ? '2px solid #7d9850' : '2px solid transparent',
-              color: activeTab === 'alerts' ? '#202320' : '#888d82',
+              borderBottom: activeTab === 'alerts' ? '2px solid #18181b' : '2px solid transparent',
+              color: activeTab === 'alerts' ? '#09090b' : '#71717a',
               display: 'inline-flex',
               alignItems: 'center',
               gap: '6px',
@@ -184,11 +184,11 @@ export function NotificationCenter({
               <span
                 style={{
                   font: "10px 'DM Mono'",
-                  background: '#fcf0ed',
-                  color: '#9e3f2d',
+                  background: '#fef2f2',
+                  color: '#dc2626',
                   padding: '1px 6px',
                   borderRadius: '10px',
-                  border: '1px solid #f4cfc7',
+                  border: '1px solid #fecaca',
                 }}
               >
                 {unreadAlertsCount}
@@ -201,8 +201,8 @@ export function NotificationCenter({
             style={{
               paddingBottom: '10px',
               fontWeight: 600,
-              borderBottom: activeTab === 'reminders' ? '2px solid #7d9850' : '2px solid transparent',
-              color: activeTab === 'reminders' ? '#202320' : '#888d82',
+              borderBottom: activeTab === 'reminders' ? '2px solid #18181b' : '2px solid transparent',
+              color: activeTab === 'reminders' ? '#09090b' : '#71717a',
               display: 'inline-flex',
               alignItems: 'center',
               gap: '6px',
@@ -212,8 +212,8 @@ export function NotificationCenter({
             <span
               style={{
                 font: "10px 'DM Mono'",
-                background: '#e8ebd8',
-                color: '#495a28',
+                background: '#f4f4f5',
+                color: '#18181b',
                 padding: '1px 6px',
                 borderRadius: '10px',
               }}
@@ -227,8 +227,8 @@ export function NotificationCenter({
             style={{
               paddingBottom: '10px',
               fontWeight: 600,
-              borderBottom: activeTab === 'preferences' ? '2px solid #7d9850' : '2px solid transparent',
-              color: activeTab === 'preferences' ? '#202320' : '#888d82',
+              borderBottom: activeTab === 'preferences' ? '2px solid #18181b' : '2px solid transparent',
+              color: activeTab === 'preferences' ? '#09090b' : '#71717a',
               display: 'inline-flex',
               alignItems: 'center',
               gap: '6px',
@@ -250,7 +250,7 @@ export function NotificationCenter({
                   onClick={markAllAsRead}
                   style={{
                     fontSize: '11px',
-                    color: '#7d9850',
+                    color: '#18181b',
                     fontWeight: 600,
                     textDecoration: 'underline',
                   }}
@@ -343,7 +343,7 @@ export function NotificationCenter({
                   border: '1px dashed #dedfd8',
                 }}
               >
-                <CheckCircle2 size={32} style={{ color: '#7d9850', marginBottom: '8px' }} />
+                <CheckCircle2 size={32} style={{ color: '#10b981', marginBottom: '8px' }} />
                 <p style={{ fontSize: '13px', fontWeight: 600, color: '#202320', margin: '0 0 4px' }}>
                   {isId ? 'Semua Beres!' : 'All clear!'}
                 </p>
@@ -373,7 +373,7 @@ export function NotificationCenter({
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Calendar size={15} style={{ color: '#7d9850' }} />
+                  <Calendar size={15} style={{ color: '#18181b' }} />
                   <strong style={{ fontSize: '13px', color: '#202320' }}>{item.title}</strong>
                 </div>
                 <p style={{ fontSize: '12px', color: '#666b62', margin: 0 }}>{item.message}</p>
@@ -431,7 +431,7 @@ export function NotificationCenter({
                     type="checkbox"
                     checked={channels.emailAlerts}
                     onChange={(e) => setChannels({ ...channels, emailAlerts: e.target.checked })}
-                    style={{ accentColor: '#7d9850' }}
+                    style={{ accentColor: '#18181b' }}
                   />
                 </label>
                 <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12px', cursor: 'pointer' }}>
@@ -440,7 +440,7 @@ export function NotificationCenter({
                     type="checkbox"
                     checked={channels.telegramBot}
                     onChange={(e) => setChannels({ ...channels, telegramBot: e.target.checked })}
-                    style={{ accentColor: '#7d9850' }}
+                    style={{ accentColor: '#18181b' }}
                   />
                 </label>
                 <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12px', cursor: 'pointer' }}>
@@ -449,7 +449,7 @@ export function NotificationCenter({
                     type="checkbox"
                     checked={channels.browserPush}
                     onChange={(e) => setChannels({ ...channels, browserPush: e.target.checked })}
-                    style={{ accentColor: '#7d9850' }}
+                    style={{ accentColor: '#18181b' }}
                   />
                 </label>
               </div>

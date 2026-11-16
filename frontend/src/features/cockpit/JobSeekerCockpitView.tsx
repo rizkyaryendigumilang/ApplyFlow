@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { LayoutDashboard, Compass, Send, Briefcase, Plus, ArrowUpRight } from 'lucide-react';
+import { LayoutDashboard, Plus, ArrowUpRight, Calendar, Sparkles } from 'lucide-react';
 import type { Application, Interview, JobLead } from '../../lib/pb-types';
 import { useCandidateProfile } from '../../hooks/useCandidateProfile';
 import { useI18n } from '../../lib/i18n';
@@ -102,41 +102,44 @@ export const JobSeekerCockpitView: React.FC<JobSeekerCockpitViewProps> = ({
   }, [radarApps]);
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-12 animate-in fade-in duration-300">
-      {/* Welcome Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-slate-900 to-blue-950/40 border border-slate-800/90 rounded-3xl p-6 sm:p-8 backdrop-blur-md relative overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_1px_2px_rgba(0,0,0,0.3),0_20px_40px_-20px_rgba(0,0,0,0.7)]">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 text-xs font-semibold ring-1 ring-inset ring-blue-500/20">
-              <LayoutDashboard className="w-3.5 h-3.5" />
-              {t('cockpit.eyebrow')}
+    <div className="space-y-5 max-w-7xl mx-auto pb-8 select-none">
+      {/* 1. Twenty CRM Workspace Header Card */}
+      <div className="bg-white dark:bg-[#18181b] border border-zinc-200/90 dark:border-zinc-800/90 rounded-xl p-5 shadow-2xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+                Dasbor Utama
+              </span>
+              <span className="text-zinc-300 dark:text-zinc-700">·</span>
+              <span className="text-[10px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 px-2 py-0.2 rounded-full">
+                Sesi Aktif
+              </span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-100 tracking-tight">
+            <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">
               {t('cockpit.welcome', { name: candidateName })}
             </h1>
-            <p className="text-sm text-slate-300 max-w-2xl leading-relaxed">
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-2xl leading-relaxed">
               {t('cockpit.subtitle')}
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-            <div className="px-3.5 py-2 rounded-xl bg-slate-950/80 border border-slate-800 text-xs text-slate-400 font-mono text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] tabular-nums">
+          <div className="flex items-center gap-2.5">
+            <div className="px-3 py-1.5 rounded-md bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200/80 dark:border-zinc-700/80 text-xs text-zinc-600 dark:text-zinc-300 font-mono text-center tabular-nums">
               📅 {dateLabel}
             </div>
-            <Button
+            <button
               onClick={onOpenAddModal}
-              className="bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_8px_18px_-8px_rgba(37,99,235,0.5)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-200"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 rounded-md text-xs font-semibold shadow-2xs transition-all active:scale-[0.98]"
             >
-              <Plus className="w-4 h-4 mr-1.5" />
-              Tambah Lowongan
-            </Button>
+              <Plus size={14} />
+              <span>Tambah Lowongan</span>
+            </button>
           </div>
         </div>
       </div>
 
-      {/* 1. Daily Attention Radar (High priority action center) */}
+      {/* 2. Daily Attention Radar (High priority action center) */}
       <DailyAttentionRadar
         alerts={radarAlerts}
         onNavigateToPipeline={() => onNavigateTo('pipeline')}
@@ -148,7 +151,7 @@ export const JobSeekerCockpitView: React.FC<JobSeekerCockpitViewProps> = ({
         onOpenStarCoach={onOpenStarCoach}
       />
 
-      {/* 2. Kalender Wawancara & Pengingat (.ics) Widget */}
+      {/* 3. Kalender Wawancara & Pengingat (.ics) Widget */}
       <InterviewCalendarWidget
         interviews={interviews}
         applications={applications}
@@ -157,28 +160,27 @@ export const JobSeekerCockpitView: React.FC<JobSeekerCockpitViewProps> = ({
         onSelectApplication={onSelectApplication}
       />
 
-      {/* 3. Bento Grid: Funnel Momentum & Safe Quota Habit */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* 4. Two-Column Row: Funnel Momentum & Safe Quota Habit */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <FunnelMomentumWidget stats={funnelStats} />
-        
+
         <div className="space-y-4">
           <SafeQuotaTrackerCard />
           <div className="flex justify-end">
-            <Button
-              variant="outline"
-              size="sm"
+            <button
+              type="button"
               onClick={() => onNavigateTo('linkedin')}
-              className="text-xs text-blue-400 hover:text-blue-300 border-blue-500/30"
+              className="flex items-center gap-1 text-xs font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200 transition-colors"
             >
               <span>{t('cockpit.openLinkedIn')}</span>
-              <ArrowUpRight className="w-3.5 h-3.5 ml-1" />
-            </Button>
+              <ArrowUpRight size={13} />
+            </button>
           </div>
         </div>
       </div>
 
-      {/* 4. Intelligence Grid: AI Job Scout & Real THP Offer Comparator */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* 5. Intelligence Row: AI Job Scout & Real THP Offer Comparator */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <JobScoutMiniFeedWidget
           jobLeads={jobLeads}
           onNavigateToJobHunter={() => onNavigateTo('jobhunter')}
@@ -191,7 +193,7 @@ export const JobSeekerCockpitView: React.FC<JobSeekerCockpitViewProps> = ({
         />
       </div>
 
-      {/* 5. Top 5 Priority Applications Queue */}
+      {/* 6. Top 5 Priority Applications Queue */}
       <PriorityActionList
         applications={applications}
         onSelectApplication={onSelectApplication}

@@ -387,7 +387,7 @@ Score: ${audit.score}/100 | Key Metrics: ${audit.uniqueMetrics.join(', ') || 'No
                   style={{
                     padding: '10px 12px',
                     borderRadius: '4px',
-                    border: idx === activeStoryIndex ? '1px solid #7d9850' : '1px solid #dedfd8',
+                    border: idx === activeStoryIndex ? '1px solid #18181b' : '1px solid #dedfd8',
                     background: idx === activeStoryIndex ? '#fff' : '#f5f5f0',
                     cursor: 'pointer',
                     fontSize: '12px',
@@ -400,7 +400,7 @@ Score: ${audit.score}/100 | Key Metrics: ${audit.uniqueMetrics.join(', ') || 'No
                         fontSize: '10px',
                         textTransform: 'uppercase',
                         fontWeight: 600,
-                        color: '#556b2f',
+                        color: '#18181b',
                       }}
                     >
                       {st.category || 'Story'} #{idx + 1}
@@ -448,7 +448,7 @@ Score: ${audit.score}/100 | Key Metrics: ${audit.uniqueMetrics.join(', ') || 'No
                       lineHeight: 1.3,
                     }}
                   >
-                    <b style={{ color: '#556b2f', display: 'block' }}>[{preset.category}]</b>
+                    <b style={{ color: '#18181b', display: 'block' }}>[{preset.category}]</b>
                     {preset.question.slice(0, 65)}...
                   </button>
                 ))}
@@ -569,7 +569,7 @@ Score: ${audit.score}/100 | Key Metrics: ${audit.uniqueMetrics.join(', ') || 'No
             >
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <span style={{ fontSize: '12px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', color: '#202320' }}>
-                  <Sparkles size={14} style={{ color: '#7d9850' }} /> STAR Quality Auditor & Metrics Inspector
+                  <Sparkles size={14} style={{ color: '#18181b' }} /> STAR Quality Auditor & Metrics Inspector
                 </span>
                 <span style={{ fontSize: '11px', color: '#777c73' }}>
                   Detected Numbers: <b>{audit.uniqueMetrics.length}</b> · Power Verbs: <b>{audit.verbsFound.length}</b>

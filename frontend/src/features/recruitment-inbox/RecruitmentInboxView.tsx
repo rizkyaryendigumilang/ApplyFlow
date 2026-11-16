@@ -10,6 +10,7 @@ import {
   X,
   FileCheck,
 } from 'lucide-react';
+import { cn } from '../../lib/cn';
 import { useRecruitmentNotifications } from '../../hooks/useRecruitmentNotifications';
 import { useApplicationEvents } from '../../hooks/useApplicationEvents';
 import { EmptyState } from '../../components/ui/EmptyState';
@@ -81,90 +82,48 @@ export function RecruitmentInboxView({
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+    <div className="space-y-6">
       {/* Header & Gmail Connection Card */}
-      <div
-        style={{
-          background: '#fbfbf8',
-          border: '1px solid #dedfd8',
-          padding: '24px',
-          display: 'flex',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '16px',
-        }}
-      >
+      <div className="rounded-lg border border-zinc-200/90 bg-white p-5 shadow-2xs dark:border-zinc-800 dark:bg-[#18181b] flex flex-wrap items-center justify-between gap-4">
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span
-              style={{
-                background: '#eef2e6',
-                color: '#556b2f',
-                padding: '6px',
-                borderRadius: '50%',
-                display: 'inline-grid',
-                placeItems: 'center',
-              }}
-            >
-              <Inbox size={18} />
+          <div className="flex items-center gap-2.5">
+            <span className="flex h-8 w-8 items-center justify-center rounded-md bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100">
+              <Inbox size={16} />
             </span>
-            <h1 style={{ fontSize: '20px', margin: 0, fontWeight: 600 }}>
+            <h1 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
               Recruitment Inbox & Email Sync
             </h1>
-            <span
-              style={{
-                font: "10px 'DM Mono'",
-                textTransform: 'uppercase',
-                background: '#e8eedd',
-                color: '#4e622b',
-                padding: '4px 8px',
-                borderRadius: '3px',
-                border: '1px solid #d4dec3',
-              }}
-            >
+            <span className="rounded-md border border-zinc-200 bg-zinc-50 px-2 py-0.5 font-mono text-[10px] uppercase font-semibold text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
               JobStreet Sync Ready
             </span>
           </div>
-          <p style={{ fontSize: '13px', color: '#777c73', margin: '8px 0 0' }}>
-            Connected Account: <b style={{ color: '#202320' }}>{gmailConnection.email}</b> · Last
+          <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
+            Connected Account: <b className="text-zinc-900 dark:text-zinc-100 font-medium">{gmailConnection.email}</b> · Last
             Synced:{' '}
-            <span style={{ font: "12px 'DM Mono'" }}>
+            <span className="font-mono text-zinc-700 dark:text-zinc-300">
               {new Date(gmailConnection.lastSyncedAt || Date.now()).toLocaleTimeString('id-ID')}
             </span>{' '}
             · Auto-Create Applications:{' '}
-            <b style={{ color: gmailConnection.autoCreateApplication ? '#455928' : '#888d82' }}>
+            <b className={cn("font-medium", gmailConnection.autoCreateApplication ? "text-emerald-600 dark:text-emerald-400" : "text-zinc-400")}>
               {gmailConnection.autoCreateApplication ? 'Enabled' : 'Disabled'}
             </b>
           </p>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <label
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              fontSize: '12px',
-              cursor: 'pointer',
-              background: '#f0f2eb',
-              padding: '8px 12px',
-              borderRadius: '3px',
-            }}
-          >
+        <div className="flex items-center gap-3">
+          <label className="inline-flex items-center gap-2 rounded-md border border-zinc-200 bg-zinc-50 px-3 py-1.5 text-xs text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
             <input
               type="checkbox"
               checked={Boolean(gmailConnection.autoCreateApplication)}
               onChange={(e) => updateGmailSetting(e.target.checked)}
-              style={{ accentColor: '#7d9850' }}
+              className="h-3.5 w-3.5 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900 cursor-pointer"
             />
-            <span>Auto-create on discovery</span>
+            <span className="text-xs font-medium">Auto-create on discovery</span>
           </label>
 
           <button
             onClick={() => setIsIngestModalOpen(true)}
-            className="primary compact-btn"
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+            className="inline-flex items-center gap-1.5 rounded-md bg-zinc-900 px-3.5 py-1.5 text-xs font-medium text-white shadow-2xs hover:bg-zinc-800 active:scale-[0.98] transition-all dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
           >
             <Zap size={14} /> Quick Ingest Email
           </button>
@@ -172,160 +131,98 @@ export function RecruitmentInboxView({
       </div>
 
       {message && (
-        <div
-          style={{
-            padding: '12px 16px',
-            background: '#edf2e3',
-            border: '1px solid #cfddbe',
-            color: '#455928',
-            fontSize: '12px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
+        <div className="flex items-center justify-between rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 text-xs text-zinc-800 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200">
           <span>{message}</span>
-          <button onClick={() => setMessage(null)} style={{ color: '#455928', fontWeight: 'bold' }}>
+          <button onClick={() => setMessage(null)} className="font-bold text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100">
             ✕
           </button>
         </div>
       )}
 
       {/* Filter Tabs */}
-      <div
-        style={{
-          display: 'flex',
-          gap: '24px',
-          borderBottom: '1px solid #dedfd8',
-          fontSize: '13px',
-          overflowX: 'auto',
-        }}
-      >
-        {(['all', 'matched', 'needs_review', 'auto_created', 'unmatched'] as const).map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveFilter(tab)}
-            style={{
-              paddingBottom: '12px',
-              fontWeight: 600,
-              textTransform: 'capitalize',
-              borderBottom: activeFilter === tab ? '2px solid #7d9850' : '2px solid transparent',
-              color: activeFilter === tab ? '#202320' : '#888d82',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {tab.replace('_', ' ')}
-            <span
-              style={{
-                font: "10px 'DM Mono'",
-                background: '#e8ebd8',
-                color: '#495a28',
-                padding: '2px 7px',
-                borderRadius: '12px',
-              }}
+      <div className="flex items-center gap-1.5 border-b border-zinc-200/90 dark:border-zinc-800 pb-2.5 overflow-x-auto">
+        {(['all', 'matched', 'needs_review', 'auto_created', 'unmatched'] as const).map((tab) => {
+          const count = tab === 'all'
+            ? notifications.length
+            : notifications.filter((n) => n.matchStatus === tab).length;
+          const isActive = activeFilter === tab;
+          return (
+            <button
+              key={tab}
+              onClick={() => setActiveFilter(tab)}
+              className={cn(
+                "inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-xs font-medium capitalize transition-colors whitespace-nowrap",
+                isActive
+                  ? "bg-zinc-900 text-white font-semibold dark:bg-zinc-100 dark:text-zinc-900"
+                  : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+              )}
             >
-              {tab === 'all'
-                ? notifications.length
-                : notifications.filter((n) => n.matchStatus === tab).length}
-            </span>
-          </button>
-        ))}
+              {tab.replace('_', ' ')}
+              <span
+                className={cn(
+                  "font-mono text-[10px] px-1.5 py-0.5 rounded-full",
+                  isActive
+                    ? "bg-zinc-800 text-zinc-200 dark:bg-zinc-200 dark:text-zinc-800"
+                    : "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400"
+                )}
+              >
+                {count}
+              </span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Notifications List */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      <div className="space-y-3">
         {filteredNotifications.map((item) => {
           const matchedApp = applications.find((a) => a.id === item.matchedApplication);
           return (
             <div
               key={item.id}
-              style={{
-                background: '#fbfbf8',
-                border: '1px solid #dedfd8',
-                padding: '18px 20px',
-                display: 'flex',
-                flexWrap: 'wrap',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: '16px',
-              }}
+              className="rounded-lg border border-zinc-200/90 bg-white p-4 shadow-2xs hover:border-zinc-300 dark:border-zinc-800 dark:bg-[#18181b] flex flex-wrap items-center justify-between gap-4 transition-colors"
             >
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', flex: 1, minWidth: '280px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+              <div className="flex flex-col gap-1.5 flex-1 min-w-[280px]">
+                <div className="flex items-center gap-2.5 flex-wrap">
                   <span
-                    style={{
-                      font: "10px 'DM Mono'",
-                      textTransform: 'uppercase',
-                      padding: '3px 8px',
-                      borderRadius: '3px',
-                      background:
-                        item.extractedEventType === 'employer_viewed'
-                          ? '#e0f2fe'
-                          : item.extractedEventType === 'interview_invited'
-                          ? '#edf2e3'
-                          : item.extractedEventType === 'rejection_received'
-                          ? '#faece8'
-                          : '#f0f2eb',
-                      color:
-                        item.extractedEventType === 'employer_viewed'
-                          ? '#0369a1'
-                          : item.extractedEventType === 'interview_invited'
-                          ? '#455928'
-                          : item.extractedEventType === 'rejection_received'
-                          ? '#914030'
-                          : '#4e5548',
-                      border: '1px solid rgba(0,0,0,0.06)',
-                    }}
+                    className={cn(
+                      "font-mono text-[10px] uppercase font-semibold px-2 py-0.5 rounded-md border",
+                      item.extractedEventType === 'employer_viewed'
+                        ? "bg-sky-50 text-sky-700 border-sky-200 dark:bg-sky-950 dark:text-sky-300 dark:border-sky-800"
+                        : item.extractedEventType === 'interview_invited'
+                        ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950 dark:text-emerald-300 dark:border-emerald-800"
+                        : item.extractedEventType === 'rejection_received'
+                        ? "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950 dark:text-rose-300 dark:border-rose-800"
+                        : "bg-zinc-100 text-zinc-700 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700"
+                    )}
                   >
                     {item.extractedEventType?.replace('_', ' ')}
                   </span>
 
-                  <strong style={{ fontSize: '14px', color: '#202320' }}>
+                  <strong className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
                     {item.extractedCompany} · {item.extractedPosition}
                   </strong>
 
-                  <span style={{ fontSize: '11px', color: '#888d82' }}>
+                  <span className="text-xs text-zinc-400 font-mono">
                     via {item.platform?.toUpperCase()}
                   </span>
                 </div>
 
-                <p
-                  style={{
-                    fontFamily: 'monospace',
-                    fontSize: '12px',
-                    color: '#555a50',
-                    background: '#f5f5f0',
-                    padding: '8px 12px',
-                    border: '1px solid #dedfd8',
-                    margin: '4px 0',
-                    fontStyle: 'italic',
-                  }}
-                >
+                <p className="font-mono text-xs text-zinc-600 bg-zinc-50 border border-zinc-200/80 rounded-md p-2 dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-300 italic">
                   "{item.evidenceSnippet || item.rawSubject}"
                 </p>
 
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    fontSize: '11px',
-                    color: '#888d82',
-                  }}
-                >
+                <div className="flex items-center gap-3 text-xs text-zinc-400">
                   <span>
-                    Match status:{' '}
-                    <b style={{ color: '#202320', textTransform: 'capitalize' }}>
+                    Status:{' '}
+                    <b className="text-zinc-700 dark:text-zinc-300 font-medium capitalize">
                       {item.matchStatus.replace('_', ' ')}
                     </b>
                   </span>
                   <span>·</span>
                   <span>
                     Confidence:{' '}
-                    <b style={{ color: '#455928', font: "11px 'DM Mono'" }}>
+                    <b className="text-zinc-800 dark:text-zinc-200 font-mono">
                       {item.confidence}%
                     </b>
                   </span>
@@ -334,20 +231,18 @@ export function RecruitmentInboxView({
                 </div>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div className="flex items-center gap-2">
                 {matchedApp && (
                   <button
                     onClick={() => onSelectApplication(matchedApp)}
-                    className="secondary compact-btn"
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                    className="inline-flex items-center gap-1.5 rounded-md border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 transition-colors"
                   >
                     Open Application <ExternalLink size={12} />
                   </button>
                 )}
                 <button
                   onClick={() => deleteNotification(item.id)}
-                  className="secondary compact-btn"
-                  style={{ padding: '6px 10px', color: '#b43d3d' }}
+                  className="rounded-md border border-zinc-200 bg-white p-1.5 text-zinc-400 hover:text-rose-600 hover:bg-rose-50 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:bg-rose-950 transition-colors"
                   title="Delete notification"
                 >
                   <Trash2 size={13} />
@@ -378,7 +273,7 @@ export function RecruitmentInboxView({
           <div className="modal" style={{ maxWidth: '580px', width: '100%' }}>
             <div className="drawer-head">
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <Mail size={18} style={{ color: '#7d9850' }} />
+                <Mail size={16} className="text-zinc-900 dark:text-zinc-100" />
                 <span className="eyebrow" style={{ margin: 0 }}>QUICK INGEST NOTIFICATION</span>
               </div>
               <button onClick={() => setIsIngestModalOpen(false)} aria-label="Close modal">
@@ -386,23 +281,14 @@ export function RecruitmentInboxView({
               </button>
             </div>
 
-            <h2 style={{ fontSize: '22px', margin: '14px 0 6px' }}>Ingest recruitment alert</h2>
+            <h2 style={{ fontSize: '20px', margin: '14px 0 6px', fontWeight: 600 }}>Ingest recruitment alert</h2>
             <p className="muted" style={{ margin: '0 0 16px', lineHeight: 1.5 }}>
               Paste an email subject line or notification text from JobStreet, LinkedIn, or a recruiter. The parser extracts the company, position, and status while enforcing monotonic CRM hierarchy.
             </p>
 
-            <form onSubmit={handleQuickIngest} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            <form onSubmit={handleQuickIngest} className="flex flex-col gap-3.5">
               <div>
-                <label
-                  style={{
-                    fontSize: '11px',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.06em',
-                    color: '#888d82',
-                    display: 'block',
-                    marginBottom: '6px',
-                  }}
-                >
+                <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
                   Notification / Email Text *
                 </label>
                 <textarea
@@ -410,23 +296,15 @@ export function RecruitmentInboxView({
                   value={pasteText}
                   onChange={(e) => setPasteText(e.target.value)}
                   placeholder="e.g. PT Lintas Media Danawa telah melihat lamaranmu untuk DevOps Engineer"
-                  style={{
-                    width: '100%',
-                    padding: '10px 12px',
-                    border: '1px solid #dedfd8',
-                    background: '#fff',
-                    fontFamily: 'monospace',
-                    fontSize: '12px',
-                    lineHeight: 1.5,
-                  }}
+                  className="w-full rounded-md border border-zinc-200 bg-white p-3 font-mono text-xs text-zinc-900 focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100"
                   required
                 />
               </div>
 
               {/* Sample Quick Buttons */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <span style={{ fontSize: '11px', color: '#888d82' }}>Quick test samples:</span>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+              <div className="flex flex-col gap-1.5">
+                <span className="text-xs text-zinc-400">Quick test samples:</span>
+                <div className="flex flex-wrap gap-2">
                   <button
                     type="button"
                     onClick={() =>
@@ -434,8 +312,7 @@ export function RecruitmentInboxView({
                         'PT Lintas Media Danawa telah melihat lamaranmu untuk DevOps Engineer'
                       )
                     }
-                    className="secondary compact-btn"
-                    style={{ fontSize: '11px', padding: '4px 10px' }}
+                    className="rounded-md border border-zinc-200 bg-zinc-50 px-2.5 py-1 text-xs font-medium text-zinc-700 hover:bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300"
                   >
                     Viewed: PT Lintas Media Danawa
                   </button>
@@ -446,34 +323,24 @@ export function RecruitmentInboxView({
                         'Undangan Interview: Site Reliability Engineer di Tokopedia'
                       )
                     }
-                    className="secondary compact-btn"
-                    style={{ fontSize: '11px', padding: '4px 10px' }}
+                    className="rounded-md border border-zinc-200 bg-zinc-50 px-2.5 py-1 text-xs font-medium text-zinc-700 hover:bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300"
                   >
                     Interview: Tokopedia SRE
                   </button>
                 </div>
               </div>
 
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'flex-end',
-                  gap: '10px',
-                  marginTop: '12px',
-                  paddingTop: '14px',
-                  borderTop: '1px solid #dedfd8',
-                }}
-              >
+              <div className="flex items-center justify-end gap-2.5 mt-3 pt-3.5 border-t border-zinc-200 dark:border-zinc-800">
                 <button
                   type="button"
-                  className="secondary compact-btn"
+                  className="rounded-md border border-zinc-200 bg-white px-3.5 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300"
                   onClick={() => setIsIngestModalOpen(false)}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="primary compact-btn"
+                  className="inline-flex items-center gap-1.5 rounded-md bg-zinc-900 px-3.5 py-1.5 text-xs font-medium text-white shadow-2xs hover:bg-zinc-800 active:scale-[0.98] transition-all dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
                   disabled={isProcessing}
                 >
                   <FileCheck size={14} /> {isProcessing ? 'Processing...' : 'Ingest to CRM'}

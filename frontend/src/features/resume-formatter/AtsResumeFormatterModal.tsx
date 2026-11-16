@@ -458,7 +458,7 @@ export function AtsResumeFormatterModal({
         {/* Modal Top Chrome (Hidden in @media print) */}
         <header className="ats-modal-header no-print">
           <div className="ats-modal-header-left">
-            <span className="eyebrow" style={{ color: '#556b2f' }}>
+            <span className="eyebrow" style={{ color: '#18181b' }}>
               HARVARD / TECH ATS STANDARD
             </span>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -627,7 +627,7 @@ export function AtsResumeFormatterModal({
             </div>
 
             <div className="print-tip-box">
-              <Zap size={14} style={{ color: '#7d9850' }} />
+              <Zap size={14} style={{ color: '#18181b' }} />
               <span>
                 <strong>Tips Cetak PDF:</strong> Di dialog print browser, pastikan <em>Margins: Default</em> dan hilangkan centang <em>Headers and Footers</em> untuk hasil bersih 100%.
               </span>
@@ -707,7 +707,7 @@ export function AtsResumeFormatterModal({
                 <div style={{ marginTop: '20px', borderTop: '1px solid #dedfd8', paddingTop: '16px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                     <h4 style={{ margin: 0 }}>Pengalaman Kerja & Google/Harvard XYZ Bullet Optimizer</h4>
-                    <span style={{ fontSize: '11px', color: '#556b2f', font: "10px 'DM Mono'" }}>
+                    <span style={{ fontSize: '11px', color: '#18181b', font: "10px 'DM Mono'" }}>
                       Formula: Accomplished [X] as measured by [Y], by doing [Z]
                     </span>
                   </div>
@@ -722,7 +722,7 @@ export function AtsResumeFormatterModal({
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                         {exp.bullets.map((b, bIdx) => (
                           <div key={bIdx} style={{ display: 'flex', gap: '6px', alignItems: 'flex-start' }}>
-                            <span style={{ color: '#556b2f', fontWeight: 600, marginTop: '6px' }}>•</span>
+                            <span style={{ color: '#18181b', fontWeight: 600, marginTop: '6px' }}>•</span>
                             <textarea
                               rows={2}
                               value={b}
@@ -737,7 +737,7 @@ export function AtsResumeFormatterModal({
                                 style={{ fontSize: '10px', padding: '3px 6px', whiteSpace: 'nowrap' }}
                                 title="Optimalkan dengan formula XYZ Google"
                               >
-                                <Sparkles size={11} style={{ color: '#7d9850' }} /> XYZ Polish
+                                <Sparkles size={11} style={{ color: '#18181b' }} /> XYZ Polish
                               </button>
                               {exp.bullets.length > 1 && (
                                 <button
@@ -763,7 +763,7 @@ export function AtsResumeFormatterModal({
                           fontSize: '11px',
                           background: 'none',
                           border: 'none',
-                          color: '#556b2f',
+                          color: '#18181b',
                           cursor: 'pointer',
                           fontWeight: 600,
                         }}

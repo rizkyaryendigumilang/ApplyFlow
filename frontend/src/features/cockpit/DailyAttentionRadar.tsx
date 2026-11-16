@@ -1,7 +1,6 @@
 import React from 'react';
 import { AlertCircle, Calendar, Sparkles, CheckCircle2, ArrowRight } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../components/ui/card';
-import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import type { RadarAlerts } from './cockpit-helpers';
 import { useI18n } from '../../lib/i18n';
@@ -29,108 +28,125 @@ export const DailyAttentionRadar: React.FC<DailyAttentionRadarProps> = ({
   const isAllClear = !hasStale && !hasInterviews && !hasLeads;
 
   return (
-    <Card className="border-slate-800 bg-slate-900/90 shadow-2xl relative overflow-hidden">
-      <div className="absolute top-0 right-0 w-80 h-80 bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
-
-      <CardHeader className="pb-3">
+    <Card className="border border-zinc-200/90 dark:border-zinc-800/90 bg-white dark:bg-[#18181b] shadow-2xs">
+      <CardHeader className="pb-3 border-b border-zinc-100 dark:border-zinc-800/60">
         <div className="flex items-center justify-between">
-          <div className="space-y-1">
-            <CardTitle className="text-lg font-bold text-slate-100 flex items-center gap-2.5">
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-500" />
+          <div className="space-y-0.5">
+            <CardTitle className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
               </span>
               {t('cockpit.attentionTitle')}
             </CardTitle>
-            <CardDescription>{t('cockpit.attentionSubtitle')}</CardDescription>
+            <CardDescription className="text-xs text-zinc-500 dark:text-zinc-400">
+              {t('cockpit.attentionSubtitle')}
+            </CardDescription>
           </div>
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-3 pt-2">
+      <CardContent className="pt-4 space-y-3">
         {isAllClear ? (
-          <div className="flex items-center gap-3 p-4 rounded-2xl bg-slate-950/70 border border-slate-800 text-slate-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
-            <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+          <div className="flex items-center gap-3 p-4 rounded-lg bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-200/70 dark:border-zinc-800/70 text-zinc-700 dark:text-zinc-300">
+            <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
             <div className="text-xs">{t('cockpit.allCaughtUp')}</div>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            {/* Stale applications card */}
+            {/* 1. Stale applications card */}
             <div
-              className={`p-4 rounded-2xl border shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_1px_2px_rgba(0,0,0,0.2)] transition-[transform,border-color,box-shadow,background-color] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 active:scale-[0.99] ${
+              className={`p-3.5 rounded-lg border transition-all duration-150 ${
                 hasStale
-                  ? 'bg-slate-950/80 border-amber-500/30 hover:border-amber-500/60 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_4px_16px_rgba(245,158,11,0.15)]'
-                  : 'bg-slate-950/40 border-slate-800/60 opacity-60'
+                  ? 'bg-amber-50/40 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800/60'
+                  : 'bg-zinc-50/40 dark:bg-zinc-900/20 border-zinc-200/60 dark:border-zinc-800/60 opacity-60'
               }`}
             >
               <div className="flex items-center justify-between mb-2">
-                <span className="p-1.5 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
-                  <AlertCircle className="w-4 h-4" />
+                <span className="p-1 rounded bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300">
+                  <AlertCircle className="w-3.5 h-3.5" />
                 </span>
-                <Badge variant={hasStale ? 'interview' : 'outline'}>
+                <span className="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200">
                   {alerts.staleApplications.length}
-                </Badge>
+                </span>
               </div>
-              <h4 className="text-xs font-semibold text-slate-200 mb-1">
+              <h4 className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 mb-1">
                 {t('cockpit.staleAlert', { count: alerts.staleApplications.length })}
               </h4>
-              <p className="text-[11px] text-slate-400 mb-3 leading-relaxed">
+              <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mb-2.5 leading-relaxed">
                 {t('cockpit.staleDesc')}
               </p>
               {hasStale && (
-                <div className="space-y-1.5">
-                  {alerts.staleApplications.slice(0, 2).map((app) => (
+                <div className="space-y-1.5 border-t border-amber-200/60 dark:border-amber-800/40 pt-2">
+                  {alerts.staleApplications.slice(0, 2).map((a) => (
                     <button
-                      key={app.id}
-                      type="button"
-                      onClick={() => onSelectApplication(app.id)}
-                      className="w-full text-left text-[11px] px-2.5 py-1.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-300 flex items-center justify-between transition-colors border border-slate-800/80 active:scale-[0.985]"
+                      key={a.id}
+                      onClick={() => onSelectApplication(a.id)}
+                      className="w-full text-left p-1.5 rounded hover:bg-amber-100/60 dark:hover:bg-amber-900/30 flex items-center justify-between text-[11px] group transition-colors"
                     >
-                      <span className="font-medium truncate">{app.company}</span>
-                      <span className="text-slate-500 text-[10px] shrink-0">Tindak Lanjut &rarr;</span>
+                      <span className="font-medium text-zinc-800 dark:text-zinc-200 truncate">
+                        {a.company}
+                      </span>
+                      <ArrowRight className="w-3 h-3 text-zinc-400 group-hover:text-zinc-700 dark:group-hover:text-zinc-200 shrink-0" />
                     </button>
                   ))}
+                  <button
+                    onClick={onNavigateToPipeline}
+                    className="text-[10px] font-semibold text-amber-700 dark:text-amber-400 hover:underline block pt-1"
+                  >
+                    Buka Pipeline &rarr;
+                  </button>
                 </div>
               )}
             </div>
 
-            {/* Upcoming interviews card */}
+            {/* 2. Upcoming interviews card */}
             <div
-              className={`p-4 rounded-2xl border shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_1px_2px_rgba(0,0,0,0.2)] transition-[transform,border-color,box-shadow,background-color] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 active:scale-[0.99] ${
+              className={`p-3.5 rounded-lg border transition-all duration-150 ${
                 hasInterviews
-                  ? 'bg-slate-950/80 border-blue-500/30 hover:border-blue-500/60 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_4px_16px_rgba(59,130,246,0.15)]'
-                  : 'bg-slate-950/40 border-slate-800/60 opacity-60'
+                  ? 'bg-blue-50/40 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800/60'
+                  : 'bg-zinc-50/40 dark:bg-zinc-900/20 border-zinc-200/60 dark:border-zinc-800/60 opacity-60'
               }`}
             >
               <div className="flex items-center justify-between mb-2">
-                <span className="p-1.5 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
-                  <Calendar className="w-4 h-4" />
+                <span className="p-1 rounded bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300">
+                  <Calendar className="w-3.5 h-3.5" />
                 </span>
-                <Badge variant={hasInterviews ? 'applied' : 'outline'}>
+                <span className="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200">
                   {alerts.upcomingInterviews.length}
-                </Badge>
+                </span>
               </div>
-              <h4 className="text-xs font-semibold text-slate-200 mb-1">
-                {t('cockpit.interviewsAlert', { count: alerts.upcomingInterviews.length })}
+              <h4 className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 mb-1">
+                {t('cockpit.interviewAlert', { count: alerts.upcomingInterviews.length })}
               </h4>
-              <p className="text-[11px] text-slate-400 mb-3 leading-relaxed">
-                {t('cockpit.interviewsDesc')}
+              <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mb-2.5 leading-relaxed">
+                {t('cockpit.interviewDesc')}
               </p>
               {hasInterviews && (
-                <div className="space-y-1.5">
-                  {alerts.upcomingInterviews.slice(0, 2).map((iv) => (
+                <div className="space-y-1.5 border-t border-blue-200/60 dark:border-blue-800/40 pt-2">
+                  {alerts.upcomingInterviews.slice(0, 2).map((i) => (
                     <div
-                      key={iv.id}
-                      className="text-[11px] px-2.5 py-1.5 rounded-xl bg-slate-900/90 text-slate-300 flex items-center justify-between border border-slate-800/80"
+                      key={i.id}
+                      className="p-1.5 rounded bg-white/70 dark:bg-zinc-800/60 border border-blue-100 dark:border-blue-900/40 flex items-center justify-between text-[11px]"
                     >
-                      <span className="font-medium truncate">{iv.company || 'Perusahaan'}</span>
+                      <div className="truncate">
+                        <span className="font-semibold text-zinc-800 dark:text-zinc-200 block truncate">
+                          {i.company}
+                        </span>
+                        <span className="text-[10px] text-zinc-400 font-mono">
+                          {new Date(i.scheduledAt || Date.now()).toLocaleTimeString('id-ID', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}{' '}
+                          WIB
+                        </span>
+                      </div>
                       {onOpenStarCoach && (
                         <button
-                          type="button"
-                          onClick={() => onOpenStarCoach(iv.company || 'Perusahaan', iv.stage || 'Interview')}
-                          className="text-blue-400 hover:text-blue-300 text-[10px] font-semibold active:scale-95 transition-transform"
+                          onClick={() => onOpenStarCoach(i.company || '', i.stage || 'Interview')}
+                          className="px-2 py-0.5 rounded bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-semibold shrink-0"
                         >
-                          STAR Prep &rarr;
+                          Latih STAR
                         </button>
                       )}
                     </div>
@@ -139,39 +155,49 @@ export const DailyAttentionRadar: React.FC<DailyAttentionRadarProps> = ({
               )}
             </div>
 
-            {/* High match leads card */}
+            {/* 3. High-match leads card */}
             <div
-              className={`p-4 rounded-2xl border shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_1px_2px_rgba(0,0,0,0.2)] transition-[transform,border-color,box-shadow,background-color] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 active:scale-[0.99] ${
+              className={`p-3.5 rounded-lg border transition-all duration-150 ${
                 hasLeads
-                  ? 'bg-slate-950/80 border-emerald-500/30 hover:border-emerald-500/60 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_4px_16px_rgba(16,185,129,0.15)]'
-                  : 'bg-slate-950/40 border-slate-800/60 opacity-60'
+                  ? 'bg-emerald-50/40 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800/60'
+                  : 'bg-zinc-50/40 dark:bg-zinc-900/20 border-zinc-200/60 dark:border-zinc-800/60 opacity-60'
               }`}
             >
               <div className="flex items-center justify-between mb-2">
-                <span className="p-1.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
-                  <Sparkles className="w-4 h-4" />
+                <span className="p-1 rounded bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300">
+                  <Sparkles className="w-3.5 h-3.5" />
                 </span>
-                <Badge variant={hasLeads ? 'offer' : 'outline'}>
+                <span className="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-200">
                   {alerts.highMatchLeads.length}
-                </Badge>
+                </span>
               </div>
-              <h4 className="text-xs font-semibold text-slate-200 mb-1">
+              <h4 className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 mb-1">
                 {t('cockpit.leadsAlert', { count: alerts.highMatchLeads.length })}
               </h4>
-              <p className="text-[11px] text-slate-400 mb-3 leading-relaxed">
+              <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mb-2.5 leading-relaxed">
                 {t('cockpit.leadsDesc')}
               </p>
               {hasLeads && (
-                <div className="space-y-1.5">
-                  <Button
-                    size="sm"
-                    variant="outline"
+                <div className="space-y-1.5 border-t border-emerald-200/60 dark:border-emerald-800/40 pt-2">
+                  {alerts.highMatchLeads.slice(0, 2).map((l) => (
+                    <div
+                      key={l.id}
+                      className="p-1.5 rounded bg-white/70 dark:bg-zinc-800/60 border border-emerald-100 dark:border-emerald-900/40 flex items-center justify-between text-[11px]"
+                    >
+                      <span className="font-semibold text-zinc-800 dark:text-zinc-200 truncate">
+                        {l.company}
+                      </span>
+                      <span className="text-[10px] font-mono font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-900/50 px-1.5 rounded">
+                        {l.matchScore}%
+                      </span>
+                    </div>
+                  ))}
+                  <button
                     onClick={onNavigateToJobHunter}
-                    className="w-full text-xs justify-between text-slate-300 hover:text-white"
+                    className="text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 hover:underline block pt-1"
                   >
-                    <span>Buka Triage Lowongan</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </Button>
+                    Buka Job Hunter &rarr;
+                  </button>
                 </div>
               )}
             </div>

@@ -99,7 +99,7 @@ export function SystemPagesView({
       description:
         'To ensure zero-token leakage and uphold cryptographic session boundaries, please re-authenticate your PocketBase account.',
       icon: Lock,
-      accentColor: '#556b2f',
+      accentColor: '#18181b',
       actionText: 'Log In Again',
       secondaryText: 'Switch Account',
     },
@@ -124,7 +124,7 @@ export function SystemPagesView({
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Sparkles size={16} style={{ color: '#7d9850' }} />
+          <Sparkles size={16} style={{ color: '#18181b' }} />
           <span style={{ fontSize: '12px', fontWeight: 600 }}>System State Simulator:</span>
         </div>
 

@@ -1,8 +1,6 @@
 import React, { useMemo } from 'react';
-import { Banknote, TrendingUp, ShieldCheck, ArrowUpRight, Calculator } from 'lucide-react';
+import { Banknote, ArrowRight } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../components/ui/card';
-import { Button } from '../../components/ui/button';
-import { Badge } from '../../components/ui/badge';
 import type { Application } from '../../lib/pb-types';
 import { calculateTHP, type OfferPackage } from '../../lib/thp-calculator';
 
@@ -69,41 +67,39 @@ export const OfferComparatorSnapshotWidget: React.FC<OfferComparatorSnapshotWidg
   }, [offerApps, benchmarkApp]);
 
   return (
-    <Card className="border-slate-800 bg-slate-900/90 shadow-2xl relative overflow-hidden">
-      <CardHeader className="pb-3">
+    <Card className="border border-zinc-200/90 dark:border-zinc-800/90 bg-white dark:bg-[#18181b] shadow-2xs">
+      <CardHeader className="pb-3 border-b border-zinc-100 dark:border-zinc-800/60">
         <div className="flex items-center justify-between">
-          <div className="space-y-1">
-            <CardTitle className="text-base font-bold text-slate-100 flex items-center gap-2">
-              <Banknote className="w-4 h-4 text-emerald-400" />
+          <div className="space-y-0.5">
+            <CardTitle className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+              <Banknote className="w-4 h-4 text-zinc-500" />
               {offerApps.length > 0 ? 'Komparasi Penawaran & Real THP' : 'Estimasi Gaji Bersih (Real THP)'}
             </CardTitle>
-            <CardDescription className="text-xs text-slate-400">
+            <CardDescription className="text-xs text-zinc-500 dark:text-zinc-400">
               Kalkulasi gaji bersih setelah potongan BPJS Ketenagakerjaan/Kesehatan dan estimasi komuter.
             </CardDescription>
           </div>
 
-          <Button
-            variant="outline"
-            size="sm"
+          <button
             onClick={onNavigateToOffers}
-            className="text-xs text-emerald-400 hover:text-emerald-300 border-emerald-500/30"
+            className="flex items-center gap-1 text-xs font-semibold text-zinc-700 hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-zinc-100 transition-colors"
           >
             <span>Buka Kalkulator</span>
-            <ArrowUpRight className="w-3.5 h-3.5 ml-1" />
-          </Button>
+            <ArrowRight size={13} />
+          </button>
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-3">
+      <CardContent className="pt-4 space-y-3">
         {offerPackages.length === 0 ? (
-          <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800 text-center text-xs text-slate-400">
+          <div className="p-5 rounded-lg bg-zinc-50/70 dark:bg-zinc-900/30 border border-dashed border-zinc-200 dark:border-zinc-800 text-center text-xs text-zinc-400">
             Tambahkan informasi gaji pada lamaran untuk melihat estimasi Take Home Pay bersih.
           </div>
         ) : (
           <div className="space-y-3">
             {offerApps.length === 0 && (
-              <div className="text-[11px] text-amber-400/90 bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-lg flex items-center gap-1.5">
-                <span>⚡ Belum ada tawaran resmi. Menampilkan simulasi target gaji tertinggi dari pipeline Anda:</span>
+              <div className="text-[11px] text-zinc-600 dark:text-zinc-400 bg-zinc-100/70 dark:bg-zinc-800/50 border border-zinc-200/60 dark:border-zinc-700/60 px-3 py-1.5 rounded-md flex items-center gap-1.5">
+                <span>⚡ Menampilkan simulasi target gaji tertinggi dari pipeline aktif Anda:</span>
               </div>
             )}
 
@@ -111,33 +107,39 @@ export const OfferComparatorSnapshotWidget: React.FC<OfferComparatorSnapshotWidg
               {offerPackages.slice(0, 2).map(({ app, thp }) => (
                 <div
                   key={app.id}
-                  className="p-3.5 rounded-2xl bg-slate-950/75 border border-slate-800/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_1px_2px_rgba(0,0,0,0.2)] hover:border-slate-700/90 hover:bg-slate-950/90 hover:-translate-y-0.5 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_4px_16px_rgba(0,0,0,0.35)] transition-[transform,border-color,box-shadow,background-color] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] active:scale-[0.99] space-y-2.5"
+                  className="p-3.5 rounded-lg border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-900/30 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors space-y-2.5 text-xs"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <div className="text-xs font-bold text-slate-100 truncate">{app.company}</div>
-                      <div className="text-[11px] text-slate-400 truncate">{app.position}</div>
+                      <div className="font-semibold text-zinc-900 dark:text-zinc-100 truncate">
+                        {app.company}
+                      </div>
+                      <div className="text-[11px] text-zinc-500 truncate">{app.position}</div>
                     </div>
-                    <Badge variant={app.status === 'Offer' ? 'offer' : 'outline'} className="text-[10px] py-0 shrink-0">
+                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800 shrink-0">
                       {app.status === 'Offer' ? 'Offer Aktif' : app.mode}
-                    </Badge>
+                    </span>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2 pt-1 border-t border-slate-800/80 text-xs">
+                  <div className="grid grid-cols-2 gap-2 pt-2 border-t border-zinc-200/60 dark:border-zinc-800/60">
                     <div>
-                      <span className="text-[10px] text-slate-500 block">Gaji Kotor Bulanan:</span>
-                      <strong className="text-slate-200 font-mono text-xs tabular-nums">{formatIdr(thp.grossMonthly)}</strong>
+                      <span className="text-[10px] text-zinc-400 block">Gaji Kotor Bulanan:</span>
+                      <strong className="text-zinc-800 dark:text-zinc-200 font-mono text-xs tabular-nums">
+                        {formatIdr(thp.grossMonthly)}
+                      </strong>
                     </div>
                     <div>
-                      <span className="text-[10px] text-emerald-400 block font-medium">Real THP (Netto):</span>
-                      <strong className="text-emerald-300 font-mono text-xs font-bold tabular-nums">
+                      <span className="text-[10px] text-emerald-600 dark:text-emerald-400 block font-semibold">
+                        Real THP (Netto):
+                      </span>
+                      <strong className="text-emerald-700 dark:text-emerald-300 font-mono text-xs font-bold tabular-nums">
                         {formatIdr(thp.realNetTakeHome)}
                       </strong>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between text-[10px] text-slate-400 bg-slate-900/60 px-2 py-1.5 rounded-lg border border-slate-800/60 tabular-nums">
-                    <span>Potongan BPJS & Pajak: {formatIdr(thp.totalDeductions)}</span>
+                  <div className="flex items-center justify-between text-[10px] text-zinc-500 bg-white dark:bg-zinc-800/60 px-2 py-1 rounded border border-zinc-200/50 dark:border-zinc-700/50 tabular-nums">
+                    <span>Potongan BPJS: {formatIdr(thp.totalDeductions)}</span>
                     <span>Transpor: {formatIdr(app.mode === 'On-site' ? 1200000 : app.mode === 'Hybrid' ? 600000 : 0)}</span>
                   </div>
                 </div>

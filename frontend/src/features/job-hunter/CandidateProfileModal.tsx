@@ -103,7 +103,7 @@ export function CandidateProfileModal({
       <div className="modal" style={{ maxWidth: '640px', width: '100%', maxHeight: '90vh', overflowY: 'auto' }}>
         <div className="drawer-head">
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Target size={18} style={{ color: '#7d9850' }} />
+            <Target size={18} style={{ color: '#18181b' }} />
             <span className="eyebrow" style={{ margin: 0 }}>CANDIDATE TARGET PROFILE</span>
           </div>
           <button onClick={onClose} aria-label="Close modal">
@@ -290,7 +290,7 @@ export function CandidateProfileModal({
                     type="checkbox"
                     checked={preferredModes.includes(mode)}
                     onChange={() => handleToggleMode(mode)}
-                    style={{ accentColor: '#7d9850' }}
+                    style={{ accentColor: '#18181b' }}
                   />
                   <span>{mode}</span>
                 </label>

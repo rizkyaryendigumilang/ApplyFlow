@@ -19,6 +19,7 @@ import {
   X,
   Save,
 } from 'lucide-react';
+import { cn } from '../../lib/cn';
 import { useProfessionalContacts } from '../../hooks/useProfessionalContacts';
 import type { ProfessionalContact, RelationshipType, ReferralStatus } from '../../lib/pb-types';
 import { daysSince, sanitizeUrl } from '../../lib/utils';
@@ -189,110 +190,81 @@ Semoga hari Anda menyenangkan dan saya menantikan kabar baik berikutnya!`;
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div className="space-y-6">
       {/* Top Banner / KPIs */}
-      <div
-        style={{
-          background: '#fbfbf8',
-          border: '1px solid #dedfd8',
-          padding: '20px 24px',
-          display: 'flex',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '16px',
-        }}
-      >
+      <div className="rounded-lg border border-zinc-200/90 bg-white p-5 shadow-2xs dark:border-zinc-800 dark:bg-[#18181b] flex flex-wrap items-center justify-between gap-4">
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span
-              style={{
-                background: '#eef2e6',
-                color: '#556b2f',
-                padding: '6px',
-                borderRadius: '50%',
-                display: 'inline-grid',
-                placeItems: 'center',
-              }}
-            >
-              <Users size={18} />
+          <div className="flex items-center gap-2.5">
+            <span className="flex h-8 w-8 items-center justify-center rounded-md bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100">
+              <Users size={16} />
             </span>
-            <h1 style={{ fontSize: '20px', margin: 0, fontWeight: 600 }}>Networking & Referral CRM</h1>
-            <span
-              style={{
-                font: "10px 'DM Mono'",
-                textTransform: 'uppercase',
-                background: '#e8eedd',
-                color: '#4e622b',
-                padding: '4px 8px',
-                borderRadius: '3px',
-                border: '1px solid #d4dec3',
-              }}
-            >
-              P1 · Executive Headhunter & Referral Tracking
+            <h1 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
+              Networking & Referral CRM
+            </h1>
+            <span className="rounded-md border border-zinc-200 bg-zinc-50 px-2 py-0.5 font-mono text-[10px] uppercase font-semibold text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
+              Executive Headhunter & Referral Tracking
             </span>
           </div>
-          <p style={{ fontSize: '13px', color: '#777c73', margin: '6px 0 0' }}>
+          <p className="mt-1.5 text-xs text-zinc-500 dark:text-zinc-400">
             Kelola koneksi recruiter, headhunter, hiring manager, dan rekanan referral untuk membuka peluang kerja senior.
           </p>
         </div>
 
         <button
           onClick={openAddModal}
-          className="primary compact-btn"
-          style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#202320', color: '#f5f5f0' }}
+          className="inline-flex items-center gap-1.5 rounded-md bg-zinc-900 px-3.5 py-1.5 text-xs font-medium text-white shadow-2xs hover:bg-zinc-800 active:scale-[0.98] transition-all dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
         >
           <UserPlus size={14} /> + Tambah Kontak Profesional
         </button>
       </div>
 
       {/* KPI Cards Row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px' }}>
-        <div style={{ background: '#fff', border: '1px solid #dedfd8', padding: '16px', borderRadius: '4px' }}>
-          <span style={{ fontSize: '11px', textTransform: 'uppercase', color: '#777c73', fontWeight: 600 }}>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+        <div className="rounded-lg border border-zinc-200/90 bg-white p-4 shadow-2xs dark:border-zinc-800 dark:bg-[#18181b]">
+          <span className="text-[11px] uppercase tracking-wider font-semibold text-zinc-500 dark:text-zinc-400">
             Total Professional Network
           </span>
-          <div style={{ fontSize: '24px', fontWeight: 700, color: '#202320', marginTop: '4px' }}>
+          <div className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mt-1 font-mono">
             {stats.total}
           </div>
         </div>
 
-        <div style={{ background: '#fff', border: '1px solid #dedfd8', padding: '16px', borderRadius: '4px' }}>
-          <span style={{ fontSize: '11px', textTransform: 'uppercase', color: '#4e622b', fontWeight: 600 }}>
+        <div className="rounded-lg border border-zinc-200/90 bg-white p-4 shadow-2xs dark:border-zinc-800 dark:bg-[#18181b]">
+          <span className="text-[11px] uppercase tracking-wider font-semibold text-emerald-600 dark:text-emerald-400">
             Active Referral In-Flight
           </span>
-          <div style={{ fontSize: '24px', fontWeight: 700, color: '#556b2f', marginTop: '4px' }}>
+          <div className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mt-1 font-mono">
             {stats.activeReferrals}
           </div>
         </div>
 
-        <div style={{ background: '#fff', border: '1px solid #dedfd8', padding: '16px', borderRadius: '4px' }}>
-          <span style={{ fontSize: '11px', textTransform: 'uppercase', color: stats.pendingFollowups > 0 ? '#b43d3d' : '#777c73', fontWeight: 600 }}>
+        <div className="rounded-lg border border-zinc-200/90 bg-white p-4 shadow-2xs dark:border-zinc-800 dark:bg-[#18181b]">
+          <span className={cn("text-[11px] uppercase tracking-wider font-semibold", stats.pendingFollowups > 0 ? "text-rose-600 dark:text-rose-400" : "text-zinc-500 dark:text-zinc-400")}>
             Follow-Up Tertunda (&gt;14 Hari)
           </span>
-          <div style={{ fontSize: '24px', fontWeight: 700, color: stats.pendingFollowups > 0 ? '#b43d3d' : '#202320', marginTop: '4px' }}>
+          <div className={cn("text-2xl font-bold mt-1 font-mono", stats.pendingFollowups > 0 ? "text-rose-600 dark:text-rose-400" : "text-zinc-900 dark:text-zinc-100")}>
             {stats.pendingFollowups}
           </div>
         </div>
       </div>
 
       {/* Search & Filters */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', alignItems: 'center' }}>
-        <div style={{ position: 'relative', flex: 1, minWidth: '220px' }}>
-          <Search size={14} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: '#888d82' }} />
+      <div className="flex flex-wrap gap-3 items-center">
+        <div className="relative flex-1 min-w-[220px]">
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Cari nama, perusahaan, atau peran..."
-            style={{ width: '100%', padding: '8px 10px 8px 32px', border: '1px solid #dedfd8', fontSize: '12px', background: '#fff' }}
+            className="w-full rounded-md border border-zinc-200 bg-white pl-9 pr-3 py-1.5 text-xs text-zinc-900 focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400"
           />
         </div>
 
         <select
           value={selectedRelationship}
           onChange={(e) => setSelectedRelationship(e.target.value)}
-          style={{ padding: '8px 12px', border: '1px solid #dedfd8', background: '#fff', fontSize: '12px' }}
+          className="rounded-md border border-zinc-200 bg-white px-3 py-1.5 text-xs text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900"
         >
           <option value="all">Semua Hubungan</option>
           <option value="Recruiter">Recruiter / Headhunter</option>
@@ -306,7 +278,7 @@ Semoga hari Anda menyenangkan dan saya menantikan kabar baik berikutnya!`;
         <select
           value={selectedReferralStatus}
           onChange={(e) => setSelectedReferralStatus(e.target.value)}
-          style={{ padding: '8px 12px', border: '1px solid #dedfd8', background: '#fff', fontSize: '12px' }}
+          className="rounded-md border border-zinc-200 bg-white px-3 py-1.5 text-xs text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900"
         >
           <option value="all">Semua Status Referral</option>
           <option value="None">Tanpa Referral</option>
@@ -318,7 +290,7 @@ Semoga hari Anda menyenangkan dan saya menantikan kabar baik berikutnya!`;
       </div>
 
       {/* Contacts Cards Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '16px' }}>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
         {filteredContacts.map((c) => {
           const days = c.lastContactDate ? daysSince(c.lastContactDate) : null;
           const isStale = days !== null && days >= 14;
@@ -326,79 +298,46 @@ Semoga hari Anda menyenangkan dan saya menantikan kabar baik berikutnya!`;
           return (
             <div
               key={c.id}
-              style={{
-                background: '#fff',
-                border: '1px solid #dedfd8',
-                borderRadius: '4px',
-                padding: '16px',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                gap: '12px',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.03)',
-              }}
+              className="rounded-lg border border-zinc-200/90 bg-white p-4 shadow-2xs hover:border-zinc-300 dark:border-zinc-800 dark:bg-[#18181b] flex flex-col justify-between gap-3 transition-colors"
             >
               <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div className="flex justify-between items-start gap-2">
                   <div>
-                    <h3 style={{ margin: '0 0 2px', fontSize: '15px', fontWeight: 600, color: '#202320' }}>
+                    <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
                       {c.name}
                     </h3>
-                    <p style={{ margin: 0, fontSize: '12px', color: '#686d63' }}>
+                    <p className="text-xs text-zinc-500 dark:text-zinc-400">
                       {c.role || 'Professional'} {c.company ? `@ ${c.company}` : ''}
                     </p>
                   </div>
-                  <span
-                    style={{
-                      font: "10px 'DM Mono'",
-                      textTransform: 'uppercase',
-                      background: '#f5f5f0',
-                      color: '#444840',
-                      padding: '2px 6px',
-                      borderRadius: '3px',
-                      border: '1px solid #e0e1d8',
-                    }}
-                  >
+                  <span className="font-mono text-[10px] uppercase font-semibold px-2 py-0.5 rounded-md border border-zinc-200 bg-zinc-50 text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
                     {c.relationship}
                   </span>
                 </div>
 
                 {/* Referral Status Badge */}
-                <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div className="mt-2.5 flex items-center gap-2">
                   <span
-                    style={{
-                      fontSize: '11px',
-                      padding: '2px 8px',
-                      borderRadius: '12px',
-                      fontWeight: 600,
-                      background:
-                        c.referralStatus === 'Interview Secured'
-                          ? '#edf2e3'
-                          : c.referralStatus === 'Submitted'
-                          ? '#eef0fa'
-                          : c.referralStatus === 'Requested'
-                          ? '#fcf6e6'
-                          : '#f5f5f0',
-                      color:
-                        c.referralStatus === 'Interview Secured'
-                          ? '#455928'
-                          : c.referralStatus === 'Submitted'
-                          ? '#2b3f78'
-                          : c.referralStatus === 'Requested'
-                          ? '#8c6b1e'
-                          : '#777c73',
-                    }}
+                    className={cn(
+                      "font-mono text-[10px] px-2 py-0.5 rounded-md font-semibold border",
+                      c.referralStatus === 'Interview Secured'
+                        ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950 dark:text-emerald-300 dark:border-emerald-800"
+                        : c.referralStatus === 'Submitted'
+                        ? "bg-sky-50 text-sky-700 border-sky-200 dark:bg-sky-950 dark:text-sky-300 dark:border-sky-800"
+                        : c.referralStatus === 'Requested'
+                        ? "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-800"
+                        : "bg-zinc-100 text-zinc-600 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:border-zinc-700"
+                    )}
                   >
                     Referral: {c.referralStatus}
                   </span>
 
                   {days !== null && (
                     <span
-                      style={{
-                        fontSize: '11px',
-                        color: isStale ? '#b43d3d' : '#888d82',
-                        fontWeight: isStale ? 600 : 400,
-                      }}
+                      className={cn(
+                        "text-[11px]",
+                        isStale ? "text-rose-600 dark:text-rose-400 font-semibold" : "text-zinc-400"
+                      )}
                     >
                       {days === 0 ? 'Kontak hari ini' : `${days} hari lalu`}
                     </span>
@@ -407,41 +346,21 @@ Semoga hari Anda menyenangkan dan saya menantikan kabar baik berikutnya!`;
 
                 {/* Notes preview */}
                 {c.notes && (
-                  <p
-                    style={{
-                      fontSize: '12px',
-                      color: '#555a50',
-                      background: '#f9f9f6',
-                      padding: '8px 10px',
-                      borderRadius: '3px',
-                      margin: '10px 0 0',
-                      lineHeight: 1.4,
-                      borderLeft: '2px solid #7d9850',
-                    }}
-                  >
+                  <p className="text-xs text-zinc-600 dark:text-zinc-300 bg-zinc-50 dark:bg-zinc-900 border-l-2 border-zinc-900 dark:border-zinc-100 p-2 rounded-r-md mt-2.5 leading-relaxed">
                     {c.notes}
                   </p>
                 )}
               </div>
 
               {/* Action Toolbar */}
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  borderTop: '1px solid #f0f1ea',
-                  paddingTop: '10px',
-                }}
-              >
-                <div style={{ display: 'flex', gap: '6px' }}>
+              <div className="flex items-center justify-between border-t border-zinc-100 dark:border-zinc-800 pt-2.5 mt-1">
+                <div className="flex items-center gap-1.5">
                   {c.linkedinUrl && (
                     <a
                       href={sanitizeUrl(c.linkedinUrl)}
                       target="_blank"
                       rel="noreferrer"
-                      className="secondary compact-btn"
-                      style={{ padding: '4px 8px', color: '#0a66c2' }}
+                      className="rounded-md border border-zinc-200 bg-white p-1.5 text-[#0a66c2] hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:bg-zinc-800 transition-colors"
                       title="Buka LinkedIn"
                     >
                       <Linkedin size={13} />
@@ -450,8 +369,7 @@ Semoga hari Anda menyenangkan dan saya menantikan kabar baik berikutnya!`;
                   {c.email && (
                     <a
                       href={`mailto:${c.email}`}
-                      className="secondary compact-btn"
-                      style={{ padding: '4px 8px' }}
+                      className="rounded-md border border-zinc-200 bg-white p-1.5 text-zinc-600 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 transition-colors"
                       title="Kirim Email"
                     >
                       <Mail size={13} />
@@ -462,8 +380,7 @@ Semoga hari Anda menyenangkan dan saya menantikan kabar baik berikutnya!`;
                       href={`https://wa.me/${c.phone.replace(/[^0-9]/g, '')}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="secondary compact-btn"
-                      style={{ padding: '4px 8px', color: '#25d366' }}
+                      className="rounded-md border border-zinc-200 bg-white p-1.5 text-emerald-600 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:bg-zinc-800 transition-colors"
                       title="Kirim WhatsApp"
                     >
                       <Phone size={13} />
@@ -475,11 +392,10 @@ Semoga hari Anda menyenangkan dan saya menantikan kabar baik berikutnya!`;
                       setOutreachContact(c);
                       setTemplateType('referral_ask');
                     }}
-                    className="secondary compact-btn"
-                    style={{ padding: '4px 8px', display: 'flex', alignItems: 'center', gap: '4px' }}
+                    className="inline-flex items-center gap-1 rounded-md border border-zinc-200 bg-white px-2 py-1 text-xs font-medium text-zinc-700 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 transition-colors"
                     title="Generate Outreach Message"
                   >
-                    <Sparkles size={12} style={{ color: '#7d9850' }} /> Outreach
+                    <Sparkles size={12} className="text-zinc-900 dark:text-zinc-100" /> Outreach
                   </button>
                 </div>
 
@@ -528,7 +444,7 @@ Semoga hari Anda menyenangkan dan saya menantikan kabar baik berikutnya!`;
         <div className="overlay" role="dialog" aria-modal="true" style={{ zIndex: 1050 }}>
           <div className="modal" style={{ maxWidth: '540px', width: '95vw', background: '#fff' }}>
             <div className="drawer-head">
-              <span className="eyebrow" style={{ color: '#556b2f' }}>
+              <span className="eyebrow" style={{ color: '#18181b' }}>
                 {editingContact ? 'EDIT KONTAK' : 'KONTAK BARU'}
               </span>
               <button onClick={() => setIsModalOpen(false)}>
@@ -673,7 +589,7 @@ Semoga hari Anda menyenangkan dan saya menantikan kabar baik berikutnya!`;
         <div className="overlay" role="dialog" aria-modal="true" style={{ zIndex: 1060 }}>
           <div className="modal" style={{ maxWidth: '600px', width: '95vw', background: '#fff' }}>
             <div className="drawer-head">
-              <span className="eyebrow" style={{ color: '#556b2f' }}>
+              <span className="eyebrow" style={{ color: '#18181b' }}>
                 1-CLICK OUTREACH GENERATOR
               </span>
               <button onClick={() => setOutreachContact(null)}>

@@ -98,10 +98,10 @@ export function AnalyticsView({ applications, cvs }: AnalyticsViewProps) {
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <span
               style={{
-                background: '#eef2e6',
-                color: '#556b2f',
+                background: '#f4f4f5',
+                color: '#18181b',
                 padding: '6px',
-                borderRadius: '50%',
+                borderRadius: '6px',
                 display: 'inline-grid',
                 placeItems: 'center',
               }}
@@ -172,7 +172,7 @@ export function AnalyticsView({ applications, cvs }: AnalyticsViewProps) {
           <span style={{ font: "10px 'DM Mono'", color: '#888d82', textTransform: 'uppercase' }}>
             Employer Response Rate
           </span>
-          <b style={{ display: 'block', font: "32px 'DM Mono'", margin: '6px 0 2px', color: '#7d9850' }}>
+          <b style={{ display: 'block', font: "32px 'DM Mono'", margin: '6px 0 2px', color: '#09090b' }}>
             {overallResponseRate}%
           </b>
           <small style={{ color: '#777c73', fontSize: '11px' }}>
@@ -196,7 +196,7 @@ export function AnalyticsView({ applications, cvs }: AnalyticsViewProps) {
           <span style={{ font: "10px 'DM Mono'", color: '#888d82', textTransform: 'uppercase' }}>
             Offer Win Rate
           </span>
-          <b style={{ display: 'block', font: "32px 'DM Mono'", margin: '6px 0 2px', color: '#556b2f' }}>
+          <b style={{ display: 'block', font: "32px 'DM Mono'", margin: '6px 0 2px', color: '#09090b' }}>
             {offerConversionRate}%
           </b>
           <small style={{ color: '#777c73', fontSize: '11px' }}>
@@ -251,7 +251,7 @@ export function AnalyticsView({ applications, cvs }: AnalyticsViewProps) {
             <h3 style={{ fontSize: '15px', margin: 0, fontWeight: 600 }}>
               CV Story & Angle Performance
             </h3>
-            <FileText size={16} style={{ color: '#7d9850' }} />
+            <FileText size={16} style={{ color: '#18181b' }} />
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -274,7 +274,7 @@ export function AnalyticsView({ applications, cvs }: AnalyticsViewProps) {
                   </span>
                 </div>
                 <div style={{ textAlign: 'right' }}>
-                  <b style={{ font: "16px 'DM Mono'", color: '#7d9850', display: 'block' }}>
+                  <b style={{ font: "16px 'DM Mono'", color: '#09090b', display: 'block' }}>
                     {responseRate(cv.responses, cv.applications)}%
                   </b>
                   <small style={{ fontSize: '10px', color: '#888d82' }}>response</small>
@@ -295,7 +295,7 @@ export function AnalyticsView({ applications, cvs }: AnalyticsViewProps) {
             <h3 style={{ fontSize: '15px', margin: 0, fontWeight: 600 }}>
               Compensation Distribution
             </h3>
-            <TrendingUp size={16} style={{ color: '#7d9850' }} />
+            <TrendingUp size={16} style={{ color: '#18181b' }} />
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -309,7 +309,7 @@ export function AnalyticsView({ applications, cvs }: AnalyticsViewProps) {
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #ecece7' }}>
               <span style={{ fontSize: '12px', color: '#777c73' }}>Peak Opportunity Ceiling</span>
-              <b style={{ font: "13px 'DM Mono'", color: '#556b2f' }}>{idr(salaryStats.max)} / mo</b>
+              <b style={{ font: "13px 'DM Mono'", color: '#09090b' }}>{idr(salaryStats.max)} / mo</b>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0' }}>
               <span style={{ fontSize: '12px', color: '#777c73' }}>Total Roles with Disclosed Pay</span>

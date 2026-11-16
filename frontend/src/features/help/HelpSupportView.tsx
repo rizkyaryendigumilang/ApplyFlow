@@ -101,10 +101,10 @@ export function HelpSupportView() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <span
               style={{
-                background: '#eef2e6',
-                color: '#556b2f',
+                background: '#f4f4f5',
+                color: '#18181b',
                 padding: '6px',
-                borderRadius: '50%',
+                borderRadius: '6px',
                 display: 'inline-grid',
                 placeItems: 'center',
               }}
@@ -227,7 +227,7 @@ export function HelpSupportView() {
               <h3 style={{ fontSize: '15px', margin: 0, fontWeight: 600 }}>
                 Career Negotiation Playbook
               </h3>
-              <BookOpen size={16} style={{ color: '#7d9850' }} />
+              <BookOpen size={16} style={{ color: '#18181b' }} />
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -257,7 +257,7 @@ export function HelpSupportView() {
               <h3 style={{ fontSize: '15px', margin: 0, fontWeight: 600 }}>
                 Contact Engineering Support
               </h3>
-              <MessageSquare size={16} style={{ color: '#7d9850' }} />
+              <MessageSquare size={16} style={{ color: '#18181b' }} />
             </div>
 
             {ticketSubmitted ? (

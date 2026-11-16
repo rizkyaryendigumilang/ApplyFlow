@@ -98,10 +98,10 @@ export function UserManagementView() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <span
               style={{
-                background: '#eef2e6',
-                color: '#556b2f',
+                background: '#f4f4f5',
+                color: '#18181b',
                 padding: '6px',
-                borderRadius: '50%',
+                borderRadius: '6px',
                 display: 'inline-grid',
                 placeItems: 'center',
               }}
@@ -173,8 +173,8 @@ export function UserManagementView() {
           style={{
             paddingBottom: '12px',
             fontWeight: 600,
-            borderBottom: activeTab === 'members' ? '2px solid #7d9850' : '2px solid transparent',
-            color: activeTab === 'members' ? '#202320' : '#888d82',
+            borderBottom: activeTab === 'members' ? '2px solid #18181b' : '2px solid transparent',
+            color: activeTab === 'members' ? '#09090b' : '#71717a',
             display: 'inline-flex',
             alignItems: 'center',
             gap: '8px',
@@ -187,8 +187,8 @@ export function UserManagementView() {
           style={{
             paddingBottom: '12px',
             fontWeight: 600,
-            borderBottom: activeTab === 'roles' ? '2px solid #7d9850' : '2px solid transparent',
-            color: activeTab === 'roles' ? '#202320' : '#888d82',
+            borderBottom: activeTab === 'roles' ? '2px solid #18181b' : '2px solid transparent',
+            color: activeTab === 'roles' ? '#09090b' : '#71717a',
             display: 'inline-flex',
             alignItems: 'center',
             gap: '8px',
@@ -201,8 +201,8 @@ export function UserManagementView() {
           style={{
             paddingBottom: '12px',
             fontWeight: 600,
-            borderBottom: activeTab === 'security' ? '2px solid #7d9850' : '2px solid transparent',
-            color: activeTab === 'security' ? '#202320' : '#888d82',
+            borderBottom: activeTab === 'security' ? '2px solid #18181b' : '2px solid transparent',
+            color: activeTab === 'security' ? '#09090b' : '#71717a',
             display: 'inline-flex',
             alignItems: 'center',
             gap: '8px',
@@ -333,10 +333,10 @@ export function UserManagementView() {
               ].map(([perm, admin, cand, coach, rec], idx) => (
                 <tr key={idx} style={{ borderBottom: '1px solid #ecece7' }}>
                   <td style={{ padding: '12px 14px', fontWeight: 500 }}>{perm as string}</td>
-                  <td style={{ padding: '12px 14px', textAlign: 'center' }}>{admin ? <Check size={16} style={{ color: '#7d9850', margin: 'auto' }} /> : <span style={{ color: '#94a3b8' }}>-</span>}</td>
-                  <td style={{ padding: '12px 14px', textAlign: 'center' }}>{cand ? <Check size={16} style={{ color: '#7d9850', margin: 'auto' }} /> : <span style={{ color: '#94a3b8' }}>-</span>}</td>
-                  <td style={{ padding: '12px 14px', textAlign: 'center' }}>{coach ? <Check size={16} style={{ color: '#7d9850', margin: 'auto' }} /> : <span style={{ color: '#94a3b8' }}>-</span>}</td>
-                  <td style={{ padding: '12px 14px', textAlign: 'center' }}>{rec ? <Check size={16} style={{ color: '#7d9850', margin: 'auto' }} /> : <span style={{ color: '#94a3b8' }}>-</span>}</td>
+                  <td style={{ padding: '12px 14px', textAlign: 'center' }}>{admin ? <Check size={16} style={{ color: '#10b981', margin: 'auto' }} /> : <span style={{ color: '#94a3b8' }}>-</span>}</td>
+                  <td style={{ padding: '12px 14px', textAlign: 'center' }}>{cand ? <Check size={16} style={{ color: '#10b981', margin: 'auto' }} /> : <span style={{ color: '#94a3b8' }}>-</span>}</td>
+                  <td style={{ padding: '12px 14px', textAlign: 'center' }}>{coach ? <Check size={16} style={{ color: '#10b981', margin: 'auto' }} /> : <span style={{ color: '#94a3b8' }}>-</span>}</td>
+                  <td style={{ padding: '12px 14px', textAlign: 'center' }}>{rec ? <Check size={16} style={{ color: '#10b981', margin: 'auto' }} /> : <span style={{ color: '#94a3b8' }}>-</span>}</td>
                 </tr>
               ))}
             </tbody>
@@ -410,7 +410,7 @@ export function UserManagementView() {
           <div className="modal" style={{ maxWidth: '480px', width: '100%' }}>
             <div className="drawer-head">
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <Mail size={18} style={{ color: '#7d9850' }} />
+                <Mail size={18} style={{ color: '#18181b' }} />
                 <span className="eyebrow" style={{ margin: 0 }}>INVITE TEAM MEMBER</span>
               </div>
               <button onClick={() => setIsInviteOpen(false)} aria-label="Close modal">

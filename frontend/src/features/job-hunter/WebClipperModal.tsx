@@ -214,7 +214,7 @@ export function WebClipperModal({
               fontWeight: 600,
               background: activeTab === 'bookmarklet' ? '#fff' : 'transparent',
               border: 'none',
-              borderBottom: activeTab === 'bookmarklet' ? '2px solid #7d9850' : 'none',
+              borderBottom: activeTab === 'bookmarklet' ? '2px solid #18181b' : 'none',
               color: activeTab === 'bookmarklet' ? '#202320' : '#777c73',
               cursor: 'pointer',
               display: 'flex',
@@ -233,7 +233,7 @@ export function WebClipperModal({
               fontWeight: 600,
               background: activeTab === 'quickpaste' ? '#fff' : 'transparent',
               border: 'none',
-              borderBottom: activeTab === 'quickpaste' ? '2px solid #7d9850' : 'none',
+              borderBottom: activeTab === 'quickpaste' ? '2px solid #18181b' : 'none',
               color: activeTab === 'quickpaste' ? '#202320' : '#777c73',
               cursor: 'pointer',
               display: 'flex',
@@ -257,7 +257,7 @@ export function WebClipperModal({
               <div
                 style={{
                   background: '#f9f9f5',
-                  border: '1px dashed #7d9850',
+                  border: '1px dashed #18181b',
                   padding: '20px',
                   borderRadius: '6px',
                   textAlign: 'center',
@@ -267,7 +267,7 @@ export function WebClipperModal({
                   gap: '10px',
                 }}
               >
-                <span style={{ fontSize: '12px', color: '#556b2f', fontWeight: 600 }}>
+                <span style={{ fontSize: '12px', color: '#18181b', fontWeight: 600 }}>
                   👇 Drag tombol ini ke Bookmarks Bar browser Anda:
                 </span>
                 <a

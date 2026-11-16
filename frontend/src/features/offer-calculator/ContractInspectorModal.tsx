@@ -390,7 +390,7 @@ export function ContractInspectorModal({
                   fontSize: '11px',
                   background: 'none',
                   border: 'none',
-                  color: '#556b2f',
+                  color: '#18181b',
                   cursor: 'pointer',
                   textDecoration: 'underline',
                 }}

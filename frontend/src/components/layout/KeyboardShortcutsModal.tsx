@@ -30,7 +30,7 @@ export function KeyboardShortcutsModal({ isOpen, onClose }: KeyboardShortcutsMod
       <div className="modal" style={{ maxWidth: '480px', width: '92vw' }}>
         <div className="drawer-head">
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Command size={14} style={{ color: '#556b2f' }} />
+            <Command size={14} style={{ color: '#18181b' }} />
             <span className="eyebrow">PINTASAN KEYBOARD</span>
           </div>
           <button onClick={onClose} aria-label="Tutup modal">

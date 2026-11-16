@@ -6,7 +6,7 @@ export const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDi
     <div
       ref={ref}
       className={cn(
-        'rounded-2xl border border-slate-800/80 bg-slate-900/90 text-slate-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_1px_2px_rgba(0,0,0,0.3),0_18px_36px_-20px_rgba(0,0,0,0.55)] backdrop-blur-md transition-[transform,box-shadow,border-color] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)]',
+        'rounded-xl border border-zinc-200/90 dark:border-zinc-800/90 bg-white dark:bg-[#18181b] text-zinc-900 dark:text-zinc-100 shadow-2xs transition-all duration-150',
         className
       )}
       {...props}
@@ -17,7 +17,7 @@ Card.displayName = 'Card';
 
 export const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn('flex flex-col space-y-1.5 p-5', className)} {...props} />
+    <div ref={ref} className={cn('flex flex-col space-y-1 p-5', className)} {...props} />
   )
 );
 CardHeader.displayName = 'CardHeader';
@@ -26,7 +26,7 @@ export const CardTitle = React.forwardRef<HTMLHeadingElement, React.HTMLAttribut
   ({ className, ...props }, ref) => (
     <h3
       ref={ref}
-      className={cn('text-base font-semibold leading-none tracking-tight text-slate-100', className)}
+      className={cn('text-sm font-semibold leading-none tracking-tight text-zinc-900 dark:text-zinc-100', className)}
       {...props}
     />
   )
@@ -35,7 +35,7 @@ CardTitle.displayName = 'CardTitle';
 
 export const CardDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
   ({ className, ...props }, ref) => (
-    <p ref={ref} className={cn('text-xs text-slate-400 leading-relaxed', className)} {...props} />
+    <p ref={ref} className={cn('text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed', className)} {...props} />
   )
 );
 CardDescription.displayName = 'CardDescription';
