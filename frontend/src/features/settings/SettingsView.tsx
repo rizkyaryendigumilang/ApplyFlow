@@ -755,6 +755,7 @@ export function SettingsView({
                       }
                     >
                       <option value="pipeline">Opportunity Pipeline (Kanban)</option>
+                      <option value="jobscout">Auto Job Scout (Multi-Platform Vacancy Radar)</option>
                       <option value="jobhunter">Job Hunter AI</option>
                       <option value="applyflow">ApplyFlow Generator</option>
                       <option value="inbox">Recruitment Inbox</option>

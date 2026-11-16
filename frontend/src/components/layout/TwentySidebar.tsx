@@ -3,6 +3,7 @@ import {
   Briefcase,
   Compass,
   Target,
+  Radar,
   Zap,
   Inbox,
   Users,
@@ -104,6 +105,13 @@ export const TwentySidebar: React.FC<TwentySidebarProps> = ({
           fallbackLabel: 'Job Hunter',
           icon: Target,
           badge: counts.jobHunter > 0 ? counts.jobHunter : undefined,
+          badgeVariant: 'accent',
+        },
+        {
+          id: 'jobscout',
+          labelKey: 'nav.jobscout',
+          fallbackLabel: 'Auto Job Scout',
+          icon: Radar,
           badgeVariant: 'accent',
         },
         {

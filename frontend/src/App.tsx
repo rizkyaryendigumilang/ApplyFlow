@@ -40,6 +40,7 @@ import { JobSeekerCockpitView } from './features/cockpit/JobSeekerCockpitView';
 import { StarCoachModal } from './features/interview-prep/StarCoachModal';
 import { ApplyFlowView } from './features/applyflow/ApplyFlowView';
 import { JobHunterView } from './features/job-hunter/JobHunterView';
+import { AutoJobScoutView } from './features/job-scout/AutoJobScoutView';
 import { RecruitmentInboxView } from './features/recruitment-inbox/RecruitmentInboxView';
 import { NetworkingView } from './features/networking/NetworkingView';
 import { LinkedInAssistantView } from './features/linkedin-assistant/LinkedInAssistantView';
@@ -93,6 +94,7 @@ export type Module =
   | 'cockpit'
   | 'pipeline'
   | 'jobhunter'
+  | 'jobscout'
   | 'applyflow'
   | 'inbox'
   | 'networking'
@@ -239,6 +241,7 @@ function App() {
           'cockpit',
           'pipeline',
           'jobhunter',
+          'jobscout',
           'applyflow',
           'inbox',
           'networking',
@@ -473,6 +476,11 @@ function App() {
                 setPromotedLead(lead);
                 navigateTo('applyflow');
               }}
+            />
+          ) : module === 'jobscout' ? (
+            <AutoJobScoutView
+              onAddApplication={add}
+              onNavigateToTracker={() => navigateTo('pipeline')}
             />
           ) : module === 'inbox' ? (
             <RecruitmentInboxView

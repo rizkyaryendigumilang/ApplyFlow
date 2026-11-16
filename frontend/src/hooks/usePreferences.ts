@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 
 export interface CRMPreferences {
   locale: 'id' | 'en';
-  defaultLandingModule: 'pipeline' | 'jobhunter' | 'applyflow' | 'inbox';
+  defaultLandingModule: 'pipeline' | 'jobhunter' | 'jobscout' | 'applyflow' | 'inbox';
   currency: 'IDR' | 'USD' | 'SGD' | 'EUR';
   salaryPeriod: 'monthly' | 'annual';
   ghostingThresholdDays: number;
