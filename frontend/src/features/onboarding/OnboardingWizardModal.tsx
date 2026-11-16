@@ -12,7 +12,6 @@ import {
   Send,
   Mail,
   Briefcase,
-  DollarSign,
   MapPin,
   Check,
 } from 'lucide-react';
@@ -270,13 +269,20 @@ export function OnboardingWizardModal({
               </label>
               <div className="flex items-center gap-3">
                 <div className="relative flex-1">
-                  <DollarSign size={16} className="absolute left-3 top-3 text-zinc-400" />
+                  <span className="absolute left-3.5 top-2.5 text-xs font-bold text-zinc-500 dark:text-zinc-400 font-mono select-none pointer-events-none">
+                    Rp
+                  </span>
                   <input
                     type="number"
-                    value={expectedSalary}
-                    onChange={(e) => setExpectedSalary(Number(e.target.value))}
+                    value={expectedSalary === 0 ? '' : expectedSalary}
+                    onChange={(e) => {
+                      const raw = e.target.value.replace(/^0+(?=\d)/, '');
+                      setExpectedSalary(raw === '' ? 0 : Math.max(0, parseInt(raw, 10) || 0));
+                    }}
                     step={1000000}
-                    className="w-full rounded-lg border border-zinc-300 bg-white pl-9 pr-3 py-2 text-sm text-zinc-900 focus:border-zinc-900 focus:outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 font-mono"
+                    min={0}
+                    placeholder="10000000"
+                    className="w-full rounded-lg border border-zinc-300 bg-white pl-11 pr-3 py-2 text-sm text-zinc-900 focus:border-zinc-900 focus:outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 font-mono"
                   />
                 </div>
                 <span className="text-xs font-semibold text-zinc-600 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 px-3 py-2 rounded-lg font-mono">

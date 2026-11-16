@@ -184,7 +184,8 @@ export function CandidateProfileModal({
                 min="0"
                 step="500000"
                 value={minSalary}
-                onChange={(e) => setMinSalary(e.target.value)}
+                onChange={(e) => setMinSalary(e.target.value.replace(/^0+(?=\d)/, ''))}
+                placeholder="15000000"
                 style={{ width: '100%', padding: '10px 12px', border: '1px solid #dedfd8', background: '#fff', fontSize: '13px' }}
               />
             </div>
