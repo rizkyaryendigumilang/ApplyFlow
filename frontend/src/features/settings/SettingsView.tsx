@@ -461,7 +461,7 @@ export function SettingsView({
           </div>
 
           {/* Navigation Groups */}
-          <nav className="settings-nav">
+          <div className="settings-nav">
             {Object.entries(groupedSections).map(([groupTitle, items]) => {
               if (items.length === 0) return null;
               return (
@@ -485,7 +485,7 @@ export function SettingsView({
                 </div>
               );
             })}
-          </nav>
+          </div>
 
           {/* User footer in sidebar */}
           <div className="settings-sidebar-footer">
