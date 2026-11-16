@@ -4,50 +4,7 @@ import type { ProfessionalContact } from '../lib/pb-types';
 
 const STORAGE_KEY = 'career_crm_professional_contacts';
 
-const SEED_CONTACTS: ProfessionalContact[] = [
-  {
-    id: 'seed-con-1',
-    name: 'Sarah Praditya',
-    company: 'GoTo / Tokopedia',
-    role: 'Principal Platform Engineer',
-    email: 'sarah.praditya@example.com',
-    phone: '+62 811-9876-5432',
-    linkedinUrl: 'https://linkedin.com/in/sarah-praditya',
-    relationship: 'Former Colleague',
-    referralStatus: 'Submitted',
-    lastContactDate: new Date(Date.now() - 3 * 86400000).toISOString(),
-    notes: 'Bantu submit internal referral untuk role Staff Cloud Platform Architect. Follow-up lagi setelah screening.',
-    created: new Date().toISOString(),
-  },
-  {
-    id: 'seed-con-2',
-    name: 'Alexandre Meyer',
-    company: 'Michael Page Executive Search',
-    role: 'Managing Consultant - Tech & Cloud',
-    email: 'alex.meyer@michaelpage.co.id',
-    phone: '+62 812-4433-2211',
-    linkedinUrl: 'https://linkedin.com/in/alexandremeyer-recruit',
-    relationship: 'Recruiter',
-    referralStatus: 'Interview Secured',
-    lastContactDate: new Date(Date.now() - 1 * 86400000).toISOString(),
-    notes: 'Headhunter yang merekomendasikan posisi VP of Engineering di Regional Logistics scale-up.',
-    created: new Date().toISOString(),
-  },
-  {
-    id: 'seed-con-3',
-    name: 'Dimas Wicaksono',
-    company: 'Traveloka',
-    role: 'Engineering Manager - SRE',
-    email: 'dimas.w@example.com',
-    phone: '+62 813-7766-5544',
-    linkedinUrl: 'https://linkedin.com/in/dimas-sre-lead',
-    relationship: 'Alumni',
-    referralStatus: 'Requested',
-    lastContactDate: new Date(Date.now() - 5 * 86400000).toISOString(),
-    notes: 'Alumni kampus UI angkatan 2014. Sudah kirim pesan LinkedIn meminta info tim platform.',
-    created: new Date().toISOString(),
-  },
-];
+const SEED_CONTACTS: ProfessionalContact[] = [];
 
 export function useProfessionalContacts() {
   const [contacts, setContacts] = useState<ProfessionalContact[]>(() => {

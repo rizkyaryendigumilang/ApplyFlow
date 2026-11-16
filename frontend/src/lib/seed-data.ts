@@ -1,16 +1,11 @@
 import type { Application, CVArtifact, Interview } from './pb-types';
-export const seedApplications: Application[] = [
- {id:'a1',company:'Apple',position:'Engineer',location:'USA',type:'Full-time',mode:'Remote',pay:'135/hr',salaryMin:135,salaryMax:0,salaryPeriod:'hourly',sent:'Email, resume',status:'Interview',sentAt:'2026-10-28',nextFollowUp:'2026-11-13',contactName:'Steve Jobs',contact:'steve@apple.com',cvVersion:'CV-Infra-v3',link:'https://www.apple.com',notes:'Submitted resume and portfolio via executive referral.'},
- {id:'a2',company:'Microsoft',position:'Data Analyst',location:'USA',type:'Part-time',mode:'In-person',pay:'125/hr',salaryMin:125,salaryMax:0,salaryPeriod:'hourly',sent:'CV, short vid intro',status:'Screening',sentAt:'2026-11-03',nextFollowUp:'2026-11-12',contactName:'Bill Gates',contact:'bill@microsoft.com',cvVersion:'CV-Cloud-v2',link:'https://www.microsoft.com',notes:'Sent Harvard-format CV and 90s intro video.'},
- {id:'a3',company:'Tokopedia',position:'Platform Engineer',location:'Jakarta',type:'In-house',mode:'Hybrid',salaryMin:16000000,salaryMax:22000000,salaryPeriod:'monthly',sent:'CV-Infra-v3, Portofolio',status:'Applied',sentAt:'2026-11-07',nextFollowUp:'2026-11-12',contactName:'Nadia',contact:'nadia@tokopedia.example',cvVersion:'CV-Infra-v3',link:'https://tokopedia.com/careers'},
- {id:'a4',company:'Accenture',position:'DevOps Lead (Banking)',location:'Kuala Lumpur',type:'Vendor / Outsource',mode:'On-site',salaryMin:9000000,salaryMax:13000000,salaryPeriod:'monthly',sent:'CV-Leadership-v1',status:'Offer',sentAt:'2026-10-11',cvVersion:'CV-Leadership-v1',link:'https://accenture.com/careers',notes:'Compare shift allowance and THP.'},
- {id:'a5',company:'Gojek',position:'Staff Backend Engineer',location:'Jakarta',type:'In-house',mode:'Remote',salaryMin:24000000,salaryMax:32000000,salaryPeriod:'monthly',sent:'LinkedIn Profile, CV',status:'Wishlist',sentAt:'2026-11-09',cvVersion:'CV-Backend-v4',link:'https://careers.gojek.com'},
- {id:'a6',company:'Schneider Electric',position:'IT Service Manager',location:'Batam',type:'Vendor / Outsource',mode:'On-site',salaryMin:14000000,salaryMax:19000000,salaryPeriod:'monthly',sent:'Email lamaran lengkap',status:'Ghosted',sentAt:'2026-09-18',cvVersion:'CV-Leadership-v1',link:'https://se.com/careers'},
- {id:'a7',company:'PT Lintas Media Danawa',position:'DevOps Engineer',location:'Jakarta',type:'In-house',mode:'Hybrid',salaryMin:15000000,salaryMax:20000000,salaryPeriod:'monthly',sent:'JobStreet Easy Apply',status:'Viewed',sentAt:'2026-11-08',nextFollowUp:'2026-11-15',contactName:'Recruitment Team',contact:'hr@lintasmediadanawa.com',cvVersion:'CV-Infra-v3',jobSource:'JobStreet',applicationMethod:'JobStreet Apply',autoCreated:true,notes:'Company viewed application on JobStreet.',link:'https://lintasmediadanawa.com'}
-];
-export const seedInterviews: Interview[] = [{id:'i1',application:'a1',round:'System design',scheduledAt:'2026-11-14T10:00',status:'Scheduled',questions:['Design a multi-region incident response platform','Tell us about an outage you owned']}];
+
+export const seedApplications: Application[] = [];
+
+export const seedInterviews: Interview[] = [];
+
 export const seedCVs: CVArtifact[] = [
- {id:'c1',version:'CV-DataAnalyst-v1',label:'Data Analyst & Tableau BI (Rizky)',targetRole:'Data Analyst / BI Specialist',atsScore:94,applications:18,responses:7,offers:2,isMaster:true},
- {id:'c2',version:'CV-TechConsultant-APM-v2',label:'Technical Consultant Analyst & APM (Dynatrace)',targetRole:'Technical Consultant Analyst / APM Engineer',atsScore:91,applications:11,responses:5,offers:1,isMaster:false},
- {id:'c3',version:'CV-SysAdmin-Cloud-v1',label:'System Engineer & Cloud Infrastructure',targetRole:'System Administrator / Cloud Infrastructure',atsScore:88,applications:9,responses:2,offers:0,isMaster:false}
+  {id:'c1',version:'CV-DataAnalyst-v1',label:'Data Analyst & Tableau BI (Rizky)',targetRole:'Data Analyst / BI Specialist',atsScore:94,applications:0,responses:0,offers:0,isMaster:true},
+  {id:'c2',version:'CV-TechConsultant-APM-v2',label:'Technical Consultant Analyst & APM (Dynatrace)',targetRole:'Technical Consultant Analyst / APM Engineer',atsScore:91,applications:0,responses:0,offers:0,isMaster:false},
+  {id:'c3',version:'CV-SysAdmin-Cloud-v1',label:'System Engineer & Cloud Infrastructure',targetRole:'System Administrator / Cloud Infrastructure',atsScore:88,applications:0,responses:0,offers:0,isMaster:false}
 ];

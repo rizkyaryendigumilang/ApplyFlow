@@ -33,44 +33,7 @@ interface OfferComparatorViewProps {
   applications: Application[];
 }
 
-const DEFAULT_OFFERS: OfferPackage[] = [
-  {
-    id: 'offer-1',
-    name: 'Offer A: Unicorn Fintech',
-    company: 'Fintech Maju Sejahtera',
-    position: 'Senior SRE / Cloud Platform',
-    placementType: 'In-house',
-    workMode: 'Hybrid',
-    baseSalary: 28000000,
-    fixedAllowance: 1500000,
-    onCallAllowance: 3000000, // 2 minggu on-call rotation
-    shiftAllowance: 0,
-    wfhAllowance: 1000000,
-    thrMultiplier: 1.0,
-    bonusMonths: 2.0,
-    hasBpjs: true,
-    ptkpCategory: 'TK/0',
-    monthlyCommuteCost: 600000, // 2 hari WFO per minggu
-  },
-  {
-    id: 'offer-2',
-    name: 'Offer B: Enterprise Bank Outsource',
-    company: 'PT Metro Vendor Integrasi (Penempatan Bank BUMN)',
-    position: 'Lead DevOps Engineer',
-    placementType: 'Vendor / Outsource',
-    workMode: 'On-site',
-    baseSalary: 34000000,
-    fixedAllowance: 2000000,
-    onCallAllowance: 0,
-    shiftAllowance: 0,
-    wfhAllowance: 0,
-    thrMultiplier: 1.0,
-    bonusMonths: 1.0,
-    hasBpjs: true,
-    ptkpCategory: 'TK/0',
-    monthlyCommuteCost: 1800000, // 5 hari WFO full + bensin/toll
-  },
-];
+const DEFAULT_OFFERS: OfferPackage[] = [];
 
 export function OfferComparatorView({ applications }: OfferComparatorViewProps) {
   const [offers, setOffers] = useState<OfferPackage[]>(DEFAULT_OFFERS);
@@ -194,18 +157,20 @@ Thank you for your consideration, and I look forward to your thoughts.`;
           >
             <Scale size={13} /> Audit Draf Kontrak PKWT
           </button>
-          <button
-            type="button"
-            className="secondary compact-btn"
-            onClick={() => {
-              setNegotiateOffer(offers[0]);
-              setTargetCounterSalary(Math.round(offers[0].baseSalary * 1.15));
-            }}
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
-            title="Buat draf counter-offer dan negosiasi gaji terstruktur"
-          >
-            <MessageSquare size={13} /> Script Negosiasi Gaji
-          </button>
+          {offers.length > 0 && (
+            <button
+              type="button"
+              className="secondary compact-btn"
+              onClick={() => {
+                setNegotiateOffer(offers[0]);
+                setTargetCounterSalary(Math.round(offers[0].baseSalary * 1.15));
+              }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+              title="Buat draf counter-offer dan negosiasi gaji terstruktur"
+            >
+              <MessageSquare size={13} /> Script Negosiasi Gaji
+            </button>
+          )}
           {offers.length < 3 && (
             <button className="primary compact-btn" onClick={handleAddOffer}>
               <Plus size={14} /> Tambah Penawaran ({offers.length}/3)
@@ -214,8 +179,21 @@ Thank you for your consideration, and I look forward to your thoughts.`;
         </div>
       </div>
 
-      {/* Main Comparison Grid */}
-      <div className={`offers-grid cols-${evaluatedOffers.length}`}>
+      {/* Main Comparison Grid or Empty State */}
+      {offers.length === 0 ? (
+        <div className="empty-state-card" style={{ padding: '48px 24px', textAlign: 'center', background: '#ffffff', borderRadius: '8px', border: '1px solid #e4e4e7', margin: '16px 0' }}>
+          <h3 style={{ fontSize: '15px', fontWeight: 600, color: '#18181b', marginBottom: '8px' }}>
+            Belum Ada Penawaran Kerja Tercatat
+          </h3>
+          <p style={{ fontSize: '13px', color: '#71717a', maxWidth: '440px', margin: '0 auto 16px' }}>
+            Tambahkan rincian paket penawaran kerja untuk menghitung Take Home Pay (THP) bersih setelah pajak PPh 21 TER 2024 dan potongan BPJS.
+          </p>
+          <button className="primary compact-btn" onClick={handleAddOffer}>
+            <Plus size={14} /> Tambah Penawaran Pertama
+          </button>
+        </div>
+      ) : (
+        <div className={`offers-grid cols-${evaluatedOffers.length}`}>
         {evaluatedOffers.map(({ pkg, breakdown }, index) => {
           return (
             <div className="offer-card" key={pkg.id}>
@@ -416,6 +394,7 @@ Thank you for your consideration, and I look forward to your thoughts.`;
           );
         })}
       </div>
+      )}
 
       {/* Side-by-Side Winner & Trade-Off Summary */}
       {evaluatedOffers.length > 1 && (

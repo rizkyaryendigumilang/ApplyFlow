@@ -6,34 +6,7 @@ import { parseJobStreetNotification } from '../lib/jobstreet-parser';
 const STORAGE_KEY_NOTIFS = 'career_crm_recruitment_notifications';
 const STORAGE_KEY_GMAIL = 'career_crm_gmail_connection';
 
-const SEED_NOTIFICATIONS: RecruitmentNotification[] = [
-  {
-    id: 'seed-notif-1',
-    gmailMessageId: 'gmail-msg-101',
-    platform: 'jobstreet',
-    extractedCompany: 'PT Lintas Media Danawa',
-    extractedPosition: 'DevOps Engineer',
-    extractedEventType: 'employer_viewed',
-    rawSubject: 'PT Lintas Media Danawa telah melihat lamaranmu untuk DevOps Engineer',
-    evidenceSnippet: 'PT Lintas Media Danawa telah melihat lamaranmu untuk DevOps Engineer di JobStreet.',
-    matchStatus: 'matched',
-    confidence: 95,
-    created: new Date().toISOString(),
-  },
-  {
-    id: 'seed-notif-2',
-    gmailMessageId: 'gmail-msg-102',
-    platform: 'jobstreet',
-    extractedCompany: 'Shopee International',
-    extractedPosition: 'Site Reliability Engineer',
-    extractedEventType: 'interview_invited',
-    rawSubject: 'Undangan Interview: Site Reliability Engineer - Shopee',
-    evidenceSnippet: 'Kami mengundang Anda untuk mengikuti sesi technical interview pertama...',
-    matchStatus: 'needs_review',
-    confidence: 88,
-    created: new Date(Date.now() - 3600000 * 24).toISOString(),
-  },
-];
+const SEED_NOTIFICATIONS: RecruitmentNotification[] = [];
 
 const DEFAULT_GMAIL: GmailConnection = {
   id: 'gmail-conn-default',

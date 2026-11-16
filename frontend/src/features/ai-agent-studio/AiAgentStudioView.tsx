@@ -37,29 +37,7 @@ interface AiAgentStudioViewProps {
   onNavigateToPipeline: () => void;
 }
 
-const SAMPLE_BATCH_INPUT: RawJobInput[] = [
-  {
-    id: 'batch-1',
-    title: 'Lead SRE & Platform Engineer',
-    company: 'Fintech Bank Digital',
-    workMode: 'Hybrid',
-    rawJd: `Kami mencari Lead SRE untuk memimpin kehandalan infrastruktur Kubernetes, Docker, Terraform, dan CI/CD GitLab. Pengalaman mengelola monitoring Prometheus & Grafana, serta penanganan insiden skala besar. Lokasi Jakarta (Hybrid). Gaji: Rp 30.000.000 - 45.000.000.`,
-  },
-  {
-    id: 'batch-2',
-    title: 'Senior DevOps Architect',
-    company: 'Cloud Global Consulting',
-    workMode: 'Remote',
-    rawJd: `Mencari Senior DevOps Engineer remote. Menguasai AWS, GitHub Actions, Terraform, microservices architecture, dan Python automation. Bersedia on-call standby giliran. Gaji: Rp 35.000.000 - 55.000.000 per bulan.`,
-  },
-  {
-    id: 'batch-3',
-    title: 'Junior Infrastructure Operator',
-    company: 'PT Kasino Game Studio',
-    workMode: 'On-site',
-    rawJd: `Dibutuhkan operator server judi slot online & casino. Wajib WFO full on-site 6 hari seminggu tanpa tunjangan lembur. Gaji 7jt - 10jt.`,
-  },
-];
+const SAMPLE_BATCH_INPUT: RawJobInput[] = [];
 
 export function AiAgentStudioView({ onPromoteApplication, onNavigateToPipeline }: AiAgentStudioViewProps) {
   const { profile } = useCandidateProfile();

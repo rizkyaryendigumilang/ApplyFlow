@@ -72,9 +72,9 @@ export const JobTable: React.FC<JobTableProps> = ({
     return (
       <EmptyState
         icon={SearchX}
-        title="Tidak Ada Lamaran Ditemukan"
-        description="Tidak ada peluang karier yang cocok dengan filter atau kata kunci saat ini. Coba sesuaikan kata kunci atau bersihkan filter."
-        actionLabel={onResetFilters ? 'Reset Filter' : undefined}
+        title="Belum Ada Peluang Kerja Tercatat"
+        description="Tidak ada lamaran yang cocok atau daftar masih kosong. Tambahkan peluang karier pertama Anda atau impor dari file spreadsheet."
+        actionLabel={onResetFilters ? 'Bersihkan Pencarian' : undefined}
         onAction={onResetFilters}
       />
     );
