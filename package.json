@@ -4,6 +4,8 @@
   "description": "ApplyFlow - Autonomous Career CRM & Monotonic Funnel Pipeline",
   "private": true,
   "scripts": {
+    "dev": "npm --prefix frontend run dev",
+    "backend:serve": "cd pocketbase && ./pocketbase serve --http=127.0.0.1:8090",
     "frontend:install": "npm --prefix frontend install",
     "frontend:build": "npm --prefix frontend run build",
     "frontend:test": "node --experimental-strip-types --test frontend/src/**/__tests__/*.test.ts",

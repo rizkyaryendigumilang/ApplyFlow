@@ -13,6 +13,7 @@ frontend/.vite/
 pocketbase/pb_data/
 pocketbase/pb_backups/
 *.zip
+*.exe
 
 # Mobile build artifacts
 *.apk
