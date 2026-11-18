@@ -32,6 +32,7 @@ import {
   Globe,
 } from 'lucide-react';
 import { useI18n } from '../../lib/i18n';
+import { useTheme } from '../../lib/theme';
 import { usePWAInstall } from '../../hooks/usePWAInstall';
 import { AtsResumeFormatterModal } from '../resume-formatter/AtsResumeFormatterModal';
 import { pb, isOfflineMode, clearSession } from '../../lib/pocketbase';
@@ -105,6 +106,7 @@ export function SettingsView({
   const { profile, saveProfile } = useCandidateProfile();
   const { preferences, updatePreferences, resetPreferences, savedStatus } = usePreferences();
   const { locale, setLocale, t } = useI18n();
+  const { theme, setTheme } = useTheme();
   const { canInstall, isInstalled, promptInstall } = usePWAInstall();
 
   // Local account states
@@ -868,16 +870,33 @@ export function SettingsView({
               <div className="settings-card">
                 <h3>Gaya Visual Antarmuka</h3>
                 <div className="theme-options">
-                  <div className="theme-card active">
+                  <button
+                    type="button"
+                    onClick={() => setTheme('light')}
+                    className={`theme-card text-left transition-all cursor-pointer ${theme === 'light' ? 'active' : 'opacity-80 hover:opacity-100'}`}
+                  >
                     <div className="theme-swatch natural" />
-                    <strong>Editorial Natural (Default)</strong>
-                    <small>High contrast neutrals (#202320, #f5f5f0) dengan aksen sage/olive terukur.</small>
-                  </div>
-                  <div className="theme-card disabled">
+                    <strong>Editorial Natural (Terang)</strong>
+                    <small>High contrast neutrals (#fafafa, #ffffff) dengan aksen sage/olive terukur.</small>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTheme('dark')}
+                    className={`theme-card text-left transition-all cursor-pointer ${theme === 'dark' ? 'active' : 'opacity-80 hover:opacity-100'}`}
+                  >
                     <div className="theme-swatch dark" />
-                    <strong>Monochrome Dark (Segera)</strong>
-                    <small>Mode gelap murni berbasis kontras OLED tanpa aksen neon palsu.</small>
-                  </div>
+                    <strong>HorizonX Obsidian (Gelap)</strong>
+                    <small>Mode gelap presisi OLED (#09090b) dengan hairline highlights dan grain texture.</small>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTheme('system')}
+                    className={`theme-card text-left transition-all cursor-pointer ${theme === 'system' ? 'active' : 'opacity-80 hover:opacity-100'}`}
+                  >
+                    <div className="theme-swatch" style={{ background: 'linear-gradient(135deg, #f4f4f5 50%, #111114 50%)' }} />
+                    <strong>Sistem Operasi (Otomatis)</strong>
+                    <small>Menyesuaikan preferensi mode tampilan sistem operasi Anda secara otomatis.</small>
+                  </button>
                 </div>
               </div>
 

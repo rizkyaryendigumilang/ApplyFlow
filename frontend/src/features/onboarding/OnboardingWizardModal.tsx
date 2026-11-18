@@ -144,7 +144,7 @@ export function OnboardingWizardModal({
                 <Sparkles size={14} className="text-amber-500" /> Ruang Kerja Karier Pribadi
               </div>
               <h3 className="mt-2 text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
-                Selamat Datang di Junction Career CRM
+                Selamat Datang di ApplyFlow Career CRM
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
                 Aplikasi privat untuk mencatat lamaran kerja, persiapan wawancara, perhitungan gaji bersih (THP), dan pengingat tindak lanjut tanpa membagikan data Anda ke pihak ketiga.
@@ -471,7 +471,7 @@ export function OnboardingWizardModal({
                 onClick={handleFinish}
                 className="inline-flex items-center gap-1.5 rounded-lg bg-zinc-900 px-4 py-2 text-xs font-medium text-white shadow-sm hover:bg-zinc-800 active:scale-[0.98] transition-colors duration-150 transition-transform dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-100"
               >
-                <CheckCircle2 size={15} /> Mulai Gunakan Junction
+                <CheckCircle2 size={15} /> Mulai Gunakan ApplyFlow
               </button>
             )}
           </div>

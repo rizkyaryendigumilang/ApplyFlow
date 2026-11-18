@@ -30,6 +30,7 @@ import { useCandidateProfile } from './hooks/useCandidateProfile';
 import { useJobLeads } from './hooks/useJobLeads';
 import { usePWAInstall } from './hooks/usePWAInstall';
 import { useI18n } from './lib/i18n';
+import { useTheme } from './lib/theme';
 import { daysSince, responseRate } from './lib/utils';
 
 // Twenty CRM layout shell components
@@ -241,6 +242,7 @@ function App() {
 
   const { leads: jobLeads } = useJobLeads();
   const { locale, setLocale, t } = useI18n();
+  useTheme();
   const [starCoachParams, setStarCoachParams] = useState<{ company: string; position: string } | null>(null);
 
   const [module, setModule] = useState<Module>(() => {
@@ -373,7 +375,10 @@ function App() {
   };
 
   return (
-    <div className="twenty-app-shell flex h-screen w-screen overflow-hidden bg-[#fafafa] dark:bg-[#0c0c0e] text-zinc-900 dark:text-zinc-100 font-sans antialiased">
+    <div className="twenty-app-shell flex h-screen w-screen overflow-hidden bg-[#fafafa] dark:bg-[#09090b] text-zinc-900 dark:text-zinc-100 font-sans antialiased relative">
+      {/* Grainient tactile SVG noise grain overlay */}
+      <div className="grain-overlay" aria-hidden="true" />
+
       {/* 1. Twenty CRM Collapsible Left Navigation Sidebar */}
       <TwentySidebar
         currentModule={module}

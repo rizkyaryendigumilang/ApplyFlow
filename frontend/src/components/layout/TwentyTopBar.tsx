@@ -22,9 +22,12 @@ import {
   HelpCircle,
   FileText,
   Settings,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import type { Module } from '../../App';
 import { useI18n } from '../../lib/i18n';
+import { useTheme } from '../../lib/theme';
 
 export interface TwentyTopBarProps {
   currentModule: Module;
@@ -79,24 +82,25 @@ export const TwentyTopBar: React.FC<TwentyTopBarProps> = ({
   loading,
 }) => {
   const { t, locale, setLocale } = useI18n();
+  const { isDark, toggleTheme } = useTheme();
   const meta = moduleMeta[currentModule] || moduleMeta.pipeline;
   const CurrentIcon = meta.icon;
   const moduleTitle = t(meta.labelKey) !== meta.labelKey ? t(meta.labelKey) : meta.fallbackLabel;
 
   return (
-    <header className="twenty-topbar sticky top-0 z-30 h-[52px] bg-white/80 dark:bg-[#121214]/80 backdrop-blur-xl border-b border-zinc-200/60 dark:border-zinc-800/60 px-4 flex items-center justify-between gap-4 select-none">
+    <header className="twenty-topbar sticky top-0 z-30 h-[52px] bg-white/80 dark:bg-[#111114]/80 backdrop-blur-xl border-b border-zinc-200/70 dark:border-white/[0.08] px-4 flex items-center justify-between gap-4 select-none">
       {/* Left side: Mobile menu toggle + View title + Breadcrumbs */}
       <div className="flex items-center gap-3 min-w-0">
         <button
           onClick={onOpenMobileSidebar}
           className="md:hidden p-1.5 rounded-md text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:text-zinc-100 dark:hover:bg-zinc-800 active:scale-[0.95] transition-all"
-          aria-label="Open sidebar"
+          aria-label="Buka menu navigasi"
         >
           <Menu size={18} />
         </button>
 
         <div className="flex items-center gap-2 min-w-0">
-          <div className="w-6 h-6 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 flex items-center justify-center flex-shrink-0">
+          <div className="w-6 h-6 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 flex items-center justify-center flex-shrink-0 border border-zinc-200/60 dark:border-white/[0.06]">
             <CurrentIcon size={14} />
           </div>
           <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight truncate">
@@ -104,99 +108,106 @@ export const TwentyTopBar: React.FC<TwentyTopBarProps> = ({
           </span>
         </div>
 
-        {/* In Pipeline: View Mode Switcher (Board vs Table) in Twenty CRM style */}
+        {/* In Pipeline: View Mode Switcher (Board vs Table) in Arc UI style */}
         {currentModule === 'pipeline' && onViewChange && (
-          <div className="hidden sm:flex items-center ml-2 border border-zinc-200/90 dark:border-zinc-700/80 rounded-md p-0.5 bg-zinc-100/70 dark:bg-zinc-800/60">
+          <div className="hidden sm:inline-flex arc-pill-group ml-2">
             <button
               onClick={() => onViewChange('board')}
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-[11px] font-medium transition-colors ${
-                view === 'board'
-                  ? 'bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 shadow-2xs font-semibold'
-                  : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
-              }`}
-              title="Board View"
+              className={`arc-pill-button ${view === 'board' ? 'active' : ''}`}
+              title="Tampilan Papan Kanban"
             >
-              <LayoutGrid size={13} />
+              <LayoutGrid size={12} />
               <span>Board</span>
             </button>
             <button
               onClick={() => onViewChange('table')}
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-[11px] font-medium transition-colors ${
-                view === 'table'
-                  ? 'bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 shadow-2xs font-semibold'
-                  : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
-              }`}
-              title="Table View"
+              className={`arc-pill-button ${view === 'table' ? 'active' : ''}`}
+              title="Tampilan Tabel Spreadsheet"
             >
-              <List size={13} />
+              <List size={12} />
               <span>Table</span>
             </button>
           </div>
         )}
 
-        {/* Pipeline Search input */}
+        {/* Pipeline Search input with Bencho keycap hint */}
         {currentModule === 'pipeline' && onQueryChange && (
           <div className="hidden md:flex items-center relative ml-1">
             <Search size={13} className="absolute left-2.5 text-zinc-400 pointer-events-none" />
             <input
               ref={searchInputRef}
               type="text"
-              placeholder="Cari perusahaan, posisi… (/)"
+              placeholder="Cari lowongan atau perusahaan..."
               value={query}
               onChange={(e) => onQueryChange(e.target.value)}
-              className="w-48 lg:w-60 pl-8 pr-2.5 py-1 text-xs bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200/80 dark:border-zinc-700/70 rounded-md text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-600 transition-all font-sans"
+              className="w-48 lg:w-60 pl-8 pr-7 py-1 text-xs bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200/80 dark:border-zinc-700/70 rounded-md text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-600 transition-all font-sans"
             />
+            <span className="absolute right-2 pointer-events-none">
+              <span className="bencho-kbd">/</span>
+            </span>
           </div>
         )}
       </div>
 
-      {/* Right side: Sync state, Notifications, Shortcuts, Language, and + New button */}
+      {/* Right side: Sync state, Theme switch, Notifications, Shortcuts, Language, and + New button */}
       <div className="flex items-center gap-2">
-        {/* PocketBase sync state */}
+        {/* Bencho live status ping indicator */}
         <div
-          className="hidden lg:flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono text-zinc-500 dark:text-zinc-400 bg-zinc-100/60 dark:bg-zinc-800/50 border border-zinc-200/60 dark:border-zinc-700/50"
-          title={loading ? 'Menyinkronkan data…' : 'PocketBase tersambung dan siap'}
+          className="hidden lg:flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono text-zinc-500 dark:text-zinc-400 bg-zinc-100/70 dark:bg-zinc-800/60 border border-zinc-200/60 dark:border-zinc-700/50"
+          title={loading ? 'Menyinkronkan data...' : 'PocketBase tersambung dan aktif'}
         >
-          <span
-            className={`w-1.5 h-1.5 rounded-full ${
-              loading ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500'
-            }`}
-          />
-          <span>{loading ? 'Syncing…' : 'Connected'}</span>
+          <span className="bencho-live-dot">
+            {loading ? (
+              <span className="core bg-amber-500 animate-pulse" />
+            ) : (
+              <>
+                <span className="ping bg-emerald-400" />
+                <span className="core bg-emerald-500" />
+              </>
+            )}
+          </span>
+          <span className="tracking-tight">{loading ? 'Syncing...' : 'Live PB'}</span>
         </div>
 
-        {/* Bilingual Switcher (ID / EN) */}
-        <div className="flex items-center bg-zinc-100 dark:bg-zinc-800 p-0.5 rounded-md border border-zinc-200/80 dark:border-zinc-700/70 text-[10px] font-semibold">
+        {/* Arc UI Bilingual Switcher (ID / EN) */}
+        <div className="arc-pill-group text-[10px] font-semibold">
           <button
             type="button"
             onClick={() => setLocale('id')}
-            className={`px-1.5 py-0.5 rounded transition-colors ${
-              locale === 'id'
-                ? 'bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 shadow-2xs'
-                : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200'
-            }`}
+            className={`arc-pill-button px-2 py-0.5 ${locale === 'id' ? 'active' : ''}`}
           >
             ID
           </button>
           <button
             type="button"
             onClick={() => setLocale('en')}
-            className={`px-1.5 py-0.5 rounded transition-colors ${
-              locale === 'en'
-                ? 'bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 shadow-2xs'
-                : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200'
-            }`}
+            className={`arc-pill-button px-2 py-0.5 ${locale === 'en' ? 'active' : ''}`}
           >
             EN
           </button>
         </div>
+
+        {/* HorizonX / Arc UI Theme Switcher (Dark / Light) */}
+        <button
+          type="button"
+          onClick={toggleTheme}
+          className="p-1.5 rounded-md text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 active:scale-[0.95] transition-all border border-transparent hover:border-zinc-200/60 dark:hover:border-zinc-700/60"
+          title={isDark ? 'Ganti ke Mode Terang' : 'Ganti ke Mode Gelap HorizonX'}
+          aria-label="Toggle theme mode"
+        >
+          {isDark ? (
+            <Sun size={15} className="text-amber-400 transition-transform duration-200" />
+          ) : (
+            <Moon size={15} className="text-zinc-600 transition-transform duration-200" />
+          )}
+        </button>
 
         {/* Notifications Bell */}
         <button
           onClick={onOpenNotifications}
           className="relative p-1.5 rounded-md text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 active:scale-[0.95] transition-all"
           title="Notifikasi"
-          aria-label="Open notifications"
+          aria-label="Buka notifikasi"
         >
           <Bell size={16} />
           {unreadAlertsCount > 0 && (
@@ -206,17 +217,18 @@ export const TwentyTopBar: React.FC<TwentyTopBarProps> = ({
           )}
         </button>
 
-        {/* Keyboard Shortcuts Trigger */}
+        {/* Keyboard Shortcuts Trigger with Bencho keycap */}
         <button
           onClick={onOpenShortcuts}
-          className="hidden sm:flex p-1.5 rounded-md text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 active:scale-[0.95] transition-all"
+          className="hidden sm:flex items-center gap-1 p-1.5 rounded-md text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 active:scale-[0.95] transition-all"
           title="Pintasan Keyboard (?)"
-          aria-label="Keyboard Shortcuts"
+          aria-label="Pintasan Keyboard"
         >
-          <Command size={15} />
+          <Command size={14} />
+          <span className="bencho-kbd hidden xl:inline-flex">?</span>
         </button>
 
-        {/* Twenty CRM Signature Primary Action: + New Opportunity */}
+        {/* Primary Action Button: + New Opportunity */}
         <button
           onClick={onOpenAddModal}
           className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 rounded-md text-xs font-semibold shadow-2xs active:scale-[0.975] transition-all"
@@ -225,6 +237,9 @@ export const TwentyTopBar: React.FC<TwentyTopBarProps> = ({
           <Plus size={14} />
           <span className="hidden sm:inline">Peluang Baru</span>
           <span className="sm:hidden">Baru</span>
+          <span className="bencho-kbd hidden 2xl:inline-flex bg-zinc-800 text-zinc-300 dark:bg-zinc-200 dark:text-zinc-700 border-zinc-700 dark:border-zinc-300">
+            N
+          </span>
         </button>
       </div>
     </header>

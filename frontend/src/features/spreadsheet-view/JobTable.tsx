@@ -81,7 +81,7 @@ export const JobTable: React.FC<JobTableProps> = ({
   }
 
   return (
-    <div className="twenty-table-container border border-zinc-200/90 dark:border-zinc-800/90 rounded-lg overflow-hidden bg-white dark:bg-[#18181b] shadow-2xs">
+    <div className="twenty-table-container horizonx-card overflow-hidden bg-white dark:bg-[#111114] shadow-2xs">
       {/* Table Toolbar */}
       <div className="px-4 py-2.5 bg-zinc-50/60 dark:bg-zinc-900/40 border-b border-zinc-200/80 dark:border-zinc-800 flex items-center justify-between text-xs">
         <div className="flex items-center gap-2">

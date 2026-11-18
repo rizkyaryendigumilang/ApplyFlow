@@ -115,16 +115,20 @@ export const JobSeekerCockpitView: React.FC<JobSeekerCockpitViewProps> = ({
 
   return (
     <div className="space-y-5 max-w-7xl mx-auto pb-8 select-none">
-      {/* 1. Twenty CRM Workspace Header Card */}
-      <div className="bg-white dark:bg-[#18181b] border border-zinc-200/90 dark:border-zinc-800/90 rounded-xl p-5 shadow-2xs">
+      {/* 1. Twenty CRM & HorizonX Workspace Header Card */}
+      <div className="horizonx-card p-5 relative overflow-hidden bg-gradient-to-br from-white via-white to-zinc-50/50 dark:from-[#111114] dark:via-[#111114] dark:to-zinc-900/40">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 font-mono">
                 Dasbor Utama
               </span>
               <span className="text-zinc-300 dark:text-zinc-700">·</span>
-              <span className="text-[10px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 px-2 py-0.2 rounded-full">
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-medium text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/80 px-2.5 py-0.5 rounded-full font-mono">
+                <span className="bencho-live-dot">
+                  <span className="ping bg-emerald-400" />
+                  <span className="core bg-emerald-500" />
+                </span>
                 Sesi Aktif
               </span>
             </div>
@@ -143,17 +147,20 @@ export const JobSeekerCockpitView: React.FC<JobSeekerCockpitViewProps> = ({
             </div>
             <button
               onClick={onOpenAddModal}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 rounded-md text-xs font-semibold shadow-2xs transition-all active:scale-[0.98]"
+              className="flex items-center gap-2 px-3.5 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 rounded-md text-xs font-semibold shadow-2xs transition-all active:scale-[0.98]"
             >
               <Plus size={14} />
               <span>Tambah Lowongan</span>
+              <span className="bencho-kbd bg-zinc-800 text-zinc-300 dark:bg-zinc-200 dark:text-zinc-700 border-zinc-700 dark:border-zinc-300">
+                N
+              </span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* 2. Interactive Guided Funnel Path (Alur 4 Langkah Mudah) */}
-      <div className="bg-white dark:bg-[#18181b] border border-zinc-200/90 dark:border-zinc-800/90 rounded-2xl p-5 shadow-2xs space-y-4">
+      {/* 2. Interactive Guided Funnel Path (Alur 4 Langkah Mudah) in Bencho Bento Grid */}
+      <div className="horizonx-card p-5 space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-100 dark:border-zinc-800/80 pb-3">
           <div>
             <div className="flex items-center gap-2">
@@ -177,7 +184,7 @@ export const JobSeekerCockpitView: React.FC<JobSeekerCockpitViewProps> = ({
           {/* Step 1: Temukan Lowongan */}
           <div
             onClick={() => onNavigateTo('jobscout')}
-            className="group p-4 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50/60 dark:bg-zinc-900/40 hover:bg-white dark:hover:bg-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700 hover:shadow-sm cursor-pointer transition-all active:scale-[0.985] flex flex-col justify-between"
+            className="group p-4 rounded-xl border border-zinc-200/80 dark:border-white/[0.08] bg-zinc-50/60 dark:bg-zinc-900/40 hover:bg-white dark:hover:bg-zinc-800/60 hover:border-zinc-300 dark:hover:border-zinc-700 hover:shadow-2xs cursor-pointer transition-all active:scale-[0.985] flex flex-col justify-between"
           >
             <div className="space-y-2">
               <div className="flex items-center justify-between">
@@ -208,7 +215,7 @@ export const JobSeekerCockpitView: React.FC<JobSeekerCockpitViewProps> = ({
           {/* Step 2: Evaluasi Kecocokan */}
           <div
             onClick={() => onNavigateTo('jobhunter')}
-            className="group p-4 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50/60 dark:bg-zinc-900/40 hover:bg-white dark:hover:bg-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700 hover:shadow-sm cursor-pointer transition-all active:scale-[0.985] flex flex-col justify-between"
+            className="group p-4 rounded-xl border border-zinc-200/80 dark:border-white/[0.08] bg-zinc-50/60 dark:bg-zinc-900/40 hover:bg-white dark:hover:bg-zinc-800/60 hover:border-zinc-300 dark:hover:border-zinc-700 hover:shadow-2xs cursor-pointer transition-all active:scale-[0.985] flex flex-col justify-between"
           >
             <div className="space-y-2">
               <div className="flex items-center justify-between">
@@ -239,7 +246,7 @@ export const JobSeekerCockpitView: React.FC<JobSeekerCockpitViewProps> = ({
           {/* Step 3: Siapkan Lamaran */}
           <div
             onClick={() => onNavigateTo('applyflow')}
-            className="group p-4 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50/60 dark:bg-zinc-900/40 hover:bg-white dark:hover:bg-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700 hover:shadow-sm cursor-pointer transition-all active:scale-[0.985] flex flex-col justify-between"
+            className="group p-4 rounded-xl border border-zinc-200/80 dark:border-white/[0.08] bg-zinc-50/60 dark:bg-zinc-900/40 hover:bg-white dark:hover:bg-zinc-800/60 hover:border-zinc-300 dark:hover:border-zinc-700 hover:shadow-2xs cursor-pointer transition-all active:scale-[0.985] flex flex-col justify-between"
           >
             <div className="space-y-2">
               <div className="flex items-center justify-between">
@@ -270,7 +277,7 @@ export const JobSeekerCockpitView: React.FC<JobSeekerCockpitViewProps> = ({
           {/* Step 4: Lacak & Pantau */}
           <div
             onClick={() => onNavigateTo('pipeline')}
-            className="group p-4 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50/60 dark:bg-zinc-900/40 hover:bg-white dark:hover:bg-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700 hover:shadow-sm cursor-pointer transition-all active:scale-[0.985] flex flex-col justify-between"
+            className="group p-4 rounded-xl border border-zinc-200/80 dark:border-white/[0.08] bg-zinc-50/60 dark:bg-zinc-900/40 hover:bg-white dark:hover:bg-zinc-800/60 hover:border-zinc-300 dark:hover:border-zinc-700 hover:shadow-2xs cursor-pointer transition-all active:scale-[0.985] flex flex-col justify-between"
           >
             <div className="space-y-2">
               <div className="flex items-center justify-between">

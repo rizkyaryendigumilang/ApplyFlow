@@ -8,5 +8,5 @@ export function AuthGate({ children }: { children: ReactNode }) {
 
   useEffect(() => pb.authStore.onChange(() => setAuthenticated(pb.authStore.isValid), true), []);
   if (!authenticated && !preview) return <AuthScreen onPreview={() => setPreview(true)} />;
-  return <div className="authenticated-shell">{authenticated && <button className="signout" onClick={clearSession}>Sign out</button>}{children}</div>;
+  return <div className="authenticated-shell">{children}</div>;
 }
