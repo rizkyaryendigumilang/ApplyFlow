@@ -157,7 +157,7 @@ export const TwentySidebar: React.FC<TwentySidebarProps> = ({
         {
           id: 'ai-studio',
           labelKey: 'nav.aistudio',
-          fallbackLabel: 'AI Studio',
+          fallbackLabel: 'Otomasi Karier',
           icon: Sparkles,
         },
         {

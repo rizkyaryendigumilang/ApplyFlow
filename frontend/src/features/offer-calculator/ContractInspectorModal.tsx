@@ -11,6 +11,7 @@ import {
   Scale,
   Sparkles,
   Info,
+  Lightbulb,
 } from 'lucide-react';
 import type { Application } from '../../lib/pb-types';
 
@@ -545,11 +546,13 @@ export function ContractInspectorModal({
                     "{f.clauseText}"
                   </div>
 
-                  <div style={{ fontSize: '11px', color: '#455928', marginTop: '6px' }}>
-                    <b>💡 Solusi Negosiasi:</b> {f.recommendation}
+                  <div style={{ fontSize: '11px', color: '#455928', marginTop: '6px', display: 'flex', alignItems: 'flex-start', gap: '4px' }}>
+                    <Lightbulb size={12} style={{ flexShrink: 0, marginTop: '2px' }} />
+                    <span><b>Solusi Negosiasi:</b> {f.recommendation}</span>
                   </div>
-                  <div style={{ fontSize: '10px', color: '#888d82', marginTop: '4px' }}>
-                    <b>⚖️ Dasar Hukum:</b> {f.lawReference}
+                  <div style={{ fontSize: '10px', color: '#888d82', marginTop: '4px', display: 'flex', alignItems: 'flex-start', gap: '4px' }}>
+                    <Scale size={11} style={{ flexShrink: 0, marginTop: '1px' }} />
+                    <span><b>Dasar Hukum:</b> {f.lawReference}</span>
                   </div>
                 </div>
               ))}

@@ -51,7 +51,7 @@ export function generateFollowUp(options: FollowUpOptions): GeneratedFollowUp {
     } else {
       // Email
       if (tone === 'polite_inquiry') {
-        subject = `Follow-Up: ${role} Application – ${company}`;
+        subject = `Follow-Up: ${role} Application - ${company}`;
         body = `Dear ${contactName},
 
 I hope this email finds you well.
@@ -64,7 +64,7 @@ Thank you very much for your time and guidance. Looking forward to hearing from 
 
 Best regards,`;
       } else if (tone === 'value_add') {
-        subject = `Additional Insights regarding ${role} role – ${company}`;
+        subject = `Additional Insights regarding ${role} role - ${company}`;
         body = `Dear ${contactName},
 
 I hope you are having a wonderful week.
@@ -77,7 +77,7 @@ Could you kindly share an update on the recruitment timeline when convenient?
 
 Warm regards,`;
       } else {
-        subject = `Checking in on ${role} search – ${company}`;
+        subject = `Checking in on ${role} search - ${company}`;
         body = `Dear ${contactName},
 
 I hope you are having a productive week.
@@ -110,7 +110,7 @@ Sincerely,`;
     } else {
       // Email
       if (tone === 'polite_inquiry') {
-        subject = `Menindaklanjuti Lamaran: ${role} – ${company}`;
+        subject = `Menindaklanjuti Lamaran: ${role} - ${company}`;
         body = `Yth. ${contactName},
 
 Semoga Bapak/Ibu senantiasa dalam keadaan sehat dan lancar dalam menjalankan aktivitas.
@@ -123,7 +123,7 @@ Terima kasih banyak atas perhatian dan waktu Bapak/Ibu. Saya menantikan kabar ba
 
 Salam hangat,`;
       } else if (tone === 'value_add') {
-        subject = `Referensi Tambahan untuk Posisi ${role} – ${company}`;
+        subject = `Referensi Tambahan untuk Posisi ${role} - ${company}`;
         body = `Yth. ${contactName},
 
 Semoga email ini menjumpai Bapak/Ibu dalam keadaan baik.
@@ -136,7 +136,7 @@ Terima kasih banyak atas kesempatan yang telah diberikan.
 
 Hormat saya,`;
       } else {
-        subject = `Konfirmasi Status Proses Seleksi: ${role} – ${company}`;
+        subject = `Konfirmasi Status Proses Seleksi: ${role} - ${company}`;
         body = `Yth. ${contactName},
 
 Semoga Bapak/Ibu selalu sehat dan sukses.

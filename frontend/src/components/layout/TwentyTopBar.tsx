@@ -56,7 +56,7 @@ const moduleMeta: Record<
   networking: { labelKey: 'nav.networking', fallbackLabel: 'Networking', icon: Users },
   linkedin: { labelKey: 'nav.linkedin', fallbackLabel: 'LinkedIn Assistant', icon: Share2 },
   offers: { labelKey: 'nav.offers', fallbackLabel: 'Offer & THP', icon: Scale },
-  'ai-studio': { labelKey: 'nav.aistudio', fallbackLabel: 'AI Studio', icon: Sparkles },
+  'ai-studio': { labelKey: 'nav.aistudio', fallbackLabel: 'Otomasi Karier', icon: Sparkles },
   analytics: { labelKey: 'nav.analytics', fallbackLabel: 'Funnel Analytics', icon: BarChart3 },
   users: { labelKey: 'nav.users', fallbackLabel: 'Users & Roles', icon: ShieldCheck },
   help: { labelKey: 'nav.help', fallbackLabel: 'Help & Docs', icon: HelpCircle },

@@ -290,7 +290,10 @@ export function AiAgentStudioView({ onPromoteApplication, onNavigateToPipeline }
                     <div className="skills-matched-box">
                       <div className="pill-row">
                         {lead.matchedSkills.slice(0, 4).map(s => (
-                          <span key={s} className="skill-pill match">✓ {s}</span>
+                          <span key={s} className="skill-pill match inline-flex items-center gap-1">
+                            <Check size={11} />
+                            <span>{s}</span>
+                          </span>
                         ))}
                         {lead.equivalentSkills.slice(0, 2).map((eq, i) => (
                           <span key={i} className="skill-pill equiv" title={`Kandidat menguasai ${eq.candidateHas}`}>

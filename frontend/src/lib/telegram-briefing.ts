@@ -109,11 +109,11 @@ export function generateMorningBriefingText({
   }
 
   if (hotLeads.length > 0) {
-    msg += `🔥 <b>Rekomendasi AI Job Hunter (&gt;80% Fit):</b>\n`;
+    msg += `🎯 <b>Rekomendasi Lowongan Terpilih (&gt;80% Cocok):</b>\n`;
     msg += hotLeads.join('\n') + '\n\n';
   }
 
-  msg += `💡 <i>Pro-Tip: Mengirimkan follow-up santun 5–7 hari setelah lamaran terbukti meningkatkan peluang respon HRD hingga 30%.</i>\n\n`;
+  msg += `💡 <i>Catatan: Mengirimkan pesan tindak lanjut secara santun 5-7 hari setelah melamar terbukti meningkatkan respons rekruter.</i>\n\n`;
   msg += `🔗 <a href="http://localhost:5173">Buka Junction Career CRM</a>`;
 
   return msg;

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { AlertTriangle, ArrowLeft, ArrowRight, Check, Clipboard, ExternalLink, FileText, Link2, Mail, Plus, Printer, Sparkles, WandSparkles } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, ArrowRight, Check, Clipboard, ExternalLink, FileText, Link2, Mail, Plus, Printer, Search } from 'lucide-react';
 import type { ApplicationDraft, CVArtifact } from '../../lib/pb-types';
 import { buildEmail, buildSubject, matchAgainstEvidence, parseJobPosting, validateDraft, type ParsedJobPosting, type ParsedPosition } from '../../lib/applyflow';
 import { useApplyFlowDraft } from '../../hooks/useApplyFlowDraft';
@@ -7,14 +7,14 @@ import { AtsResumeFormatterModal } from '../resume-formatter/AtsResumeFormatterM
 
 type Step = 'paste' | 'understand' | 'match' | 'compose' | 'review';
 const steps: { id: Step; label: string; helper: string }[] = [
-  { id: 'paste', label: 'Paste', helper: 'Bring in the source' },
-  { id: 'understand', label: 'Understand', helper: 'Review extracted facts' },
-  { id: 'match', label: 'Match', helper: 'Choose verified evidence' },
-  { id: 'compose', label: 'Compose', helper: 'Tailor the email' },
-  { id: 'review', label: 'Review & apply', helper: 'Prepare, never auto-send' },
+  { id: 'paste', label: '1. Sumber Lowongan', helper: 'Salin teks iklan lowongan' },
+  { id: 'understand', label: '2. Tinjau Data', helper: 'Periksa hasil ekstraksi posisi' },
+  { id: 'match', label: '3. Bukti Kualifikasi', helper: 'Pilih bukti dan versi CV' },
+  { id: 'compose', label: '4. Draf Email', helper: 'Sesuaikan draf pesan pengantar' },
+  { id: 'review', label: '5. Siapkan Lamaran', helper: 'Siapkan draf tanpa kirim otomatis' },
 ];
 
-const starterText = `Paste the complete job advertisement here. ApplyFlow keeps the original text and only uses facts you confirm.\n\nExample:\nPT Example Teknologi\nIT Engineer L0\nIT Engineer L1\nLocation: Jakarta\nWork arrangement: WFO / shift\nSend updated CV to recruiter@example.com\nSubject: Nama_Posisi yang dilamar`;
+const starterText = `Tempel iklan lowongan kerja lengkap di sini. ApplyFlow mempertahankan teks asli dan hanya menggunakan fakta yang Anda konfirmasi.\n\nContoh:\nPT Teknologi Nusantara\nPosisi: IT Support Specialist\nLokasi: Jakarta\nMode kerja: Remote / Hybrid\nKirimkan CV terbaru ke: hrd@perusahaan.com\nSubjek email: Lamaran_IT Support Specialist_Nama`;
 
 export function ApplyFlowView({
   cvs,
@@ -36,7 +36,7 @@ export function ApplyFlowView({
   const [body, setBody] = useState('');
   const [sourcePlatform, setSourcePlatform] = useState(initialData?.source || '');
   const [sourceUrl, setSourceUrl] = useState(initialData?.url || '');
-  const [message, setMessage] = useState(initialData ? `Loaded posting for ${initialData.company} - ${initialData.title}. Click Understand to parse.` : '');
+  const [message, setMessage] = useState(initialData ? `Memuat lowongan untuk ${initialData.company} - ${initialData.title}. Klik Analisis Isi Lowongan untuk membaca data.` : '');
   const [confirmed, setConfirmed] = useState(false);
   const [savedPositions, setSavedPositions] = useState<string[]>([]);
   const [showAtsModal, setShowAtsModal] = useState(false);
@@ -52,7 +52,7 @@ export function ApplyFlowView({
       setRawText(initialData.rawJd || '');
       setSourcePlatform(initialData.source || '');
       setSourceUrl(initialData.url || '');
-      setMessage(`Loaded posting for ${initialData.company} - ${initialData.title}. Click Understand to parse.`);
+      setMessage(`Memuat lowongan untuk ${initialData.company} - ${initialData.title}. Klik Analisis Isi Lowongan untuk membaca data.`);
       setStep('paste');
       setJob(null);
       setConfirmed(false);
@@ -60,7 +60,7 @@ export function ApplyFlowView({
   }, [initialData]);
 
   const analyze = async () => {
-    if (!rawText.trim()) return setMessage('Paste the job advertisement first.');
+    if (!rawText.trim()) return setMessage('Tempel teks iklan lowongan terlebih dahulu.');
     const parsed = parseJobPosting(rawText);
     parsed.sourcePlatform = sourcePlatform;
     parsed.sourceUrl = sourceUrl;
@@ -69,9 +69,9 @@ export function ApplyFlowView({
     setConfirmed(false);
     try {
       await saveDraft({ rawText: parsed.rawText, sourcePlatform: parsed.sourcePlatform, sourceUrl: parsed.sourceUrl, parsedData: parsed, selectedPositionId: parsed.positions[0]?.id || '', selectedCvArtifact: '', candidateName, evidence, subject: '', body: '', state: 'draft', applicationIds: [] });
-      setMessage('Draft extraction ready and saved privately. Review every important field before continuing.');
+      setMessage('Ekstraksi draf selesai dan tersimpan privat. Tinjau setiap bidang penting sebelum melanjutkan.');
     } catch (_) {
-      setMessage('Draft extraction ready locally. PocketBase could not save it yet.');
+      setMessage('Ekstraksi draf siap di memori lokal. Sinkronisasi database tertunda.');
     }
     setStep('understand');
   };
@@ -103,7 +103,7 @@ export function ApplyFlowView({
     try {
       await saveDraft({ rawText: job.rawText, sourcePlatform: job.sourcePlatform, sourceUrl: job.sourceUrl, parsedData: job, selectedPositionId, selectedCvArtifact: selectedCv, candidateName, evidence, subject, body, state, applicationIds: [] });
     } catch (_) {
-      setMessage('The action is available, but the latest draft could not sync to PocketBase.');
+      setMessage('Tindakan berhasil dicatat, sinkronisasi database akan berjalan otomatis.');
     }
   };
 
@@ -111,30 +111,30 @@ export function ApplyFlowView({
     try {
       await navigator.clipboard.writeText(value);
       await persistDraft('copied');
-      setMessage(`${label} copied. This is not proof that an email was sent.`);
+      setMessage(`${label} berhasil disalin. Langkah ini belum menandai email terkirim.`);
     } catch (_) {
-      setMessage('Clipboard access was blocked. Select and copy the text from the preview manually.');
+      setMessage('Akses papan klip dibatasi peramban. Silakan salin teks langsung dari tampilan pratinjau.');
     }
   };
 
   const openCompose = async () => {
-    if (!job?.recruiterEmail) return setMessage('No confirmed recruiter email is available for compose.');
-    if (!confirmed || validation.errors.length) return setMessage('Resolve the validation errors and confirm the review checklist first.');
+    if (!job?.recruiterEmail) return setMessage('Alamat email perekrut belum terisi. Lengkapi email tujuan terlebih dahulu.');
+    if (!confirmed || validation.errors.length) return setMessage('Selesaikan catatan validasi dan centang konfirmasi sebelum membuka email.');
     await persistDraft('compose_opened');
     window.location.href = `mailto:${encodeURIComponent(job.recruiterEmail)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    setMessage('Your mail client was opened. Attach files and send manually after review.');
+    setMessage('Aplikasi email Anda telah dibuka. Lampirkan berkas CV secara manual sebelum mengirim.');
   };
 
   const saveApplication = async (positionToSave: ParsedPosition) => {
     if (!job) return;
-    if (job.mode === 'Unknown') throw new Error('Confirm the work arrangement in the parser review before adding this position.');
+    if (job.mode === 'Unknown') throw new Error('Tentukan mode kerja (Remote/Hybrid/On-site) sebelum menambahkan posisi ini.');
     await add({
-      company: job.company || 'Company to confirm',
+      company: job.company || 'Perusahaan Ditinjau',
       position: positionToSave.title,
       link: job.sourceUrl,
       contactName: job.recruiterName,
       contact: job.recruiterEmail,
-      location: job.location || 'Unknown',
+      location: job.location || 'Lokasi belum ditentukan',
       type: /vendor|outsource|agency/i.test(job.employmentType) ? 'Vendor / Outsource' : /contract|freelance/i.test(job.employmentType) ? 'Contract' : 'In-house',
       mode: job.mode,
       salaryMin: 0,
@@ -143,7 +143,7 @@ export function ApplyFlowView({
       status: confirmed ? 'Applied' : 'Wishlist',
       sentAt: new Date().toISOString().slice(0, 10),
       cvVersion: selectedCV?.version || '',
-      notes: `ApplyFlow source${job.sourcePlatform ? `: ${job.sourcePlatform}` : ''}. Original posting preserved in this workspace draft.`,
+      notes: `Sumber ApplyFlow${job.sourcePlatform ? `: ${job.sourcePlatform}` : ''}. Teks iklan asli tersimpan privat di draf workspace.`,
     });
     setSavedPositions(current => [...current, positionToSave.id]);
     await persistDraft('draft');
@@ -152,17 +152,17 @@ export function ApplyFlowView({
   return <section className="applyflow-page">
     <div className="applyflow-intro">
       <div>
-        <p className="eyebrow">APPLYFLOW · SMART JOB APPLICATION STUDIO</p>
-        <h1>From posting to<br/><em>ready to apply.</em></h1>
-        <p className="lede">One reusable profile, multiple career directions. ApplyFlow keeps the original ad, highlights what is verified, and leaves the final send in your hands.</p>
+        <p className="eyebrow">APPLYFLOW · STUDIO LAMARAN KERJA</p>
+        <h1>Draf Lamaran Siap Kirim</h1>
+        <p className="lede">Satu profil terarah untuk berbagai peluang kerja. ApplyFlow menjaga teks iklan asli, mengecek kecocokan kualifikasi, dan menyerahkan kendali pengiriman sepenuhnya kepada Anda.</p>
       </div>
-      <div className="applyflow-promise"><Sparkles size={17}/><span>Human approval at every step<br/><small>Local parser fallback · no scraping · no auto-send</small></span></div>
+      <div className="applyflow-promise"><Check size={16}/><span>Kendali Penuh Pelamar<br/><small>Draf tersimpan privat tanpa pengiriman otomatis</small></span></div>
     </div>
 
     <div className="applyflow-shell">
-      <aside className="applyflow-rail" aria-label="ApplyFlow steps">
+      <aside className="applyflow-rail" aria-label="Langkah ApplyFlow">
         {steps.map((item, index) => <button key={item.id} className={step === item.id ? 'active' : ''} onClick={() => index <= steps.findIndex(current => current.id === step) ? setStep(item.id) : undefined} disabled={index > steps.findIndex(current => current.id === step)}><span className="step-number">{index + 1}</span><span><b>{item.label}</b><small>{item.helper}</small></span></button>)}
-        <div className="applyflow-rail-note"><b>Draft, not delivery.</b><span>Copying or opening Gmail never marks an application as sent.</span></div>
+        <div className="applyflow-rail-note"><b>Draf, bukan pengiriman otomatis.</b><span>Menyalin draf atau membuka aplikasi email tidak otomatis menandai lamaran terkirim.</span></div>
       </aside>
 
       <div className="applyflow-content">
@@ -187,47 +187,47 @@ export function ApplyFlowView({
 function StepHeader({ eyebrow, title, description }: { eyebrow: string; title: string; description: string }) { return <div className="applyflow-step-header"><p className="eyebrow">{eyebrow}</p><h2>{title}</h2><p>{description}</p></div>; }
 
 function PasteStep({ rawText, setRawText, sourcePlatform, setSourcePlatform, sourceUrl, setSourceUrl, analyze }: { rawText:string; setRawText:(value:string)=>void; sourcePlatform:string; setSourcePlatform:(value:string)=>void; sourceUrl:string; setSourceUrl:(value:string)=>void; analyze:()=>void }) { return <div className="applyflow-step">
-  <StepHeader eyebrow="01 · JOB POSTING INBOX" title="Start with the source." description="Paste the complete advertisement from LinkedIn, WhatsApp, Telegram, JobStreet, a company website, or anywhere else. The original text stays intact."/>
-  <div className="applyflow-form-grid"><label>Source platform<select value={sourcePlatform} onChange={event => setSourcePlatform(event.target.value)}><option value="">Unknown / not specified</option><option>LinkedIn</option><option>WhatsApp</option><option>Telegram</option><option>Instagram</option><option>JobStreet</option><option>Glints</option><option>Company website</option><option>Other</option></select></label><label>Source URL <span className="optional">optional</span><div className="input-with-icon"><Link2 size={14}/><input value={sourceUrl} onChange={event => setSourceUrl(event.target.value)} placeholder="https://..."/></div></label></div>
-  <label className="textarea-label">Complete job advertisement<textarea autoFocus value={rawText} onChange={event => setRawText(event.target.value)} placeholder={starterText}/></label>
-  <div className="applyflow-actions"><span className="helper-text"><FileText size={14}/> Original text is preserved as your source of truth.</span><button className="primary" onClick={analyze}><WandSparkles size={17}/> Analyze posting <ArrowRight size={15}/></button></div>
+  <StepHeader eyebrow="01 · KOTAK SUMBER LOWONGAN" title="Mulai dari Teks Iklan Asli" description="Tempel teks iklan lowongan lengkap dari LinkedIn, JobStreet, Glints, situs karier perusahaan, atau kanal lainnya. Teks asli akan tersimpan utuh."/>
+  <div className="applyflow-form-grid"><label>Platform asal lowongan<select value={sourcePlatform} onChange={event => setSourcePlatform(event.target.value)}><option value="">Tidak ditentukan / Lainnya</option><option>LinkedIn</option><option>JobStreet</option><option>Glints</option><option>Situs Web Perusahaan</option><option>WhatsApp</option><option>Telegram</option><option>Lainnya</option></select></label><label>Tautan URL lowongan <span className="optional">(opsional)</span><div className="input-with-icon"><Link2 size={14}/><input value={sourceUrl} onChange={event => setSourceUrl(event.target.value)} placeholder="https://..."/></div></label></div>
+  <label className="textarea-label">Teks lengkap iklan lowongan pekerjaan<textarea autoFocus value={rawText} onChange={event => setRawText(event.target.value)} placeholder={starterText}/></label>
+  <div className="applyflow-actions"><span className="helper-text"><FileText size={14}/> Teks asli tetap dijaga sebagai acuan utama Anda.</span><button className="primary" onClick={analyze}><Search size={16}/> Analisis Isi Lowongan <ArrowRight size={15}/></button></div>
  </div>; }
 
 function UnderstandStep({ job, setJob, position, selectedPositionId, choosePosition, goMatch, onBack }: { job:ParsedJobPosting; setJob:(job:ParsedJobPosting)=>void; position?:ParsedPosition; selectedPositionId:string; choosePosition:(id:string)=>void; goMatch:()=>void; onBack:()=>void }) { return <div className="applyflow-step">
-  <StepHeader eyebrow="02 · JOB PARSER REVIEW" title="Make the facts yours." description="This is a deterministic first pass, not a verdict. Correct anything uncertain before using it in an application."/>
-  <div className="applyflow-fact-grid"><label>Company<input value={job.company} onChange={event => setJob({...job, company:event.target.value})} placeholder="Unknown"/></label><label>Location<input value={job.location} onChange={event => setJob({...job, location:event.target.value})} placeholder="Unknown"/></label><label>Work arrangement<select value={job.mode} onChange={event => setJob({...job, mode:event.target.value as ParsedJobPosting['mode']})}><option>Unknown</option><option>On-site</option><option>Hybrid</option><option>Remote</option></select></label><label>Recruiter email<input value={job.recruiterEmail} onChange={event => setJob({...job, recruiterEmail:event.target.value})} placeholder="Not found"/></label><label>Subject instruction<input value={job.subjectInstruction} onChange={event => setJob({...job, subjectInstruction:event.target.value})} placeholder="No exact format found"/></label></div>
-  <div className="applyflow-panel"><div className="panel-heading"><div><p className="eyebrow">POSITIONS DETECTED</p><h3>Choose a target</h3></div><span className="confidence-tag">{job.positions.length} position{job.positions.length === 1 ? '' : 's'}</span></div><div className="position-list">{job.positions.map(item => <label className={`position-option ${selectedPositionId === item.id ? 'selected' : ''}`} key={item.id}><input type="radio" name="target-position" checked={selectedPositionId === item.id} onChange={() => choosePosition(item.id)}/><span><b>{item.title}</b><small>{job.location || 'Location unknown'} · {job.mode}</small></span><Check size={16}/></label>)}</div></div>
-  <div className="instruction-row"><AlertTriangle size={16}/><span>{job.requiredDocuments.length ? `Recruiter signals: ${job.requiredDocuments.join(', ')}.` : 'No attachment instruction was confidently detected.'} Review the original posting before sending.</span></div>
-  <details className="source-details"><summary>View original job advertisement</summary><pre>{job.rawText}</pre></details>
-  <StepActions backLabel="Back to paste" onBack={onBack} nextLabel="Continue to matching" onNext={goMatch} disabled={!position}/>
+  <StepHeader eyebrow="02 · TINJAU HASIL EKSTRAKSI" title="Pastikan Rincian Sesuai Fakta" description="Periksa dan perbaiki nama perusahaan, mode kerja, atau email perekrut sebelum melanjutkan."/>
+  <div className="applyflow-fact-grid"><label>Nama Perusahaan<input value={job.company} onChange={event => setJob({...job, company:event.target.value})} placeholder="Belum ditentukan"/></label><label>Lokasi Penempatan<input value={job.location} onChange={event => setJob({...job, location:event.target.value})} placeholder="Belum ditentukan"/></label><label>Mode Kerja<select value={job.mode} onChange={event => setJob({...job, mode:event.target.value as ParsedJobPosting['mode']})}><option value="Unknown">Belum ditentukan</option><option value="On-site">On-site</option><option value="Hybrid">Hybrid</option><option value="Remote">Remote</option></select></label><label>Email Perekrut / HRD<input value={job.recruiterEmail} onChange={event => setJob({...job, recruiterEmail:event.target.value})} placeholder="hrd@perusahaan.com"/></label><label>Format Subjek Email<input value={job.subjectInstruction} onChange={event => setJob({...job, subjectInstruction:event.target.value})} placeholder="Contoh: Lamaran_Posisi_Nama"/></label></div>
+  <div className="applyflow-panel"><div className="panel-heading"><div><p className="eyebrow">POSISI YANG TERDETEKSI</p><h3>Pilih Posisi Target</h3></div><span className="confidence-tag">{job.positions.length} posisi</span></div><div className="position-list">{job.positions.map(item => <label className={`position-option ${selectedPositionId === item.id ? 'selected' : ''}`} key={item.id}><input type="radio" name="target-position" checked={selectedPositionId === item.id} onChange={() => choosePosition(item.id)}/><span><b>{item.title}</b><small>{job.location || 'Lokasi belum ditentukan'} · {job.mode}</small></span><Check size={16}/></label>)}</div></div>
+  <div className="instruction-row"><AlertTriangle size={16}/><span>{job.requiredDocuments.length ? `Lampiran yang diminta: ${job.requiredDocuments.join(', ')}.` : 'Tidak ditemukan petunjuk khusus berkas lampiran.'} Periksa kembali iklan asli sebelum mengirim lamaran.</span></div>
+  <details className="source-details"><summary>Lihat teks asli iklan lowongan</summary><pre>{job.rawText}</pre></details>
+  <StepActions backLabel="Kembali ke Sumber" onBack={onBack} nextLabel="Lanjut ke Bukti Kualifikasi" onNext={goMatch} disabled={!position}/>
  </div>; }
 
 function MatchStep({ job, position, evidence, setEvidence, candidateName, setCandidateName, matches, selectedCv, cvs, setSelectedCv, goCompose, onBack }: { job:ParsedJobPosting; position:ParsedPosition; evidence:string; setEvidence:(value:string)=>void; candidateName:string; setCandidateName:(value:string)=>void; matches:{requirement:string;group:string;evidence:string}[]; selectedCv?:CVArtifact; cvs:CVArtifact[]; setSelectedCv:(value:string)=>void; goCompose:()=>void; onBack:()=>void }) { return <div className="applyflow-step">
-  <StepHeader eyebrow="03 · CAREER MATCHING" title="Use evidence, not guesswork." description="Add only facts you personally confirm. ApplyFlow will never turn missing profile data into a rejection or invent a capability."/>
-  <div className="applyflow-fact-grid"><label>Your name<input value={candidateName} onChange={event => setCandidateName(event.target.value)} placeholder="Used in the sign-off"/></label><label>CV for this application<select value={selectedCv?.id || ''} onChange={event => setSelectedCv(event.target.value)}><option value="">Select a CV version</option>{cvs.map(cv => <option key={cv.id} value={cv.id}>{cv.label} · {cv.version}</option>)}</select></label></div>
-  <label className="textarea-label">Verified profile evidence <span className="optional">one fact per line</span><textarea value={evidence} onChange={event => setEvidence(event.target.value)} placeholder="e.g. Managed Linux incident response for a 24/7 platform\nWorked with Docker and Kubernetes in production\nCoordinated vendor escalations and service reviews"/></label>
-  <div className="match-grid"><div className="applyflow-panel"><div className="panel-heading"><div><p className="eyebrow">REQUIREMENT CHECK</p><h3>{position.title}</h3></div><Sparkles size={17}/></div>{matches.length ? matches.map(item => <div className="match-row" key={item.requirement}><span className={`match-dot ${item.group.toLowerCase().replace(' ','-')}`}/><div><b>{item.requirement}</b><small>{item.group} · {item.evidence}</small></div></div>) : <p className="empty-copy">No structured requirements detected yet. Your evidence will still be available to the email editor.</p>}</div><div className="applyflow-panel evidence-panel"><p className="eyebrow">SELECTED DOCUMENT</p><h3>{selectedCv?.label || 'No CV selected'}</h3><p>{selectedCv ? `${selectedCv.version} · verify the file is current before attaching it.` : 'Choose a CV from your Document Center before preparing the email.'}</p></div></div>
-  <StepActions backLabel="Back to parser" onBack={onBack} nextLabel="Build professional email" onNext={goCompose}/>
+  <StepHeader eyebrow="03 · BUKTI KUALIFIKASI" title="Gunakan Fakta yang Terbukti" description="Cantumkan pengalaman kerja yang sesuai dengan kualifikasi posisi yang Anda lamar."/>
+  <div className="applyflow-fact-grid"><label>Nama Lengkap Anda<input value={candidateName} onChange={event => setCandidateName(event.target.value)} placeholder="Nama pada tanda tangan email"/></label><label>Pilihan Versi CV<select value={selectedCv?.id || ''} onChange={event => setSelectedCv(event.target.value)}><option value="">Pilih versi CV</option>{cvs.map(cv => <option key={cv.id} value={cv.id}>{cv.label} ({cv.version})</option>)}</select></label></div>
+  <label className="textarea-label">Bukti pengalaman profil terverifikasi <span className="optional">(satu fakta per baris)</span><textarea value={evidence} onChange={event => setEvidence(event.target.value)} placeholder="Contoh:\nPengalaman memelihara infrastruktur Linux dan Docker di produksi\nMembuat otomasi pipeline CI/CD GitHub Actions\nBerpengalaman dalam incident response dan troubleshooting sistem"/></label>
+  <div className="match-grid"><div className="applyflow-panel"><div className="panel-heading"><div><p className="eyebrow">PEMERIKSAAN KUALIFIKASI</p><h3>{position.title}</h3></div><FileText size={16}/></div>{matches.length ? matches.map(item => <div className="match-row" key={item.requirement}><span className={`match-dot ${item.group.toLowerCase().replace(' ','-')}`}/><div><b>{item.requirement}</b><small>{item.group === 'Supported' ? 'Sesuai Bukti' : item.group === 'Partial' ? 'Sebagian Sesuai' : 'Belum Ada Bukti'} · {item.evidence}</small></div></div>) : <p className="empty-copy">Belum ada persyaratan terstruktur yang terbaca. Bukti pengalaman Anda tetap dapat dipakai di draf email.</p>}</div><div className="applyflow-panel evidence-panel"><p className="eyebrow">DOKUMEN TERPILIH</p><h3>{selectedCv?.label || 'Belum ada CV yang dipilih'}</h3><p>{selectedCv ? `${selectedCv.version} · pastikan berkas terkini sebelum dilampirkan.` : 'Pilih versi CV dari Pusat Dokumen sebelum menyusun email.'}</p></div></div>
+  <StepActions backLabel="Kembali ke Tinjauan" onBack={onBack} nextLabel="Susun Draf Email" onNext={goCompose}/>
  </div>; }
 
 function ComposeStep({ job, position, subject, setSubject, body, setBody, validation, goReview, goBack, onOpenAtsModal }: { job:ParsedJobPosting; position:ParsedPosition; subject:string; setSubject:(value:string)=>void; body:string; setBody:(value:string)=>void; validation:{errors:string[];warnings:string[]}; goReview:()=>void; goBack:()=>void; onOpenAtsModal?:()=>void }) { return <div className="applyflow-step">
-  <StepHeader eyebrow="04 · EMAIL STUDIO" title="Make the next move clear." description="The default is a detailed professional cover email. Edit freely; the generated version is only a starting point."/>
-  <div className="compose-meta"><span><Mail size={15}/>{job.recruiterEmail || 'Recipient not confirmed'}</span><span><FileText size={15}/>{position.title}</span>{onOpenAtsModal && <button type="button" className="ml-auto inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300 hover:bg-emerald-100 active:scale-[0.975] transition-all shadow-2xs" onClick={onOpenAtsModal}><Printer size={13}/> Format Harvard ATS Resume</button>}</div>
-  <label className="textarea-label">Subject<input value={subject} onChange={event => setSubject(event.target.value)}/></label>
-  <label className="textarea-label">Professional cover email<textarea className="email-editor" value={body} onChange={event => setBody(event.target.value)}/></label>
+  <StepHeader eyebrow="04 · DRAF EMAIL LAMARAN" title="Susun Pesan Pengantar yang Jelas" description="Draf disusun profesional dan dapat Anda sunting bebas sesuai kebutuhan."/>
+  <div className="compose-meta"><span><Mail size={15}/>{job.recruiterEmail || 'Email penerima belum ditentukan'}</span><span><FileText size={15}/>{position.title}</span>{onOpenAtsModal && <button type="button" className="ml-auto inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300 hover:bg-emerald-100 active:scale-[0.975] transition-all shadow-2xs" onClick={onOpenAtsModal}><Printer size={13}/> Format Harvard ATS Resume</button>}</div>
+  <label className="textarea-label">Subjek Email<input value={subject} onChange={event => setSubject(event.target.value)}/></label>
+  <label className="textarea-label">Isi Surat Pengantar (Cover Email)<textarea className="email-editor" value={body} onChange={event => setBody(event.target.value)}/></label>
   {validation.warnings.length > 0 && <div className="validation-box warning"><AlertTriangle size={16}/><div>{validation.warnings.map(warning => <p key={warning}>{warning}</p>)}</div></div>}
-  <StepActions backLabel="Back to matching" onBack={goBack} nextLabel="Review & prepare" onNext={goReview}/>
+  <StepActions backLabel="Kembali ke Kualifikasi" onBack={goBack} nextLabel="Tinjau & Siapkan" onNext={goReview}/>
  </div>; }
 
-function ReviewStep({ job, position, subject, body, selectedCV, validation, copy, openCompose, saveApplication, savedPositions, allPositions, setStep, message, confirmed, setConfirmed, savingDraft, onOpenAtsModal }: { job:ParsedJobPosting; position:ParsedPosition; subject:string; body:string; selectedCV?:CVArtifact; validation:{errors:string[];warnings:string[]}; copy:(value:string,label:string)=>void; openCompose:()=>void; saveApplication:(position:ParsedPosition)=>Promise<void>; savedPositions:string[]; allPositions:ParsedPosition[]; setStep:(step:Step)=>void; message:string; confirmed:boolean; setConfirmed:(value:boolean)=>void; savingDraft:boolean; onOpenAtsModal?:()=>void }) { const [saving,setSaving] = useState(false); const [error,setError] = useState(''); const canPrepare = confirmed && validation.errors.length === 0; const save = async (target:ParsedPosition) => { if (!canPrepare) { setError('Confirm the review checklist and resolve validation errors first.'); return; } setSaving(true); setError(''); try { await saveApplication(target); } catch (cause) { setError(cause instanceof Error ? cause.message : 'Could not add application'); } finally { setSaving(false); } }; return <div className="applyflow-step">
-  <StepHeader eyebrow="05 · REVIEW & APPLY" title="Ready when you are." description="Prepare the email, attach files manually in your mail client, and record the selected position in your private pipeline. Nothing is sent automatically."/>
-  <div className="review-grid"><div className="applyflow-panel review-card"><div className="panel-heading"><div><p className="eyebrow">EMAIL PREVIEW</p><h3>{subject || 'Subject to confirm'}</h3></div><span className="status-pill">Draft</span></div><div className="preview-recipient">To: {job.recruiterEmail || 'No confirmed recipient'}</div><pre className="email-preview">{body || 'Write the email in the previous step.'}</pre><div className="review-actions"><button className="secondary" onClick={() => copy(subject, 'Subject')}><Clipboard size={15}/> Copy subject</button><button className="secondary" onClick={() => copy(body, 'Body')}><Clipboard size={15}/> Copy body</button><button className="primary" onClick={() => copy(`Subject: ${subject}\n\n${body}`, 'Subject + body')}><Clipboard size={15}/> Copy all</button></div></div>
-    <div className="applyflow-panel checklist"><p className="eyebrow">ATTACHMENT CHECKLIST</p><h3>Before you prepare</h3><Checklist label={selectedCV ? `${selectedCV.label} selected` : 'Select a CV version'} done={Boolean(selectedCV)}/>{job.requiredDocuments.filter(document => document !== 'CV / Resume' && document !== 'Updated CV').map(document => <Checklist key={document} label={`${document} (attach manually)`} done={false}/>)}<Checklist label="Review subject and recipient" done={Boolean(subject && (job.recruiterEmail || !validation.errors.length))}/><label className="review-confirm"><input type="checkbox" checked={confirmed} onChange={event => setConfirmed(event.target.checked)}/><span>I reviewed the recipient, subject, body, and attachment instructions.</span></label>{onOpenAtsModal && <div className="mt-3.5 pt-3 border-t border-zinc-200/80 dark:border-zinc-800"><button type="button" className="w-full flex items-center justify-center gap-2 p-2.5 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300 hover:bg-emerald-100 font-semibold text-xs active:scale-[0.975] transition-all shadow-2xs" onClick={onOpenAtsModal}><Printer size={15}/> 1-Click Printable ATS Resume (Harvard Standard)</button></div>}<div className="instruction-row compact"><AlertTriangle size={15}/><span>Opening compose is not sending. Local files cannot be attached by mailto.</span></div></div></div>
+function ReviewStep({ job, position, subject, body, selectedCV, validation, copy, openCompose, saveApplication, savedPositions, allPositions, setStep, message, confirmed, setConfirmed, savingDraft, onOpenAtsModal }: { job:ParsedJobPosting; position:ParsedPosition; subject:string; body:string; selectedCV?:CVArtifact; validation:{errors:string[];warnings:string[]}; copy:(value:string,label:string)=>void; openCompose:()=>void; saveApplication:(position:ParsedPosition)=>Promise<void>; savedPositions:string[]; allPositions:ParsedPosition[]; setStep:(step:Step)=>void; message:string; confirmed:boolean; setConfirmed:(value:boolean)=>void; savingDraft:boolean; onOpenAtsModal?:()=>void }) { const [saving,setSaving] = useState(false); const [error,setError] = useState(''); const canPrepare = confirmed && validation.errors.length === 0; const save = async (target:ParsedPosition) => { if (!canPrepare) { setError('Centang konfirmasi pemeriksaan dan selesaikan catatan terlebih dahulu.'); return; } setSaving(true); setError(''); try { await saveApplication(target); } catch (cause) { setError(cause instanceof Error ? cause.message : 'Gagal menambahkan lamaran'); } finally { setSaving(false); } }; return <div className="applyflow-step">
+  <StepHeader eyebrow="05 · TINJAU & SIAPKAN" title="Lamaran Siap Digunakan" description="Periksa draf email, lampirkan berkas secara manual di aplikasi email Anda, dan catat posisi terpilih ke dalam pipeline."/>
+  <div className="review-grid"><div className="applyflow-panel review-card"><div className="panel-heading"><div><p className="eyebrow">PRATINJAU EMAIL</p><h3>{subject || 'Subjek belum ditentukan'}</h3></div><span className="status-pill">Draf</span></div><div className="preview-recipient">Tujuan: {job.recruiterEmail || 'Email tujuan belum diisi'}</div><pre className="email-preview">{body || 'Tulis pesan email pada langkah sebelumnya.'}</pre><div className="review-actions"><button className="secondary" onClick={() => copy(subject, 'Subjek')}><Clipboard size={15}/> Salin Subjek</button><button className="secondary" onClick={() => copy(body, 'Isi Email')}><Clipboard size={15}/> Salin Isi</button><button className="primary" onClick={() => copy(`Subjek: ${subject}\n\n${body}`, 'Subjek + Isi')}><Clipboard size={15}/> Salin Semua</button></div></div>
+    <div className="applyflow-panel checklist"><p className="eyebrow">DAFTAR PERIKSA LAMPIRAN</p><h3>Sebelum Mengirim</h3><Checklist label={selectedCV ? `Versi ${selectedCV.label} terpilih` : 'Pilih versi CV'} done={Boolean(selectedCV)}/>{job.requiredDocuments.filter(document => document !== 'CV / Resume' && document !== 'Updated CV').map(document => <Checklist key={document} label={`${document} (lampirkan manual)`} done={false}/>)}<Checklist label="Periksa subjek dan penerima" done={Boolean(subject && (job.recruiterEmail || !validation.errors.length))}/><label className="review-confirm"><input type="checkbox" checked={confirmed} onChange={event => setConfirmed(event.target.checked)}/><span>Saya telah memeriksa penerima, subjek, isi email, dan lampiran.</span></label>{onOpenAtsModal && <div className="mt-3.5 pt-3 border-t border-zinc-200/80 dark:border-zinc-800"><button type="button" className="w-full flex items-center justify-center gap-2 p-2.5 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300 hover:bg-emerald-100 font-semibold text-xs active:scale-[0.975] transition-all shadow-2xs" onClick={onOpenAtsModal}><Printer size={15}/> Format Harvard ATS Resume 1-Klik</button></div>}<div className="instruction-row compact"><AlertTriangle size={15}/><span>Membuka email bukan mengirim otomatis. Berkas lokal harus dilampirkan manual.</span></div></div></div>
   {validation.errors.length > 0 && <div className="validation-box error"><AlertTriangle size={16}/><div>{validation.errors.map(item => <p key={item}>{item}</p>)}</div></div>}
   {error && <div className="validation-box error"><AlertTriangle size={16}/><p>{error}</p></div>}
-  <div className="review-toolbar"><div><b>Save each selected position separately</b><small>One posting can create independent pipeline records.</small></div><div className="position-save-list">{allPositions.map(item => <button key={item.id} className="secondary" disabled={saving || !canPrepare || savedPositions.includes(item.id)} onClick={() => save(item)}>{savedPositions.includes(item.id) ? <Check size={15}/> : <Plus size={15}/>} {savedPositions.includes(item.id) ? 'Added' : `Add ${item.title}`}</button>)}</div></div>
-  <div className="applyflow-actions"><button className="secondary" onClick={() => setStep('compose')}><ArrowLeft size={15}/> Edit email</button><div className="review-primary-actions"><button className="secondary" disabled={!job.recruiterEmail || !canPrepare} onClick={openCompose}><ExternalLink size={15}/> Open compose</button><button className="primary" onClick={() => copy(`Subject: ${subject}\n\n${body}`, 'Application')}><Clipboard size={15}/> Copy & keep as draft</button></div></div>
-  {(message || savingDraft) && <p className="helper-text">{savingDraft ? 'Saving ApplyFlow draft…' : message}</p>}
+  <div className="review-toolbar"><div><b>Simpan setiap posisi terpilih secara mandiri</b><small>Satu iklan lowongan dapat menghasilkan catatan pipeline terpisah.</small></div><div className="position-save-list">{allPositions.map(item => <button key={item.id} className="secondary" disabled={saving || !canPrepare || savedPositions.includes(item.id)} onClick={() => save(item)}>{savedPositions.includes(item.id) ? <Check size={15}/> : <Plus size={15}/>} {savedPositions.includes(item.id) ? 'Tersimpan' : `Simpan ${item.title}`}</button>)}</div></div>
+  <div className="applyflow-actions"><button className="secondary" onClick={() => setStep('compose')}><ArrowLeft size={15}/> Sunting Email</button><div className="review-primary-actions"><button className="secondary" disabled={!job.recruiterEmail || !canPrepare} onClick={openCompose}><ExternalLink size={15}/> Buka Klien Email</button><button className="primary" onClick={() => copy(`Subjek: ${subject}\n\n${body}`, 'Lamaran')}><Clipboard size={15}/> Salin & Simpan Draf</button></div></div>
+  {(message || savingDraft) && <p className="helper-text">{savingDraft ? 'Menyimpan draf ApplyFlow...' : message}</p>}
  </div>; }
 
 function Checklist({ label, done }: { label:string; done:boolean }) { return <div className="checklist-row"><span className={done ? 'done' : ''}>{done ? <Check size={13}/> : <span/>}</span><p>{label}</p></div>; }

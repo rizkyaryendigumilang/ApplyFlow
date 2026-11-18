@@ -120,9 +120,9 @@ export const LinkedInAssistantView: React.FC<LinkedInAssistantViewProps> = ({ ap
             <button
               type="button"
               onClick={() => setActiveTab('outreach')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-colors duration-150 ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
                 activeTab === 'outreach'
-                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
+                  ? 'bg-zinc-100 text-zinc-900 shadow-2xs'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
@@ -132,9 +132,9 @@ export const LinkedInAssistantView: React.FC<LinkedInAssistantViewProps> = ({ ap
             <button
               type="button"
               onClick={() => setActiveTab('polish')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-colors duration-150 ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
                 activeTab === 'polish'
-                  ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/30'
+                  ? 'bg-zinc-100 text-zinc-900 shadow-2xs'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >

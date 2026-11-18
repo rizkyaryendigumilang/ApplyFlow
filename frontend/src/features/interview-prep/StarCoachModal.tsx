@@ -588,9 +588,13 @@ Score: ${audit.score}/100 | Key Metrics: ${audit.uniqueMetrics.join(', ') || 'No
                       color: '#455928',
                       padding: '2px 6px',
                       borderRadius: '3px',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '3px',
                     }}
                   >
-                    ✓ Metric: {m}
+                    <Check size={10} />
+                    <span>Metrik: {m}</span>
                   </span>
                 ))}
                 {audit.verbsFound.map((v) => (
@@ -603,9 +607,13 @@ Score: ${audit.score}/100 | Key Metrics: ${audit.uniqueMetrics.join(', ') || 'No
                       color: '#2b3f78',
                       padding: '2px 6px',
                       borderRadius: '3px',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '3px',
                     }}
                   >
-                    ★ Action Verb: {v}
+                    <Award size={10} />
+                    <span>Verba Aksi: {v}</span>
                   </span>
                 ))}
               </div>

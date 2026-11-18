@@ -15,6 +15,8 @@ import {
   ArrowUpRight,
   Plus,
   Target,
+  HelpCircle,
+  X,
 } from 'lucide-react';
 import { cn } from '../../lib/cn';
 import { useCandidateProfile } from '../../hooks/useCandidateProfile';
@@ -264,8 +266,8 @@ export function AutoJobScoutView({
             <CheckCircle2 size={15} className="text-emerald-600 dark:text-emerald-400" />
             <span>{notification}</span>
           </div>
-          <button onClick={() => setNotification(null)} className="text-xs text-emerald-600 hover:text-emerald-900 font-bold">
-            ✕
+          <button onClick={() => setNotification(null)} className="p-1 text-emerald-700 hover:text-emerald-950 dark:hover:text-emerald-100 transition-colors" aria-label="Tutup notifikasi">
+            <X size={14} />
           </button>
         </div>
       )}
@@ -470,8 +472,8 @@ export function AutoJobScoutView({
         {/* Quick 3-Step Action Guide Banner */}
         <div className="p-3.5 rounded-2xl border border-zinc-200/80 bg-zinc-50/70 dark:border-zinc-800 dark:bg-zinc-900/40 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
-            <span className="w-5 h-5 rounded-full bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 text-[10px] font-bold flex items-center justify-center shrink-0">
-              ?
+            <span className="p-1 rounded-md bg-zinc-200/80 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 flex items-center justify-center shrink-0">
+              <HelpCircle size={14} />
             </span>
             <div className="text-xs">
               <span className="font-semibold text-zinc-900 dark:text-zinc-100">

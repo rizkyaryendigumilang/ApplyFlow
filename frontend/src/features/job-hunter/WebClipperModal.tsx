@@ -268,7 +268,7 @@ export function WebClipperModal({
                 }}
               >
                 <span style={{ fontSize: '12px', color: '#18181b', fontWeight: 600 }}>
-                  👇 Drag tombol ini ke Bookmarks Bar browser Anda:
+                  Tarik tombol berikut ke bilah markah (Bookmarks Bar) peramban Anda:
                 </span>
                 <a
                   href={bookmarkletCode}
@@ -346,7 +346,8 @@ export function WebClipperModal({
                         border: '1px solid #cfddbe',
                       }}
                     >
-                      ✓ {p}
+                      <Check size={11} style={{ display: 'inline', marginRight: '4px' }} />
+                      {p}
                     </span>
                   ))}
                 </div>

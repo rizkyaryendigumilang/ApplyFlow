@@ -16,7 +16,7 @@ export const DICTIONARY: Record<Locale, Record<string, string>> = {
     'nav.networking': 'Kontak & Jejaring',
     'nav.linkedin': 'Asisten LinkedIn',
     'nav.offers': 'Kalkulator Gaji & Penawaran',
-    'nav.aistudio': 'Studio Agen AI',
+    'nav.aistudio': 'Otomasi & Asisten Karier',
     'nav.analytics': 'Statistik Karier',
     'nav.enterprise': 'Menu Lanjutan',
     'nav.users': 'Daftar Pengguna',
@@ -41,8 +41,8 @@ export const DICTIONARY: Record<Locale, Record<string, string>> = {
     'settings.savedNotice': 'Pengaturan berhasil disimpan',
 
     // Cockpit
-    'cockpit.eyebrow': 'Ringkasan Harian Pencari Kerja',
-    'cockpit.welcome': 'Selamat datang kembali, {name}!',
+    'cockpit.eyebrow': 'Ringkasan Aktivitas Karier',
+    'cockpit.welcome': 'Dasbor Karier · {name}',
     'cockpit.subtitle': 'Berikut rangkuman hal penting yang perlu Anda tindak lanjuti hari ini.',
     'cockpit.attentionTitle': 'Radar Tindakan & Prioritas Hari Ini',
     'cockpit.attentionSubtitle': 'Fokus utama yang membutuhkan perhatian Anda dalam 24 hingga 48 jam ke depan',

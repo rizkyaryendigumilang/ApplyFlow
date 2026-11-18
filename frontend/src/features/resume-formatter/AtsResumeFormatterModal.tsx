@@ -108,7 +108,7 @@ export function AtsResumeFormatterModal({
       id: 'exp-1',
       company: 'Tokopedia / GoTo Group',
       role: 'Senior DevOps & Platform Engineer',
-      period: 'Jan 2022 – Present',
+      period: 'Jan 2022 - Present',
       location: 'Jakarta, Indonesia',
       bullets: [
         'Architected and scaled Kubernetes clusters hosting 120+ microservices, sustaining 45,000 req/sec peak traffic during flash-sale campaigns with zero downtime.',
@@ -121,7 +121,7 @@ export function AtsResumeFormatterModal({
       id: 'exp-2',
       company: 'Traveloka',
       role: 'Cloud Infrastructure & SRE Engineer',
-      period: 'Jul 2019 – Dec 2021',
+      period: 'Jul 2019 - Dec 2021',
       location: 'Jakarta, Indonesia',
       bullets: [
         'Spearheaded migration of legacy EC2 monolithic services to containerized Docker workloads on Amazon EKS.',
@@ -136,15 +136,15 @@ export function AtsResumeFormatterModal({
       id: 'edu-1',
       institution: 'Universitas Indonesia',
       degree: 'Bachelor of Science in Computer Science',
-      period: '2015 – 2019',
+      period: '2015 - 2019',
       location: 'Depok, Indonesia',
       honors: 'GPA: 3.84 / 4.00 · Cum Laude',
     },
   ]);
 
   const [certifications, setCertifications] = useState<string[]>([
-    'AWS Certified Solutions Architect – Professional',
-    'Certified Kubernetes Administrator (CKA) – Linux Foundation',
+    'AWS Certified Solutions Architect (Professional)',
+    'Certified Kubernetes Administrator (CKA), Linux Foundation',
     'HashiCorp Certified: Terraform Associate',
   ]);
 

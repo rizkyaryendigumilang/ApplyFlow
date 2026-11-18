@@ -1,5 +1,5 @@
 import React from 'react';
-import { Compass, Sparkles, MapPin, Briefcase, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Compass, Lightbulb, MapPin, Briefcase, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../components/ui/card';
 import type { JobLead } from '../../lib/pb-types';
 
@@ -29,10 +29,10 @@ export const JobScoutMiniFeedWidget: React.FC<JobScoutMiniFeedWidgetProps> = ({
           <div className="space-y-0.5">
             <CardTitle className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
               <Compass className="w-4 h-4 text-zinc-500" />
-              AI Job Scout (Rekomendasi Lowongan)
+              Rekomendasi Lowongan Terpilih
             </CardTitle>
             <CardDescription className="text-xs text-zinc-500 dark:text-zinc-400">
-              Lowongan terfilter otomatis dari Job Hunter dengan Fit Score kecocokan tinggi.
+              Lowongan terfilter dari pencarian kualifikasi dengan tingkat kecocokan tinggi.
             </CardDescription>
           </div>
           <button
@@ -58,8 +58,8 @@ export const JobScoutMiniFeedWidget: React.FC<JobScoutMiniFeedWidgetProps> = ({
                 className="p-3 rounded-lg border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-900/30 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
               >
                 <div className="flex items-start gap-2.5 min-w-0">
-                  <div className="w-7 h-7 rounded-md bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center shrink-0 mt-0.5">
-                    <Sparkles className="w-3.5 h-3.5" />
+                  <div className="w-7 h-7 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center shrink-0 mt-0.5">
+                    <Briefcase className="w-3.5 h-3.5" />
                   </div>
                   <div className="space-y-1 min-w-0">
                     <div className="flex items-center gap-2">
@@ -67,7 +67,7 @@ export const JobScoutMiniFeedWidget: React.FC<JobScoutMiniFeedWidgetProps> = ({
                         {lead.title}
                       </span>
                       <span className="text-[10px] font-mono font-bold px-1.5 py-0.2 rounded bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-200">
-                        {lead.matchScore}% Match
+                        {lead.matchScore}% Cocok
                       </span>
                     </div>
 
@@ -88,8 +88,9 @@ export const JobScoutMiniFeedWidget: React.FC<JobScoutMiniFeedWidgetProps> = ({
                     </div>
 
                     {lead.evaluation?.suggestedAngle && (
-                      <div className="text-[11px] text-emerald-700 dark:text-emerald-400 italic truncate pt-0.5">
-                        💡 {lead.evaluation.suggestedAngle}
+                      <div className="text-[11px] text-emerald-700 dark:text-emerald-400 flex items-center gap-1 truncate pt-0.5">
+                        <Lightbulb size={11} className="shrink-0 text-amber-500" />
+                        <span>{lead.evaluation.suggestedAngle}</span>
                       </div>
                     )}
                   </div>

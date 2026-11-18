@@ -11,6 +11,7 @@ import {
   Users,
   ShieldCheck,
   CheckCircle2,
+  AlertTriangle,
 } from 'lucide-react';
 import {
   generateOutreachMessage,
@@ -254,7 +255,10 @@ export const OutreachComposerCard: React.FC<OutreachComposerCardProps> = ({
             </span>
 
             {hasEmDash && (
-              <span className="text-[11px] text-amber-400 font-medium">⚠️ Terdeteksi tanda em-dash</span>
+              <span className="inline-flex items-center gap-1 text-[11px] text-amber-400 font-medium">
+                <AlertTriangle className="w-3 h-3" />
+                <span>Terdeteksi tanda em-dash</span>
+              </span>
             )}
           </div>
 

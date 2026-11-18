@@ -137,8 +137,9 @@ export const JobSeekerCockpitView: React.FC<JobSeekerCockpitViewProps> = ({
           </div>
 
           <div className="flex items-center gap-2.5">
-            <div className="px-3 py-1.5 rounded-md bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200/80 dark:border-zinc-700/80 text-xs text-zinc-600 dark:text-zinc-300 font-mono text-center tabular-nums">
-              📅 {dateLabel}
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200/80 dark:border-zinc-700/80 text-xs text-zinc-600 dark:text-zinc-300 font-mono tabular-nums">
+              <Calendar size={13} className="text-zinc-400" />
+              <span>{dateLabel}</span>
             </div>
             <button
               onClick={onOpenAddModal}
@@ -198,7 +199,9 @@ export const JobSeekerCockpitView: React.FC<JobSeekerCockpitViewProps> = ({
             </div>
             <div className="mt-3 pt-2.5 border-t border-zinc-200/50 dark:border-zinc-800/50 flex items-center justify-between text-[11px]">
               <span className="text-zinc-400">Aksi:</span>
-              <span className="font-semibold text-zinc-800 dark:text-zinc-200 group-hover:underline">Buka Radar &rarr;</span>
+              <span className="font-semibold text-zinc-800 dark:text-zinc-200 group-hover:underline flex items-center gap-1">
+                Buka Radar <ArrowRight size={11} />
+              </span>
             </div>
           </div>
 
@@ -227,7 +230,9 @@ export const JobSeekerCockpitView: React.FC<JobSeekerCockpitViewProps> = ({
             </div>
             <div className="mt-3 pt-2.5 border-t border-zinc-200/50 dark:border-zinc-800/50 flex items-center justify-between text-[11px]">
               <span className="text-zinc-400">Aksi:</span>
-              <span className="font-semibold text-zinc-800 dark:text-zinc-200 group-hover:underline">Uji Kecocokan &rarr;</span>
+              <span className="font-semibold text-zinc-800 dark:text-zinc-200 group-hover:underline flex items-center gap-1">
+                Uji Kecocokan <ArrowRight size={11} />
+              </span>
             </div>
           </div>
 
@@ -256,7 +261,9 @@ export const JobSeekerCockpitView: React.FC<JobSeekerCockpitViewProps> = ({
             </div>
             <div className="mt-3 pt-2.5 border-t border-zinc-200/50 dark:border-zinc-800/50 flex items-center justify-between text-[11px]">
               <span className="text-zinc-400">Aksi:</span>
-              <span className="font-semibold text-zinc-800 dark:text-zinc-200 group-hover:underline">Susun Lamaran &rarr;</span>
+              <span className="font-semibold text-zinc-800 dark:text-zinc-200 group-hover:underline flex items-center gap-1">
+                Susun Lamaran <ArrowRight size={11} />
+              </span>
             </div>
           </div>
 
@@ -285,7 +292,9 @@ export const JobSeekerCockpitView: React.FC<JobSeekerCockpitViewProps> = ({
             </div>
             <div className="mt-3 pt-2.5 border-t border-zinc-200/50 dark:border-zinc-800/50 flex items-center justify-between text-[11px]">
               <span className="text-zinc-400">Aksi:</span>
-              <span className="font-semibold text-zinc-800 dark:text-zinc-200 group-hover:underline">Buka Pipeline &rarr;</span>
+              <span className="font-semibold text-zinc-800 dark:text-zinc-200 group-hover:underline flex items-center gap-1">
+                Buka Pipeline <ArrowRight size={11} />
+              </span>
             </div>
           </div>
         </div>

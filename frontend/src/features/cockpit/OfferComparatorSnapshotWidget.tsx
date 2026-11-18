@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Banknote, ArrowRight } from 'lucide-react';
+import { Banknote, ArrowRight, Zap } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../components/ui/card';
 import type { Application } from '../../lib/pb-types';
 import { calculateTHP, type OfferPackage } from '../../lib/thp-calculator';
@@ -99,7 +99,8 @@ export const OfferComparatorSnapshotWidget: React.FC<OfferComparatorSnapshotWidg
           <div className="space-y-3">
             {offerApps.length === 0 && (
               <div className="text-[11px] text-zinc-600 dark:text-zinc-400 bg-zinc-100/70 dark:bg-zinc-800/50 border border-zinc-200/60 dark:border-zinc-700/60 px-3 py-1.5 rounded-md flex items-center gap-1.5">
-                <span>⚡ Menampilkan simulasi target gaji tertinggi dari pipeline aktif Anda:</span>
+                <Zap size={12} className="text-zinc-500 shrink-0" />
+                <span>Menampilkan simulasi target gaji tertinggi dari pipeline aktif Anda:</span>
               </div>
             )}
 

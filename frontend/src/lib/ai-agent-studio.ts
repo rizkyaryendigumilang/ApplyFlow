@@ -232,7 +232,7 @@ Hormat saya,
 ${profile.headline?.split(' ')[0] || 'Kandidat'}`;
 
   return {
-    tailoredSubject: `Aplikasi Peran: ${role} – ${profile.headline || 'Senior Engineer'}`,
+    tailoredSubject: `Aplikasi Peran: ${role} - ${profile.headline || 'Senior Engineer'}`,
     draftCoverLetter,
     recommendedCvLabel: bestCv,
     highlightedBullets: bullets,

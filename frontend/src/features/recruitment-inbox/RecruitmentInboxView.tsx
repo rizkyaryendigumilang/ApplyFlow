@@ -133,8 +133,8 @@ export function RecruitmentInboxView({
       {message && (
         <div className="flex items-center justify-between rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 text-xs text-zinc-800 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200">
           <span>{message}</span>
-          <button onClick={() => setMessage(null)} className="font-bold text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100">
-            ✕
+          <button onClick={() => setMessage(null)} className="p-1 text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors" aria-label="Tutup pesan">
+            <X size={14} />
           </button>
         </div>
       )}

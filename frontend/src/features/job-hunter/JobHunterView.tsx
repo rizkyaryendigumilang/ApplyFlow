@@ -17,6 +17,7 @@ import {
   Radar,
   Plus,
   Compass,
+  X,
 } from 'lucide-react';
 import { useCandidateProfile } from '../../hooks/useCandidateProfile';
 import { useJobLeads } from '../../hooks/useJobLeads';
@@ -232,7 +233,7 @@ export function JobHunterView({
               Job Hunter Engine
             </h1>
             <span className="text-[10px] font-mono font-semibold uppercase px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400 border border-zinc-200/60 dark:border-zinc-700/60">
-              Deterministic Triage
+              Evaluasi Kualifikasi
             </span>
           </div>
           <p className="text-xs text-zinc-500 dark:text-zinc-400">
@@ -319,7 +320,7 @@ export function JobHunterView({
           )}
         >
           <Search size={14} />
-          <span>Evaluator & Fit Scoring</span>
+          <span>Evaluasi Kualifikasi</span>
         </button>
         <button
           onClick={() => setActiveTab('pipeline')}
@@ -331,7 +332,7 @@ export function JobHunterView({
           )}
         >
           <FolderKanban size={14} />
-          <span>Lead Pipeline</span>
+          <span>Daftar Calon Lowongan</span>
           <span className="text-[10px] font-mono px-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-medium tabular-nums">
             {leads.length}
           </span>
@@ -346,9 +347,10 @@ export function JobHunterView({
           </div>
           <button
             onClick={() => setStatusMessage(null)}
-            className="text-emerald-700 hover:text-emerald-950 dark:hover:text-emerald-100 font-bold ml-2"
+            className="p-1 text-emerald-700 hover:text-emerald-950 dark:hover:text-emerald-100 transition-colors ml-2"
+            aria-label="Tutup notifikasi"
           >
-            ✕
+            <X size={14} />
           </button>
         </div>
       )}
@@ -458,7 +460,7 @@ export function JobHunterView({
                 className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-900 text-xs font-semibold shadow-2xs active:scale-[0.975] transition-all"
               >
                 <Sparkles size={15} />
-                <span>{isEvaluating ? 'Mengevaluasi Kriteria...' : 'Jalankan Evaluasi Deterministik'}</span>
+                <span>{isEvaluating ? 'Mengevaluasi Kriteria...' : 'Jalankan Evaluasi Kualifikasi'}</span>
               </button>
             </form>
           </div>
@@ -633,7 +635,7 @@ export function JobHunterView({
                     onClick={handleSaveToPipeline}
                     className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-700 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700 text-xs font-medium active:scale-[0.975] transition-all shadow-2xs"
                   >
-                    <span>Simpan ke Lead</span>
+                    <span>Simpan ke Daftar</span>
                   </button>
                 </div>
               </div>
@@ -705,10 +707,10 @@ export function JobHunterView({
                     }
                     className="text-xs px-2 py-1 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300"
                   >
-                    <option value="inbox">Inbox</option>
-                    <option value="shortlisted">Shortlisted</option>
-                    <option value="promoted_to_apply">Promoted</option>
-                    <option value="archived">Archived</option>
+                    <option value="inbox">Kotak Masuk</option>
+                    <option value="shortlisted">Daftar Pendek</option>
+                    <option value="promoted_to_apply">Siap Dilamar</option>
+                    <option value="archived">Diarsipkan</option>
                   </select>
 
                   <div className="flex items-center gap-1.5">
