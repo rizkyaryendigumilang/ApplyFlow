@@ -22,6 +22,10 @@ pocketbase/pb_backups/
 Payload/
 build/
 DerivedData/
+dist-mobile/
+release-assets/
+release-files/
+release-body.md
 
 # Credentials & security
 *.pem

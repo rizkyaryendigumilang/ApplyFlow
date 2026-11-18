@@ -26,6 +26,26 @@ on:
         required: true
         type: boolean
         default: false
+      publish_release:
+        description: 'Publish compiled APK & IPA to GitHub Releases'
+        required: true
+        type: boolean
+        default: true
+      release_version:
+        description: 'Custom Release Version Tag (e.g. v1.4.1, leave blank for auto v1.4.0-b<run>)'
+        required: false
+        default: ''
+        type: string
+      release_notes:
+        description: 'Keterangan perbaikan bug / Catatan rilis kustom (opsional)'
+        required: false
+        default: ''
+        type: string
+      is_prerelease:
+        description: 'Mark release as pre-release / beta'
+        required: false
+        type: boolean
+        default: false
       pocketbase_url:
         description: 'PocketBase backend URL override (e.g. https://pb.example.com)'
         required: false
@@ -33,19 +53,16 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'android/**'
-      - 'ios/**'
-      - 'capacitor.config.*'
-      - 'frontend/src/**'
-      - 'frontend/public/**'
-      - 'frontend/index.html'
-      - 'frontend/package.json'
-      - 'frontend/vite.config.*'
-      - '.github/workflows/build-and-sync-vps.yml'
+    tags:
+      - 'v*'
+    paths-ignore:
+      - '**/*.md'
+      - '.gitignore'
+      - 'docs/**'
+      - '.scratch/**'
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -362,3 +379,86 @@ jobs:
         if: always()
         run: |
           rm -f "$HOME/.ssh/id_ed25519" "$HOME/.ssh/known_hosts" 2>/dev/null || true
+
+  # ========================================================
+  # JOB 3: Publish GitHub Release (APK & IPA Assets)
+  # ========================================================
+  publish-release:
+    name: Publish GitHub Release
+    needs: [build-android, build-ios]
+    if: |
+      always() &&
+      (needs.build-android.result == 'success' || needs.build-ios.result == 'success') &&
+      (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.publish_release != false))
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Source Code (Full Git History)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Create Release Asset Directories
+        run: |
+          mkdir -p release-assets/android release-assets/ios release-files
+
+      - name: Download Android APK Artifacts
+        if: ${{ needs.build-android.result == 'success' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.APP_SLUG }}-android-apk
+          path: release-assets/android
+        continue-on-error: true
+
+      - name: Download iOS IPA Artifacts
+        if: ${{ needs.build-ios.result == 'success' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.APP_SLUG }}-ios-ipa
+          path: release-assets/ios
+        continue-on-error: true
+
+      - name: Generate Release Notes and Organize Binaries
+        id: release_meta
+        env:
+          GITHUB_RUN_NUMBER: ${{ github.run_number }}
+          GITHUB_REF_TYPE: ${{ github.ref_type }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+          INPUT_RELEASE_VERSION: ${{ inputs.release_version || '' }}
+          INPUT_RELEASE_NOTES: ${{ inputs.release_notes || '' }}
+          INPUT_IS_PRERELEASE: ${{ inputs.is_prerelease || 'false' }}
+        run: |
+          node scripts/generate-release-notes.mjs
+          echo "Release metadata generated successfully."
+          echo "Files in release-files/:"
+          ls -lh release-files/
+
+      - name: Publish GitHub Release via softprops/action-gh-release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.release_meta.outputs.tag_name }}
+          name: ${{ steps.release_meta.outputs.release_title }}
+          body_path: release-body.md
+          draft: false
+          prerelease: ${{ steps.release_meta.outputs.is_prerelease == 'true' }}
+          files: |
+            release-files/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Release Publication Summary
+        if: always()
+        run: |
+          echo "### GitHub Release Published Successfully :package:" >> $GITHUB_STEP_SUMMARY
+          echo "- **Release Tag**: \`${{ steps.release_meta.outputs.tag_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Release Title**: \`${{ steps.release_meta.outputs.release_title }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Android Status**: \`${{ needs.build-android.result }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **iOS Status**: \`${{ needs.build-ios.result }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Berkas APK dan IPA telah otomatis diunggah ke GitHub Releases dan siap diunduh oleh pengguna!" >> $GITHUB_STEP_SUMMARY
