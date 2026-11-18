@@ -207,8 +207,8 @@ export const TwentySidebar: React.FC<TwentySidebarProps> = ({
         isCollapsed ? 'w-[68px]' : 'w-[240px]'
       }`}
     >
-      {/* 1. Workspace Header (Twenty CRM style) */}
-      <div className="flex items-center justify-between px-3.5 h-[52px] border-b border-zinc-200/70 dark:border-zinc-800/70">
+      {/* 1. Workspace Header (Cansaas Space & Twenty CRM style) */}
+      <div className="flex items-center justify-between px-3.5 h-[56px] border-b border-zinc-200/70 dark:border-zinc-800/70">
         <div
           className={`flex items-center gap-2.5 cursor-pointer overflow-hidden ${
             isCollapsed ? 'justify-center w-full' : ''
@@ -216,17 +216,17 @@ export const TwentySidebar: React.FC<TwentySidebarProps> = ({
           onClick={() => onNavigate('pipeline')}
           title="ApplyFlow Career CRM"
         >
-          <div className="w-7 h-7 rounded-lg bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 flex items-center justify-center font-bold text-xs shadow-sm flex-shrink-0 tracking-tight">
-            A
+          <div className="w-8 h-8 rounded-xl bg-zinc-950 text-white dark:bg-white dark:text-zinc-950 flex items-center justify-center font-bold text-xs shadow-sm flex-shrink-0 tracking-tight">
+            AF
           </div>
           {!isCollapsed && (
             <div className="flex flex-col min-w-0">
-              <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 truncate tracking-tight flex items-center gap-1">
-                ApplyFlow
-                <ChevronDown size={11} className="text-zinc-400" />
+              <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100 truncate tracking-tight flex items-center gap-1.5">
+                ApplyFlow Space
+                <ChevronDown size={12} className="text-zinc-400" />
               </span>
               <span className="text-[10px] text-zinc-500 dark:text-zinc-400 truncate">
-                Career CRM
+                Career CRM & Funnel
               </span>
             </div>
           )}
@@ -242,34 +242,55 @@ export const TwentySidebar: React.FC<TwentySidebarProps> = ({
         </button>
       </div>
 
-      {/* 2. Global Search & Quick Add Row (Twenty CRM style) */}
-      <div className="px-2.5 pt-2.5 pb-1 flex items-center gap-1.5">
-        <button
-          onClick={onOpenSearch}
-          className={`flex items-center gap-2 px-2.5 py-1.5 text-xs text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200 bg-white dark:bg-zinc-800/60 border border-zinc-200/80 dark:border-zinc-700/60 rounded-md transition-all active:scale-[0.985] shadow-2xs ${
-            isCollapsed ? 'w-full justify-center px-0' : 'flex-1'
-          }`}
-          title="Pencarian Global (⌘K)"
-        >
-          <Search size={14} className="text-zinc-400" />
-          {!isCollapsed && (
-            <>
-              <span className="flex-1 text-left text-[11px]">Cari…</span>
-              <kbd className="text-[9px] font-mono bg-zinc-100 dark:bg-zinc-700 text-zinc-500 dark:text-zinc-300 px-1 py-0.5 rounded border border-zinc-200 dark:border-zinc-600">
-                ⌘K
-              </kbd>
-            </>
-          )}
-        </button>
+      {/* 2. Global Search & Create New Work (Cansaas Space Reference) */}
+      <div className="px-2.5 pt-2.5 pb-1 space-y-2">
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={onOpenSearch}
+            className={`flex items-center gap-2 px-2.5 py-1.5 text-xs text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200 bg-white dark:bg-zinc-800/60 border border-zinc-200/80 dark:border-zinc-700/60 rounded-md transition-all active:scale-[0.985] shadow-2xs ${
+              isCollapsed ? 'w-full justify-center px-0' : 'flex-1'
+            }`}
+            title="Pencarian Global (⌘K)"
+          >
+            <Search size={14} className="text-zinc-400" />
+            {!isCollapsed && (
+              <>
+                <span className="flex-1 text-left text-[11px]">Cari…</span>
+                <kbd className="text-[9px] font-mono bg-zinc-100 dark:bg-zinc-700 text-zinc-500 dark:text-zinc-300 px-1 py-0.5 rounded border border-zinc-200 dark:border-zinc-600">
+                  ⌘K
+                </kbd>
+              </>
+            )}
+          </button>
 
+          {!isCollapsed && (
+            <button
+              onClick={onOpenAddModal}
+              className="w-7 h-7 flex items-center justify-center rounded-md bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-900 shadow-2xs active:scale-[0.95] transition-all flex-shrink-0"
+              title="Tambah Lamaran Baru (N)"
+              aria-label="Tambah Lamaran Baru"
+            >
+              <Plus size={14} />
+            </button>
+          )}
+        </div>
+
+        {/* Prominent Create New Work Button (Cansaas Style) */}
         {!isCollapsed && (
           <button
             onClick={onOpenAddModal}
-            className="w-7 h-7 flex items-center justify-center rounded-md bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-900 shadow-2xs active:scale-[0.95] transition-all flex-shrink-0"
-            title="Tambah Lamaran Baru (N)"
-            aria-label="Tambah Lamaran Baru"
+            className="w-full flex items-center justify-between px-3 py-2 rounded-xl border border-zinc-200/90 dark:border-zinc-800 bg-white dark:bg-zinc-900/90 text-xs font-semibold text-zinc-800 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800/80 shadow-2xs hover:shadow-xs active:scale-[0.985] transition-all"
+            title="Create New Work / Buat Peluang Baru (N)"
           >
-            <Plus size={14} />
+            <span className="flex items-center gap-2">
+              <span className="w-4 h-4 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-xs">
+                +
+              </span>
+              <span>Create New Work</span>
+            </span>
+            <span className="text-[10px] font-mono text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded border border-zinc-200 dark:border-zinc-700">
+              N
+            </span>
           </button>
         )}
       </div>
