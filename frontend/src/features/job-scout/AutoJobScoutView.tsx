@@ -14,6 +14,7 @@ import {
   Layers,
   ArrowUpRight,
   Plus,
+  Target,
 } from 'lucide-react';
 import { cn } from '../../lib/cn';
 import { useCandidateProfile } from '../../hooks/useCandidateProfile';
@@ -34,11 +35,27 @@ import { EmptyState } from '../../components/ui/EmptyState';
 interface AutoJobScoutViewProps {
   onAddApplication: (draft: ApplicationDraft) => Promise<unknown>;
   onNavigateToTracker?: () => void;
+  onEvaluateInHunter?: (job: {
+    title: string;
+    company: string;
+    url: string;
+    workMode: 'Remote' | 'Hybrid' | 'On-site';
+    rawJd: string;
+  }) => void;
+  onApplyViaApplyFlow?: (job: {
+    title: string;
+    company: string;
+    rawJd: string;
+    url?: string;
+    source?: string;
+  }) => void;
 }
 
 export function AutoJobScoutView({
   onAddApplication,
   onNavigateToTracker,
+  onEvaluateInHunter,
+  onApplyViaApplyFlow,
 }: AutoJobScoutViewProps) {
   const { profile } = useCandidateProfile();
 
@@ -181,6 +198,28 @@ export function AutoJobScoutView({
     } catch (err) {
       console.error(err);
       setQuickPasteStatus('Gagal menyimpan tautan cepat ke database.');
+    }
+  };
+
+  const handleQuickEvaluate = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!pasteUrl.trim()) {
+      setQuickPasteStatus('Masukkan link lowongan terlebih dahulu.');
+      return;
+    }
+    const parsed = parseJobUrlHeuristics(pasteUrl);
+    if (!parsed.isValid) {
+      setQuickPasteStatus('Format URL tidak valid. Masukkan link lowongan web (https://...).');
+      return;
+    }
+    if (onEvaluateInHunter) {
+      onEvaluateInHunter({
+        title: parsed.suggestedTitle || activeQuery,
+        company: parsed.suggestedCompany || `${parsed.platform} Opportunity`,
+        url: pasteUrl.trim(),
+        workMode: selectedMode === 'All' ? 'Hybrid' : selectedMode,
+        rawJd: `Lowongan terdeteksi dari ${parsed.platform}.\nURL: ${pasteUrl.trim()}\nTarget Posisi: ${activeQuery}\nLokasi: ${selectedLocation}`,
+      });
     }
   };
 
@@ -401,11 +440,21 @@ export function AutoJobScoutView({
             placeholder="Contoh: https://id.jobstreet.com/job/78912345 atau link LinkedIn..."
             className="flex-1 px-3 py-2 text-xs rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-900 font-mono"
           />
+          {onEvaluateInHunter && (
+            <button
+              type="button"
+              onClick={handleQuickEvaluate}
+              className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-3.5 py-2 text-xs font-semibold text-zinc-800 shadow-2xs hover:bg-zinc-100 active:scale-[0.975] dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700 transition-all"
+            >
+              <Target size={14} className="text-emerald-500" />
+              <span>Evaluasi di Hunter</span>
+            </button>
+          )}
           <button
             type="submit"
-            className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-4 py-2 text-xs font-semibold text-zinc-800 shadow-2xs hover:bg-zinc-100 active:scale-[0.975] dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700 transition-all"
+            className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-zinc-200 bg-zinc-900 px-4 py-2 text-xs font-semibold text-white shadow-2xs hover:bg-zinc-800 active:scale-[0.975] dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200 transition-all"
           >
-            <Zap size={14} className="text-amber-500" />
+            <Zap size={14} className="text-amber-400" />
             <span>Ekstrak & Simpan Cepat</span>
           </button>
         </div>
@@ -535,16 +584,58 @@ export function AutoJobScoutView({
                   </div>
 
                   {/* Card Actions Bottom */}
-                  <div className="pt-3 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between gap-2">
-                    <a
-                      href={v.url}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                      className="inline-flex items-center gap-1 text-xs font-semibold text-zinc-700 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-100 active:scale-[0.975] transition-all"
-                    >
-                      <span>Buka & Lamar</span>
-                      <ArrowUpRight size={13} />
-                    </a>
+                  <div className="pt-3 border-t border-zinc-100 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex items-center gap-1.5">
+                      <a
+                        href={v.url}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        className="inline-flex items-center gap-1 text-xs font-semibold text-zinc-700 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-100 active:scale-[0.975] transition-all"
+                      >
+                        <span>Buka</span>
+                        <ArrowUpRight size={13} />
+                      </a>
+
+                      {onEvaluateInHunter && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            onEvaluateInHunter({
+                              title: v.title,
+                              company: v.company,
+                              url: v.url,
+                              workMode: v.workMode,
+                              rawJd: `${v.title} at ${v.company}\nLocation: ${v.location}\nWork Mode: ${v.workMode}\nSalary: Rp ${v.salaryMin.toLocaleString('id-ID')} - Rp ${v.salaryMax.toLocaleString('id-ID')} / month\n\nJob Description:\n${v.description}\n\nRequired Skills:\n${v.skills.join(', ')}`,
+                            })
+                          }
+                          className="inline-flex items-center gap-1 text-[11px] font-semibold text-zinc-700 hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-zinc-100 active:scale-[0.975] transition-all px-2 py-1 rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 shadow-2xs"
+                          title="Evaluasi kecocokan skill dan dealbreaker di Job Hunter Engine"
+                        >
+                          <Target size={12} className="text-emerald-500" />
+                          <span>Evaluasi Fit</span>
+                        </button>
+                      )}
+
+                      {onApplyViaApplyFlow && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            onApplyViaApplyFlow({
+                              title: v.title,
+                              company: v.company,
+                              url: v.url,
+                              source: v.platform.toLowerCase(),
+                              rawJd: `${v.title} at ${v.company}\nLocation: ${v.location}\nWork Mode: ${v.workMode}\nSalary: Rp ${v.salaryMin.toLocaleString('id-ID')} - Rp ${v.salaryMax.toLocaleString('id-ID')} / month\n\nJob Description:\n${v.description}\n\nRequired Skills:\n${v.skills.join(', ')}`,
+                            })
+                          }
+                          className="inline-flex items-center gap-1 text-[11px] font-semibold text-zinc-700 hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-zinc-100 active:scale-[0.975] transition-all px-2 py-1 rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 shadow-2xs"
+                          title="Buat draft lamaran dan email terarah di ApplyFlow"
+                        >
+                          <Zap size={12} className="text-amber-500" />
+                          <span>ApplyFlow</span>
+                        </button>
+                      )}
+                    </div>
 
                     <button
                       type="button"

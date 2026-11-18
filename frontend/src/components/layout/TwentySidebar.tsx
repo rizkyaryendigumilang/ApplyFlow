@@ -87,17 +87,17 @@ export const TwentySidebar: React.FC<TwentySidebarProps> = ({
       fallbackTitle: 'Workspace',
       items: [
         {
-          id: 'pipeline',
-          labelKey: 'nav.pipeline',
-          fallbackLabel: 'Pipeline',
-          icon: Briefcase,
-          badge: counts.pipeline,
-        },
-        {
           id: 'cockpit',
           labelKey: 'nav.cockpit',
           fallbackLabel: 'Cockpit',
           icon: Compass,
+        },
+        {
+          id: 'jobscout',
+          labelKey: 'nav.jobscout',
+          fallbackLabel: 'Auto Job Scout',
+          icon: Radar,
+          badgeVariant: 'accent',
         },
         {
           id: 'jobhunter',
@@ -108,17 +108,17 @@ export const TwentySidebar: React.FC<TwentySidebarProps> = ({
           badgeVariant: 'accent',
         },
         {
-          id: 'jobscout',
-          labelKey: 'nav.jobscout',
-          fallbackLabel: 'Auto Job Scout',
-          icon: Radar,
-          badgeVariant: 'accent',
-        },
-        {
           id: 'applyflow',
           labelKey: 'nav.applyflow',
           fallbackLabel: 'ApplyFlow',
           icon: Zap,
+        },
+        {
+          id: 'pipeline',
+          labelKey: 'nav.pipeline',
+          fallbackLabel: 'Pipeline',
+          icon: Briefcase,
+          badge: counts.pipeline,
         },
         {
           id: 'inbox',

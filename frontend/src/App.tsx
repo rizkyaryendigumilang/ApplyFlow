@@ -14,6 +14,7 @@ import {
   Send,
   Sparkles,
   Target,
+  Radar,
   Zap,
   Printer,
   Smartphone,
@@ -272,6 +273,14 @@ function App() {
     source?: string;
   } | null>(null);
 
+  const [evaluatorPrefill, setEvaluatorPrefill] = useState<{
+    title: string;
+    company: string;
+    url?: string;
+    workMode?: 'Remote' | 'Hybrid' | 'On-site';
+    rawJd?: string;
+  } | null>(null);
+
   const filtered = useMemo(
     () =>
       applications.filter((a) =>
@@ -472,15 +481,26 @@ function App() {
             />
           ) : module === 'jobhunter' ? (
             <JobHunterView
+              initialData={evaluatorPrefill}
               onPromoteToApplyFlow={(lead) => {
                 setPromotedLead(lead);
                 navigateTo('applyflow');
               }}
+              onNavigateToJobScout={() => navigateTo('jobscout')}
+              onSaveToMainPipeline={add}
             />
           ) : module === 'jobscout' ? (
             <AutoJobScoutView
               onAddApplication={add}
               onNavigateToTracker={() => navigateTo('pipeline')}
+              onEvaluateInHunter={(job) => {
+                setEvaluatorPrefill(job);
+                navigateTo('jobhunter');
+              }}
+              onApplyViaApplyFlow={(job) => {
+                setPromotedLead(job);
+                navigateTo('applyflow');
+              }}
             />
           ) : module === 'inbox' ? (
             <RecruitmentInboxView
@@ -548,6 +568,14 @@ function App() {
 
                   <div className="flex items-center gap-2">
                     <button
+                      onClick={() => navigateTo('jobscout')}
+                      className="flex items-center gap-1.5 px-3 py-1 bg-white hover:bg-zinc-50 border border-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:border-zinc-700 text-zinc-700 dark:text-zinc-200 rounded-md text-xs font-semibold shadow-2xs transition-all active:scale-[0.98]"
+                      title="Buka Auto Job Scout untuk memindai lowongan di Jobstreet, LinkedIn, dan Glints"
+                    >
+                      <Radar size={13} className="text-zinc-500 dark:text-zinc-400" />
+                      <span>Radar Lowongan</span>
+                    </button>
+                    <button
                       onClick={() => setShowAdd(true)}
                       className="flex items-center gap-1.5 px-3 py-1 bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 rounded-md text-xs font-semibold shadow-2xs transition-all active:scale-[0.98]"
                     >
@@ -589,9 +617,11 @@ function App() {
                   <EmptyState
                     icon={Target}
                     title="Papan Pipeline Lamaran Masih Kosong"
-                    description="Mulai langkah pencarian karir terstruktur Anda. Catat peluang kerja pertama untuk memantau status seleksi, follow-up, dan penawaran gaji."
+                    description="Mulai langkah pencarian karir terstruktur Anda. Cari lowongan otomatis di Radar atau catat peluang pertama secara manual."
                     actionLabel="+ Tambah Peluang Pertama (N)"
                     onAction={() => setShowAdd(true)}
+                    secondaryActionLabel="Buka Auto Job Scout"
+                    onSecondaryAction={() => navigateTo('jobscout')}
                   />
                 ) : view === 'board' ? (
                   <div className="flex gap-3.5 overflow-x-auto pb-4 scrollbar-thin">
