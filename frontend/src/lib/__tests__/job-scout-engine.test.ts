@@ -4,9 +4,12 @@ import {
   buildJobstreetSearchUrl,
   buildLinkedInSearchUrl,
   buildGlintsSearchUrl,
+  buildCustomPlatformSearchUrl,
   parseJobUrlHeuristics,
   calculateScoutFitScore,
   CURATED_TECH_VACANCIES,
+  DEFAULT_PLATFORM_PRESETS,
+  type JobPlatformPreset,
 } from '../job-scout-engine.ts';
 import type { CandidateProfile } from '../pb-types.ts';
 
@@ -77,6 +80,43 @@ test('calculateScoutFitScore returns high match for aligned tech roles and skill
   assert.ok(fit.score >= 80, `Expected fit score >= 80, got ${fit.score}`);
   assert.equal(fit.isHighMatch, true);
   assert.ok(fit.matchedSkills.length >= 2);
+});
+
+test('DEFAULT_PLATFORM_PRESETS contains standard Indonesian job boards', () => {
+  const ids = DEFAULT_PLATFORM_PRESETS.map((p) => p.id);
+  assert.ok(ids.includes('jobstreet'));
+  assert.ok(ids.includes('linkedin'));
+  assert.ok(ids.includes('glints'));
+  assert.ok(ids.includes('indeed'));
+  assert.ok(ids.includes('kalibrr'));
+  assert.ok(ids.includes('dealls'));
+});
+
+test('buildCustomPlatformSearchUrl interpolates query and location tokens correctly', () => {
+  const customPreset: JobPlatformPreset = {
+    id: 'test-portal',
+    name: 'Portal Test',
+    urlTemplate: 'https://karir.example.com/search?posisi={query}&kota={location}',
+    isCustom: true,
+  };
+
+  const url = buildCustomPlatformSearchUrl(customPreset, 'Software Engineer', 'Jakarta');
+  assert.ok(url.includes('karir.example.com/search'));
+  assert.ok(url.includes('posisi=Software%20Engineer') || url.includes('posisi=Software+Engineer'));
+  assert.ok(url.includes('kota=Jakarta'));
+});
+
+test('buildCustomPlatformSearchUrl handles URLs without placeholder tokens gracefully', () => {
+  const simplePreset: JobPlatformPreset = {
+    id: 'bca-career',
+    name: 'BCA Career',
+    urlTemplate: 'https://karir.bca.co.id/peluang-kerja',
+    isCustom: true,
+  };
+
+  const url = buildCustomPlatformSearchUrl(simplePreset, 'Data Analyst', 'Jakarta');
+  assert.ok(url.startsWith('https://karir.bca.co.id/peluang-kerja'));
+  assert.ok(url.includes('q=Data%20Analyst') || url.includes('q=Data+Analyst'));
 });
 
 test('CURATED_TECH_VACANCIES contains zero em-dashes and valid IDR numbers', () => {

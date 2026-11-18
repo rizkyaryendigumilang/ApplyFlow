@@ -1,6 +1,66 @@
 import type { CandidateProfile } from './pb-types';
 
-export type JobPlatform = 'Jobstreet' | 'LinkedIn' | 'Glints' | 'Kalibrr' | 'Other';
+export type JobPlatform = 'Jobstreet' | 'LinkedIn' | 'Glints' | 'Kalibrr' | 'Indeed' | 'Dealls' | 'Other';
+
+export interface JobPlatformPreset {
+  id: string;
+  name: string;
+  urlTemplate: string;
+  isCustom?: boolean;
+  domain?: string;
+  description?: string;
+}
+
+export const DEFAULT_PLATFORM_PRESETS: JobPlatformPreset[] = [
+  {
+    id: 'jobstreet',
+    name: 'Jobstreet Indonesia',
+    urlTemplate: 'https://id.jobstreet.com/id/job-search/{query}-jobs/in-{location}',
+    domain: 'id.jobstreet.com',
+    description: 'Portal lowongan kerja terdepan dengan ribuan posisi enterprise dan korporat',
+    isCustom: false,
+  },
+  {
+    id: 'linkedin',
+    name: 'LinkedIn Jobs',
+    urlTemplate: 'https://www.linkedin.com/jobs/search/?keywords={query}&location={location}',
+    domain: 'linkedin.com',
+    description: 'Jejaring profesional global dengan lowongan tech, remote, dan multinational company',
+    isCustom: false,
+  },
+  {
+    id: 'glints',
+    name: 'Glints Indonesia',
+    urlTemplate: 'https://glints.com/id/opportunities/jobs/explore?keyword={query}&country=ID&locationName={location}',
+    domain: 'glints.com',
+    description: 'Platform karir teknologi terkemuka untuk startup dan perusahaan berkembang di Asia Tenggara',
+    isCustom: false,
+  },
+  {
+    id: 'indeed',
+    name: 'Indeed Indonesia',
+    urlTemplate: 'https://id.indeed.com/jobs?q={query}&l={location}',
+    domain: 'id.indeed.com',
+    description: 'Mesin pencari lowongan kerja global dengan ribuan lowongan teknis dan operasional',
+    isCustom: false,
+  },
+  {
+    id: 'kalibrr',
+    name: 'Kalibrr',
+    urlTemplate: 'https://www.kalibrr.com/job-board/te/{query}/in/{location}',
+    domain: 'kalibrr.com',
+    description: 'Pusat rekrutmen perbankan, FMCG, BUMN, dan perusahaan multinasional di Indonesia',
+    isCustom: false,
+  },
+  {
+    id: 'dealls',
+    name: 'Dealls',
+    urlTemplate: 'https://dealls.com/jobs?search={query}',
+    domain: 'dealls.com',
+    description: 'Platform job portal dan mentoring karir terkurasi untuk talenta teknologi terdepan',
+    isCustom: false,
+  },
+];
 
 export interface ScoutVacancy {
   id: string;
@@ -80,6 +140,50 @@ export function buildGlintsSearchUrl(
   }
 
   return `https://glints.com/id/opportunities/jobs/explore?${params.toString()}`;
+}
+
+/**
+ * Builds search query URL for any preset or custom user platform
+ */
+export function buildCustomPlatformSearchUrl(
+  preset: JobPlatformPreset,
+  query: string,
+  location = 'Jakarta',
+  workMode?: string
+): string {
+  if (preset.id === 'jobstreet') {
+    return buildJobstreetSearchUrl(query, location, workMode);
+  }
+  if (preset.id === 'linkedin') {
+    return buildLinkedInSearchUrl(query, location, workMode);
+  }
+  if (preset.id === 'glints') {
+    return buildGlintsSearchUrl(query, location);
+  }
+
+  const encodedQuery = encodeURIComponent(query.trim());
+  const encodedLocation = encodeURIComponent(location.trim());
+  let url = preset.urlTemplate.trim();
+
+  if (url.includes('{query}') || url.includes('{location}')) {
+    url = url.replace(/\{query\}/g, encodedQuery);
+    url = url.replace(/\{location\}/g, encodedLocation);
+    return url;
+  }
+
+  try {
+    const parsed = new URL(url);
+    if (query.trim()) {
+      parsed.searchParams.set('q', query.trim());
+    }
+    if (location && location.trim() !== 'Indonesia') {
+      parsed.searchParams.set('location', location.trim());
+    }
+    return parsed.toString();
+  } catch {
+    const sep = url.includes('?') ? '&' : '?';
+    return `${url}${sep}q=${encodedQuery}&location=${encodedLocation}`;
+  }
 }
 
 /**

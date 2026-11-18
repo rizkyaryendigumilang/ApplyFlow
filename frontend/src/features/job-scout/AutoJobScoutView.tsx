@@ -17,9 +17,13 @@ import {
   Target,
   HelpCircle,
   X,
+  Trash2,
+  Globe,
+  Share2,
 } from 'lucide-react';
 import { cn } from '../../lib/cn';
 import { useCandidateProfile } from '../../hooks/useCandidateProfile';
+import { useJobPlatforms } from '../../hooks/useJobPlatforms';
 import { idr } from '../../lib/utils';
 import type { ApplicationDraft } from '../../lib/pb-types';
 import {
@@ -27,9 +31,11 @@ import {
   buildJobstreetSearchUrl,
   buildLinkedInSearchUrl,
   buildGlintsSearchUrl,
+  buildCustomPlatformSearchUrl,
   parseJobUrlHeuristics,
   calculateScoutFitScore,
   type JobPlatform,
+  type JobPlatformPreset,
   type ScoutVacancy,
 } from '../../lib/job-scout-engine';
 import { EmptyState } from '../../components/ui/EmptyState';
@@ -60,14 +66,22 @@ export function AutoJobScoutView({
   onApplyViaApplyFlow,
 }: AutoJobScoutViewProps) {
   const { profile } = useCandidateProfile();
+  const { platforms, addPlatform, removePlatform } = useJobPlatforms();
 
   // Filter State
   const defaultRole = profile.targetRoles?.[0] || 'Technical Consultant Analyst';
   const [selectedRole, setSelectedRole] = useState<string>(defaultRole);
   const [customQuery, setCustomQuery] = useState<string>('');
-  const [selectedPlatform, setSelectedPlatform] = useState<JobPlatform | 'All'>('Jobstreet');
+  const [selectedPlatform, setSelectedPlatform] = useState<JobPlatform | 'All'>('All');
   const [selectedLocation, setSelectedLocation] = useState<string>('Jakarta');
   const [selectedMode, setSelectedMode] = useState<'All' | 'Remote' | 'Hybrid' | 'On-site'>('All');
+
+  // Form State for Adding Custom Platform
+  const [isAddingPlatform, setIsAddingPlatform] = useState(false);
+  const [newPlatformName, setNewPlatformName] = useState('');
+  const [newPlatformUrl, setNewPlatformUrl] = useState('');
+  const [newPlatformDesc, setNewPlatformDesc] = useState('');
+  const [platformFormError, setPlatformFormError] = useState<string | null>(null);
 
   // Quick URL Ingestion State
   const [pasteUrl, setPasteUrl] = useState<string>('');
@@ -80,6 +94,38 @@ export function AutoJobScoutView({
 
   // Active query to run
   const activeQuery = customQuery.trim() || selectedRole;
+
+  const handleCreateCustomPlatform = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newPlatformName.trim() || !newPlatformUrl.trim()) {
+      setPlatformFormError('Nama platform dan tautan pencarian wajib diisi.');
+      return;
+    }
+    addPlatform(newPlatformName, newPlatformUrl, newPlatformDesc);
+    setNotification(`Platform ${newPlatformName.trim()} berhasil ditambahkan ke radar.`);
+    setNewPlatformName('');
+    setNewPlatformUrl('');
+    setNewPlatformDesc('');
+    setIsAddingPlatform(false);
+    setPlatformFormError(null);
+  };
+
+  const handleLaunchAllPlatforms = () => {
+    let openedCount = 0;
+    platforms.forEach((p) => {
+      const url = buildCustomPlatformSearchUrl(
+        p,
+        activeQuery,
+        selectedLocation,
+        selectedMode === 'Remote' ? 'remote' : undefined
+      );
+      if (typeof window !== 'undefined') {
+        window.open(url, '_blank', 'noopener,noreferrer');
+        openedCount++;
+      }
+    });
+    setNotification(`Berhasil meluncurkan ${openedCount} platform pencarian di tab baru.`);
+  };
 
   // Compute live search URL for currently selected platform
   const liveSearchUrl = useMemo(() => {
@@ -358,20 +404,23 @@ export function AutoJobScoutView({
             </div>
           </div>
 
-          {/* Platform Selector */}
+          {/* Platform Selector for Feed Filtering */}
           <div>
             <label className="block text-[11px] uppercase tracking-wider font-semibold text-zinc-500 dark:text-zinc-400 mb-1.5">
-              Platform Target
+              Filter Feed Radar
             </label>
             <select
               value={selectedPlatform}
               onChange={(e) => setSelectedPlatform(e.target.value as JobPlatform | 'All')}
               className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-900 dark:focus:border-zinc-100"
             >
+              <option value="All">Semua Platform Feed</option>
               <option value="Jobstreet">Jobstreet Indonesia</option>
               <option value="LinkedIn">LinkedIn Jobs</option>
               <option value="Glints">Glints Indonesia</option>
-              <option value="All">Semua Platform</option>
+              <option value="Indeed">Indeed Indonesia</option>
+              <option value="Kalibrr">Kalibrr</option>
+              <option value="Dealls">Dealls</option>
             </select>
           </div>
 
@@ -410,22 +459,195 @@ export function AutoJobScoutView({
           </div>
         </div>
 
-        {/* Live Search Launcher Button */}
-        <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-zinc-100 dark:border-zinc-800/80">
-          <div className="text-xs text-zinc-500 dark:text-zinc-400">
-            Mencari: <b className="text-zinc-800 dark:text-zinc-200">{activeQuery}</b> di{' '}
-            <b className="text-zinc-800 dark:text-zinc-200">{selectedLocation}</b> ({selectedPlatform})
+        {/* Radar Peluncur Multi-Platform Bento Grid */}
+        <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800/80 space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">
+                  Radar Peluncur Multi-Platform
+                </span>
+                <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200/60 dark:border-zinc-700/60">
+                  {platforms.length} Portal Siap Diluncurkan
+                </span>
+              </div>
+              <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">
+                Semua link pencarian terisi otomatis dengan peran <b className="text-zinc-800 dark:text-zinc-200 font-semibold">{activeQuery}</b> di <b className="text-zinc-800 dark:text-zinc-200 font-semibold">{selectedLocation}</b>.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2 self-start sm:self-auto flex-wrap">
+              <button
+                type="button"
+                onClick={() => setIsAddingPlatform(!isAddingPlatform)}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-all shadow-2xs active:scale-[0.98]"
+              >
+                <Plus size={13} />
+                <span>+ Tambah Platform Kustom</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleLaunchAllPlatforms}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-md bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-900 transition-all shadow-2xs active:scale-[0.98]"
+                title="Buka seluruh platform di tab baru sekaligus"
+              >
+                <Share2 size={13} />
+                <span>Buka Semua Platform Sekaligus</span>
+              </button>
+            </div>
           </div>
 
-          <a
-            href={liveSearchUrl}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-lg bg-zinc-900 px-4 py-2 text-xs font-semibold text-white shadow-2xs hover:bg-zinc-800 active:scale-[0.975] transition-all dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
-          >
-            <span>Buka Pencarian Live di {selectedPlatform === 'All' ? 'Jobstreet' : selectedPlatform}</span>
-            <ExternalLink size={13} />
-          </a>
+          {/* Form Tambah Platform Kustom (Collapsible) */}
+          {isAddingPlatform && (
+            <form
+              onSubmit={handleCreateCustomPlatform}
+              className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50/90 dark:bg-zinc-800/60 space-y-3 animate-in fade-in"
+            >
+              <div className="flex items-center justify-between border-b border-zinc-200/60 dark:border-zinc-700/60 pb-2">
+                <span className="text-xs font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5">
+                  <Globe size={14} className="text-zinc-500" />
+                  Tambah Platform / Portal Karier Kustom
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setIsAddingPlatform(false)}
+                  className="text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 p-1 rounded"
+                  aria-label="Tutup form platform kustom"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+
+              {platformFormError && (
+                <div className="text-[11px] text-rose-600 dark:text-rose-400 font-medium bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 rounded-md p-2">
+                  {platformFormError}
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[10px] font-mono uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1">
+                    Nama Platform / Perusahaan
+                  </label>
+                  <input
+                    type="text"
+                    value={newPlatformName}
+                    onChange={(e) => setNewPlatformName(e.target.value)}
+                    placeholder="Contoh: Tech in Asia Jobs, Karier BCA, Kalibrr..."
+                    className="w-full px-3 py-1.5 text-xs rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-900 dark:focus:border-zinc-100 font-sans"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-mono uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-1">
+                    Format URL / Link Pencarian
+                  </label>
+                  <input
+                    type="text"
+                    value={newPlatformUrl}
+                    onChange={(e) => setNewPlatformUrl(e.target.value)}
+                    placeholder="https://contoh.com/jobs?q={query}&loc={location}"
+                    className="w-full px-3 py-1.5 text-xs rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-zinc-900 dark:focus:border-zinc-100 font-mono text-[11px]"
+                    required
+                  />
+                </div>
+              </div>
+
+              <p className="text-[10px] text-zinc-500 dark:text-zinc-400 font-mono">
+                Tips: Sisipkan token <code className="bg-zinc-200 dark:bg-zinc-700 px-1 py-0.5 rounded">{"{query}"}</code> untuk kata kunci dan <code className="bg-zinc-200 dark:bg-zinc-700 px-1 py-0.5 rounded">{"{location}"}</code> untuk lokasi kota.
+              </p>
+
+              <div className="flex justify-end gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => setIsAddingPlatform(false)}
+                  className="px-3 py-1 text-xs text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  className="px-3 py-1 bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-900 text-xs font-semibold rounded-md shadow-2xs"
+                >
+                  Simpan Platform
+                </button>
+              </div>
+            </form>
+          )}
+
+          {/* Grid Platform Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {platforms.map((p) => {
+              const targetUrl = buildCustomPlatformSearchUrl(
+                p,
+                activeQuery,
+                selectedLocation,
+                selectedMode === 'Remote' ? 'remote' : undefined
+              );
+
+              return (
+                <div
+                  key={p.id}
+                  className="horizonx-card p-3.5 flex flex-col justify-between hover:border-zinc-300 dark:hover:border-zinc-700 transition-all group"
+                >
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <div className="w-6 h-6 rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-200/80 dark:border-white/[0.08] text-zinc-800 dark:text-zinc-200 font-bold text-xs flex items-center justify-center flex-shrink-0 font-mono">
+                          {p.name[0]?.toUpperCase() || 'P'}
+                        </div>
+                        <h4 className="text-xs font-bold text-zinc-900 dark:text-zinc-100 truncate tracking-tight">
+                          {p.name}
+                        </h4>
+                      </div>
+
+                      <div className="flex items-center gap-1">
+                        {p.isCustom && (
+                          <span className="text-[9px] font-mono font-semibold px-1.5 py-0.2 rounded bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800/80">
+                            Kustom
+                          </span>
+                        )}
+                        {p.isCustom && (
+                          <button
+                            type="button"
+                            onClick={() => removePlatform(p.id)}
+                            className="p-1 text-zinc-400 hover:text-rose-600 dark:hover:text-rose-400 rounded transition-colors"
+                            title="Hapus platform kustom ini"
+                            aria-label={`Hapus ${p.name}`}
+                          >
+                            <Trash2 size={12} />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    <p className="text-[11px] text-zinc-500 dark:text-zinc-400 line-clamp-2 leading-relaxed">
+                      {p.description || `Pencarian lowongan aktif di ${p.domain || p.name}`}
+                    </p>
+                  </div>
+
+                  <div className="mt-3 pt-2.5 border-t border-zinc-100 dark:border-zinc-800/70 flex items-center justify-between gap-2">
+                    <span className="text-[10px] font-mono text-zinc-400 dark:text-zinc-500 truncate max-w-[130px]">
+                      {p.domain || 'portal web'}
+                    </span>
+
+                    <a
+                      href={targetUrl}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-semibold bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-100 transition-all shadow-2xs active:scale-[0.97]"
+                      title={`Buka hasil pencarian ${activeQuery} di ${p.name}`}
+                    >
+                      <span>Buka & Lamar</span>
+                      <ExternalLink size={11} />
+                    </a>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
 
