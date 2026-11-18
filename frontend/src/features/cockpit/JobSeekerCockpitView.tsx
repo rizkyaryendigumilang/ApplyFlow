@@ -1,5 +1,17 @@
 import React, { useMemo } from 'react';
-import { LayoutDashboard, Plus, ArrowUpRight, Calendar, Sparkles } from 'lucide-react';
+import {
+  LayoutDashboard,
+  Plus,
+  ArrowUpRight,
+  ArrowRight,
+  Calendar,
+  Sparkles,
+  Compass,
+  Radar,
+  Target,
+  Zap,
+  Briefcase,
+} from 'lucide-react';
 import type { Application, Interview, JobLead } from '../../lib/pb-types';
 import { useCandidateProfile } from '../../hooks/useCandidateProfile';
 import { useI18n } from '../../lib/i18n';
@@ -139,7 +151,147 @@ export const JobSeekerCockpitView: React.FC<JobSeekerCockpitViewProps> = ({
         </div>
       </div>
 
-      {/* 2. Daily Attention Radar (High priority action center) */}
+      {/* 2. Interactive Guided Funnel Path (Alur 4 Langkah Mudah) */}
+      <div className="bg-white dark:bg-[#18181b] border border-zinc-200/90 dark:border-zinc-800/90 rounded-2xl p-5 shadow-2xs space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-100 dark:border-zinc-800/80 pb-3">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="p-1.5 rounded-lg bg-zinc-900 text-white dark:bg-white dark:text-zinc-900">
+                <Compass size={15} />
+              </span>
+              <h2 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">
+                Alur 4 Langkah Mudah Sukses Melamar Kerja
+              </h2>
+            </div>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+              Klik salah satu tahapan di bawah untuk langsung menuju aksi yang ingin Anda lakukan.
+            </p>
+          </div>
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 font-semibold self-start sm:self-auto">
+            Panduan Terpadu
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {/* Step 1: Temukan Lowongan */}
+          <div
+            onClick={() => onNavigateTo('jobscout')}
+            className="group p-4 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50/60 dark:bg-zinc-900/40 hover:bg-white dark:hover:bg-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700 hover:shadow-sm cursor-pointer transition-all active:scale-[0.985] flex flex-col justify-between"
+          >
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="w-6 h-6 rounded-full bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 text-[11px] font-bold font-mono flex items-center justify-center">
+                  1
+                </span>
+                <span className="text-[10px] font-mono uppercase tracking-wider font-semibold text-zinc-400">
+                  Cari Lowongan
+                </span>
+              </div>
+              <h3 className="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-zinc-950 dark:group-hover:text-white flex items-center gap-1.5">
+                <Radar size={13} className="text-zinc-600 dark:text-zinc-400" />
+                <span>Auto Job Scout</span>
+                <ArrowRight size={13} className="text-zinc-400 group-hover:translate-x-0.5 transition-transform ml-auto" />
+              </h3>
+              <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                Pindai ratusan lowongan di Jobstreet, LinkedIn, dan Glints secara otomatis sesuai peran target Anda.
+              </p>
+            </div>
+            <div className="mt-3 pt-2.5 border-t border-zinc-200/50 dark:border-zinc-800/50 flex items-center justify-between text-[11px]">
+              <span className="text-zinc-400">Aksi:</span>
+              <span className="font-semibold text-zinc-800 dark:text-zinc-200 group-hover:underline">Buka Radar &rarr;</span>
+            </div>
+          </div>
+
+          {/* Step 2: Evaluasi Kecocokan */}
+          <div
+            onClick={() => onNavigateTo('jobhunter')}
+            className="group p-4 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50/60 dark:bg-zinc-900/40 hover:bg-white dark:hover:bg-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700 hover:shadow-sm cursor-pointer transition-all active:scale-[0.985] flex flex-col justify-between"
+          >
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="w-6 h-6 rounded-full bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 text-[11px] font-bold font-mono flex items-center justify-center">
+                  2
+                </span>
+                <span className="text-[10px] font-mono uppercase tracking-wider font-semibold text-zinc-400">
+                  Uji CV & Triage
+                </span>
+              </div>
+              <h3 className="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-zinc-950 dark:group-hover:text-white flex items-center gap-1.5">
+                <Target size={13} className="text-zinc-600 dark:text-zinc-400" />
+                <span>Job Hunter Engine</span>
+                <ArrowRight size={13} className="text-zinc-400 group-hover:translate-x-0.5 transition-transform ml-auto" />
+              </h3>
+              <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                Tempel link atau deskripsi lowongan untuk mengecek persentase kecocokan skill, dealbreaker, dan celah CV.
+              </p>
+            </div>
+            <div className="mt-3 pt-2.5 border-t border-zinc-200/50 dark:border-zinc-800/50 flex items-center justify-between text-[11px]">
+              <span className="text-zinc-400">Aksi:</span>
+              <span className="font-semibold text-zinc-800 dark:text-zinc-200 group-hover:underline">Uji Kecocokan &rarr;</span>
+            </div>
+          </div>
+
+          {/* Step 3: Siapkan Lamaran */}
+          <div
+            onClick={() => onNavigateTo('applyflow')}
+            className="group p-4 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50/60 dark:bg-zinc-900/40 hover:bg-white dark:hover:bg-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700 hover:shadow-sm cursor-pointer transition-all active:scale-[0.985] flex flex-col justify-between"
+          >
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="w-6 h-6 rounded-full bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 text-[11px] font-bold font-mono flex items-center justify-center">
+                  3
+                </span>
+                <span className="text-[10px] font-mono uppercase tracking-wider font-semibold text-zinc-400">
+                  Draft & ATS
+                </span>
+              </div>
+              <h3 className="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-zinc-950 dark:group-hover:text-white flex items-center gap-1.5">
+                <Zap size={13} className="text-zinc-600 dark:text-zinc-400" />
+                <span>ApplyFlow Studio</span>
+                <ArrowRight size={13} className="text-zinc-400 group-hover:translate-x-0.5 transition-transform ml-auto" />
+              </h3>
+              <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                Susun email lamaran profesional terarah ke HRD dan unduh resume format standar Harvard ATS 1-klik.
+              </p>
+            </div>
+            <div className="mt-3 pt-2.5 border-t border-zinc-200/50 dark:border-zinc-800/50 flex items-center justify-between text-[11px]">
+              <span className="text-zinc-400">Aksi:</span>
+              <span className="font-semibold text-zinc-800 dark:text-zinc-200 group-hover:underline">Susun Lamaran &rarr;</span>
+            </div>
+          </div>
+
+          {/* Step 4: Lacak & Pantau */}
+          <div
+            onClick={() => onNavigateTo('pipeline')}
+            className="group p-4 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50/60 dark:bg-zinc-900/40 hover:bg-white dark:hover:bg-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700 hover:shadow-sm cursor-pointer transition-all active:scale-[0.985] flex flex-col justify-between"
+          >
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="w-6 h-6 rounded-full bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 text-[11px] font-bold font-mono flex items-center justify-center">
+                  4
+                </span>
+                <span className="text-[10px] font-mono uppercase tracking-wider font-semibold text-zinc-400">
+                  Lacak Kanban
+                </span>
+              </div>
+              <h3 className="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-zinc-950 dark:group-hover:text-white flex items-center gap-1.5">
+                <Briefcase size={13} className="text-zinc-600 dark:text-zinc-400" />
+                <span>Pantau Lamaran</span>
+                <ArrowRight size={13} className="text-zinc-400 group-hover:translate-x-0.5 transition-transform ml-auto" />
+              </h3>
+              <p className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                Pantau perkembangan seleksi dari Wishlist, Wawancara, hingga Surat Penawaran (Offer) gaji terbaik.
+              </p>
+            </div>
+            <div className="mt-3 pt-2.5 border-t border-zinc-200/50 dark:border-zinc-800/50 flex items-center justify-between text-[11px]">
+              <span className="text-zinc-400">Aksi:</span>
+              <span className="font-semibold text-zinc-800 dark:text-zinc-200 group-hover:underline">Buka Pipeline &rarr;</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 3. Daily Attention Radar (High priority action center) */}
       <DailyAttentionRadar
         alerts={radarAlerts}
         onNavigateToPipeline={() => onNavigateTo('pipeline')}

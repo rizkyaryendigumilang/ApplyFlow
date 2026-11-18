@@ -585,6 +585,25 @@ function App() {
                   </div>
                 </div>
 
+                {/* Pipeline Funnel Flow Guide */}
+                <div className="flex flex-wrap items-center justify-between gap-2 p-3 mb-4 rounded-xl border border-zinc-200/80 bg-zinc-50/70 dark:border-zinc-800 dark:bg-zinc-900/40 text-xs">
+                  <div className="flex items-center gap-2">
+                    <span className="w-5 h-5 rounded-full bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 text-[10px] font-bold flex items-center justify-center shrink-0">
+                      ?
+                    </span>
+                    <span className="text-zinc-700 dark:text-zinc-300 font-medium">
+                      Alur Pelacakan: Geser kartu lamaran ke kanan saat ada progres seleksi: Wishlist &rarr; Applied &rarr; Viewed &rarr; Screening &rarr; Interview &rarr; Offer.
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => navigateTo('jobscout')}
+                    className="inline-flex items-center gap-1 font-semibold text-zinc-800 dark:text-zinc-200 hover:underline shrink-0 text-xs"
+                  >
+                    <span>Cari Lowongan di Radar</span>
+                    <ArrowUpRight size={12} />
+                  </button>
+                </div>
+
                 {loading ? (
                   <div className="flex gap-3.5 overflow-x-auto pb-4 scrollbar-thin">
                     {statuses.slice(0, 5).map((status) => (

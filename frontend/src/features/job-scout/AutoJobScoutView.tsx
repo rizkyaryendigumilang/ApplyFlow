@@ -467,6 +467,33 @@ export function AutoJobScoutView({
 
       {/* Vacancy Radar Cards */}
       <div className="space-y-4">
+        {/* Quick 3-Step Action Guide Banner */}
+        <div className="p-3.5 rounded-2xl border border-zinc-200/80 bg-zinc-50/70 dark:border-zinc-800 dark:bg-zinc-900/40 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <span className="w-5 h-5 rounded-full bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 text-[10px] font-bold flex items-center justify-center shrink-0">
+              ?
+            </span>
+            <div className="text-xs">
+              <span className="font-semibold text-zinc-900 dark:text-zinc-100">
+                Alur Aksi Mudah:
+              </span>{' '}
+              <span className="text-zinc-600 dark:text-zinc-400">
+                1. Pilih target posisi di atas &bull; 2. Klik <b>Buka</b> untuk daftar di web portal &bull; 3. Klik <b>+ Simpan ke Pipeline</b> agar lamaran otomatis dipantau di Kanban.
+              </span>
+            </div>
+          </div>
+          {onNavigateToTracker && (
+            <button
+              type="button"
+              onClick={onNavigateToTracker}
+              className="inline-flex items-center gap-1 font-semibold text-zinc-800 dark:text-zinc-200 hover:underline shrink-0 text-xs"
+            >
+              <span>Lihat Pipeline Pelacak</span>
+              <ArrowUpRight size={12} />
+            </button>
+          )}
+        </div>
+
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
             Daftar Lowongan Terfilter ({filteredVacancies.length})

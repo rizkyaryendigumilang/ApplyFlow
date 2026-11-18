@@ -368,6 +368,16 @@ export function JobHunterView({
               </span>
             </div>
 
+            {/* Quick Helper Ribbon */}
+            <div className="p-3 rounded-xl border border-zinc-200/70 bg-white dark:border-zinc-800 dark:bg-zinc-900/60 text-xs text-zinc-600 dark:text-zinc-400 space-y-1">
+              <span className="font-semibold text-zinc-800 dark:text-zinc-200 block">
+                Alur Evaluasi Cepat:
+              </span>
+              <p className="text-[11px] leading-relaxed">
+                1. Masukkan tautan atau judul lowongan &bull; 2. Tempel deskripsi pekerjaan (JD) &bull; 3. Klik 'Jalankan Evaluasi' untuk melihat skor kecocokan CV, dealbreaker, dan celah skill.
+              </p>
+            </div>
+
             <form onSubmit={handleEvaluate} className="space-y-3.5">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
