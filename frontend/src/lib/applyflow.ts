@@ -39,8 +39,8 @@ function labelledValue(lines: string[], labels: RegExp) {
 }
 
 function detectMode(text: string): ApplyFlowMode {
-  if (/\b(remote|wfh|work from home|fully remote)\b/i.test(text)) return 'Remote';
   if (/\b(hybrid)\b/i.test(text)) return 'Hybrid';
+  if (/\b(remote|wfh|work from home|fully remote)\b/i.test(text)) return 'Remote';
   if (/\b(wfo|on[- ]site|onsite|work from office)\b/i.test(text)) return 'On-site';
   return 'Unknown';
 }
@@ -56,7 +56,7 @@ function detectPositions(lines: string[]): ParsedPosition[] {
   const selected = titles.slice(0, 8);
   return (selected.length ? selected : [lines.find(line => line.length > 3) || 'Target position']).map((title, index) => ({
     id: `position-${index + 1}`,
-    title: title.replace(/^(position|role|job title)\s*[:\-]\s*/i, ''),
+    title: title.replace(/^(position|posisi|role|job title|jabatan|lowongan)\s*[:\-]\s*/i, ''),
     division: '',
     responsibilities: [],
     qualifications: [],
@@ -77,9 +77,9 @@ function extractList(lines: string[], heading: RegExp) {
 }
 
 function extractSubjectInstruction(lines: string[], text: string) {
-  const labelled = labelledValue(lines, /^(?:email\s+)?subject(?:\s+format)?\s*/i);
+  const labelled = labelledValue(lines, /^(?:format\s+)?(?:email\s+)?(?:subjek|subject)(?:\s+email)?(?:\s+format)?\s*/i);
   if (labelled) return labelled.replace(/^format\s*/i, '').trim();
-  const exact = text.match(/(?:subject|subjek)[^\n]{0,80}(Nama[_ ]Posisi[^\n]*)/i);
+  const exact = text.match(/(?:subject|subjek)[^\n]{0,80}[:\-]\s*([^\n]+)/i);
   return exact?.[1]?.trim() || '';
 }
 
@@ -138,17 +138,83 @@ export function matchAgainstEvidence(position: ParsedPosition, evidence: string)
   });
 }
 
-export function buildSubject(job: ParsedJobPosting, position: ParsedPosition) {
+export type EmailLanguage = 'id' | 'en';
+
+export function buildSubject(
+  job: ParsedJobPosting,
+  position: ParsedPosition,
+  lang: EmailLanguage = 'id'
+) {
   if (job.subjectInstruction) return job.subjectInstruction.replace(/Nama[_ ]Posisi(?: yang dilamar)?/i, position.title);
+  if (lang === 'id') {
+    return `Lamaran: ${position.title}${job.company ? ` | ${job.company}` : ''}`;
+  }
   return `Application: ${position.title}${job.company ? ` | ${job.company}` : ''}`;
 }
 
-export function buildEmail(job: ParsedJobPosting, position: ParsedPosition, candidateName: string, evidence: string, cvLabel: string) {
-  const greeting = job.recruiterName ? `Dear ${job.recruiterName},` : 'Dear Recruitment Team,';
+export function buildEmail(
+  job: ParsedJobPosting,
+  position: ParsedPosition,
+  candidateName: string,
+  evidence: string,
+  cvLabel: string,
+  lang: EmailLanguage = 'id'
+) {
   const highlights = evidence.split(/\r?\n|[•;]/).map(cleanLine).filter(Boolean).slice(0, 4);
-  const highlightText = highlights.length ? `Relevant evidence from my profile:\n${highlights.map(item => `- ${item}`).join('\n')}` : 'I would welcome the opportunity to discuss the verified experience and strengths I can bring to this role.';
-  const attachment = cvLabel ? `I have attached my ${cvLabel} CV for your consideration.` : 'I will attach the most relevant CV version before sending.';
-  return `${greeting}\n\nI am writing to apply for the ${position.title}${job.company ? ` position at ${job.company}` : ''}. I would welcome the opportunity to contribute my verified experience to the team.\n\n${highlightText}\n\n${attachment}${job.requiredDocuments.includes('Portfolio') ? ' I will also include my portfolio as requested.' : ''}\n\nThank you for your time and consideration. I would be glad to discuss how my background aligns with this opportunity.\n\nBest regards,\n${candidateName || 'Your name'}`;
+
+  if (lang === 'id') {
+    const greeting = job.recruiterName
+      ? `Yth. ${job.recruiterName},`
+      : job.company
+      ? `Yth. Tim Rekrutmen ${job.company},`
+      : 'Yth. Tim Rekrutmen,';
+
+    const opening = `Melalui surat ini, saya bermaksud mengajukan lamaran untuk posisi ${position.title}${
+      job.company ? ` di ${job.company}` : ''
+    }. Berdasarkan latar belakang dan pengalaman kerja yang relevan, saya siap berkontribusi secara nyata bagi tim Anda.`;
+
+    const highlightText = highlights.length
+      ? `Berikut rangkuman kualifikasi dan rekam jejak saya yang relevan:\n${highlights
+          .map(item => `- ${item}`)
+          .join('\n')}`
+      : 'Saya menyambut baik kesempatan untuk mendiskusikan pengalaman terverifikasi serta nilai tambah yang dapat saya bawa ke posisi ini.';
+
+    const attachment = cvLabel
+      ? `Bersama surat ini, saya melampirkan berkas CV ${cvLabel} untuk bahan pertimbangan Anda.`
+      : 'Bersama surat ini, saya melampirkan berkas CV terbaru untuk bahan pertimbangan Anda.';
+
+    const portfolioText = job.requiredDocuments.includes('Portfolio')
+      ? ' Saya juga menyertakan portofolio kerja sesuai persyaratan yang dicantumkan.'
+      : '';
+
+    const closing =
+      'Terima kasih atas waktu dan kesempatan yang diberikan. Saya sangat terbuka untuk tahapan wawancara guna mendiskusikan kualifikasi saya lebih mendalam.';
+
+    const signoff = `Hormat saya,\n${candidateName || 'Nama Pelamar'}`;
+
+    return `${greeting}\n\n${opening}\n\n${highlightText}\n\n${attachment}${portfolioText}\n\n${closing}\n\n${signoff}`;
+  }
+
+  const greeting = job.recruiterName ? `Dear ${job.recruiterName},` : 'Dear Recruitment Team,';
+  const opening = `I am writing to express my strong interest in the ${position.title}${
+    job.company ? ` position at ${job.company}` : ''
+  }. Based on my background and verified experience, I would welcome the opportunity to contribute to your team.`;
+  const highlightText = highlights.length
+    ? `Relevant qualifications and verified experience from my profile:\n${highlights
+        .map(item => `- ${item}`)
+        .join('\n')}`
+    : 'I would welcome the opportunity to discuss the verified experience and strengths I can bring to this role.';
+  const attachment = cvLabel
+    ? `I have attached my ${cvLabel} CV for your consideration.`
+    : 'I will attach the most relevant CV version before sending.';
+  const portfolioText = job.requiredDocuments.includes('Portfolio')
+    ? ' I will also include my portfolio as requested.'
+    : '';
+  const closing =
+    'Thank you for your time and consideration. I would be glad to discuss how my background aligns with this opportunity in an interview.';
+  const signoff = `Best regards,\n${candidateName || 'Your Name'}`;
+
+  return `${greeting}\n\n${opening}\n\n${highlightText}\n\n${attachment}${portfolioText}\n\n${closing}\n\n${signoff}`;
 }
 
 export function validateDraft(job: ParsedJobPosting, position: ParsedPosition, subject: string, body: string, cvLabel: string) {

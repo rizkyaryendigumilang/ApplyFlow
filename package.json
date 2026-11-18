@@ -10,6 +10,7 @@
     "frontend:build": "npm --prefix frontend run build",
     "frontend:test": "node --experimental-strip-types --test frontend/src/**/__tests__/*.test.ts",
     "backend:validate": "node scripts/validate-schema.mjs && node scripts/validate-auth-config.mjs",
+    "typecheck": "npm --prefix frontend exec tsc -- -p frontend/tsconfig.json --noEmit",
     "test": "node --experimental-strip-types --test frontend/src/**/__tests__/*.test.ts && node scripts/validate-schema.mjs && node scripts/validate-auth-config.mjs",
     "build": "npm --prefix frontend run build",
     "cap:sync": "npx cap sync",
@@ -23,6 +24,6 @@
     "@capacitor/ios": "^6.2.0"
   },
   "overrides": {
-    "tar": ">=7.5.3"
+    "tar": ">=7.5.21"
   }
 }

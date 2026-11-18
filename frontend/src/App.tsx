@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, lazy, Suspense } from 'react';
 import {
   Activity,
   ArrowUpRight,
@@ -38,25 +38,26 @@ import { TwentyTopBar } from './components/layout/TwentyTopBar';
 
 // Core feature views
 import { JobSeekerCockpitView } from './features/cockpit/JobSeekerCockpitView';
-import { StarCoachModal } from './features/interview-prep/StarCoachModal';
-import { ApplyFlowView } from './features/applyflow/ApplyFlowView';
-import { JobHunterView } from './features/job-hunter/JobHunterView';
-import { AutoJobScoutView } from './features/job-scout/AutoJobScoutView';
-import { RecruitmentInboxView } from './features/recruitment-inbox/RecruitmentInboxView';
-import { NetworkingView } from './features/networking/NetworkingView';
-import { LinkedInAssistantView } from './features/linkedin-assistant/LinkedInAssistantView';
-import { SettingsView } from './features/settings/SettingsView';
-import { OfferComparatorView } from './features/offer-calculator/OfferComparatorView';
-import { AiAgentStudioView } from './features/ai-agent-studio/AiAgentStudioView';
+
+const StarCoachModal = lazy(() => import('./features/interview-prep/StarCoachModal').then(m => ({ default: m.StarCoachModal })));
+const ApplyFlowView = lazy(() => import('./features/applyflow/ApplyFlowView').then(m => ({ default: m.ApplyFlowView })));
+const JobHunterView = lazy(() => import('./features/job-hunter/JobHunterView').then(m => ({ default: m.JobHunterView })));
+const AutoJobScoutView = lazy(() => import('./features/job-scout/AutoJobScoutView').then(m => ({ default: m.AutoJobScoutView })));
+const RecruitmentInboxView = lazy(() => import('./features/recruitment-inbox/RecruitmentInboxView').then(m => ({ default: m.RecruitmentInboxView })));
+const NetworkingView = lazy(() => import('./features/networking/NetworkingView').then(m => ({ default: m.NetworkingView })));
+const LinkedInAssistantView = lazy(() => import('./features/linkedin-assistant/LinkedInAssistantView').then(m => ({ default: m.LinkedInAssistantView })));
+const SettingsView = lazy(() => import('./features/settings/SettingsView').then(m => ({ default: m.SettingsView })));
+const OfferComparatorView = lazy(() => import('./features/offer-calculator/OfferComparatorView').then(m => ({ default: m.OfferComparatorView })));
+const AiAgentStudioView = lazy(() => import('./features/ai-agent-studio/AiAgentStudioView').then(m => ({ default: m.AiAgentStudioView })));
 
 // Enterprise SaaS modules
 import { NotificationCenter } from './features/notifications/NotificationCenter';
-import { UserManagementView } from './features/user-management/UserManagementView';
-import { AnalyticsView } from './features/analytics/AnalyticsView';
-import { HelpSupportView } from './features/help/HelpSupportView';
-import { SystemPagesView } from './features/system-pages/SystemPagesView';
-import { GlobalSearchModal } from './features/search/GlobalSearchModal';
-import { OnboardingWizardModal } from './features/onboarding/OnboardingWizardModal';
+const UserManagementView = lazy(() => import('./features/user-management/UserManagementView').then(m => ({ default: m.UserManagementView })));
+const AnalyticsView = lazy(() => import('./features/analytics/AnalyticsView').then(m => ({ default: m.AnalyticsView })));
+const HelpSupportView = lazy(() => import('./features/help/HelpSupportView').then(m => ({ default: m.HelpSupportView })));
+const SystemPagesView = lazy(() => import('./features/system-pages/SystemPagesView').then(m => ({ default: m.SystemPagesView })));
+const GlobalSearchModal = lazy(() => import('./features/search/GlobalSearchModal').then(m => ({ default: m.GlobalSearchModal })));
+const OnboardingWizardModal = lazy(() => import('./features/onboarding/OnboardingWizardModal').then(m => ({ default: m.OnboardingWizardModal })));
 import { KeyboardShortcutsModal } from './components/layout/KeyboardShortcutsModal';
 
 // Deconstructed Kanban & Table components (codebase-design)
@@ -66,7 +67,7 @@ import { FollowUp } from './features/kanban/FollowUpRadar';
 import { ApplicationDrawer } from './features/application-detail/ApplicationDrawer';
 import { AddOpportunityModal } from './components/layout/AddOpportunityModal';
 import { FollowUpModal } from './features/application-detail/FollowUpModal';
-import { AtsResumeFormatterModal } from './features/resume-formatter/AtsResumeFormatterModal';
+const AtsResumeFormatterModal = lazy(() => import('./features/resume-formatter/AtsResumeFormatterModal').then(m => ({ default: m.AtsResumeFormatterModal })));
 import { EmptyState } from './components/ui/EmptyState';
 import { saveAutoBackupSnapshot } from './lib/data-transfer';
 
@@ -80,6 +81,15 @@ const statuses: Status[] = [
   'Rejected',
   'Ghosted',
 ];
+
+function ViewLoadingFallback() {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[380px] p-8 text-center animate-pulse">
+      <div className="w-8 h-8 border-2 border-zinc-200 dark:border-zinc-800 border-t-zinc-900 dark:border-t-zinc-100 rounded-full animate-spin mb-3" />
+      <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">Memuat modul kerja...</p>
+    </div>
+  );
+}
 
 const dateLabel = new Intl.DateTimeFormat('en-US', {
   weekday: 'long',
@@ -404,6 +414,7 @@ function App() {
 
         <main className="twenty-main flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-5">
           {/* Module View Routers */}
+          <Suspense fallback={<ViewLoadingFallback />}>
           {module === 'cockpit' ? (
             <JobSeekerCockpitView
               applications={applications}
@@ -889,6 +900,7 @@ function App() {
               </div>
             </div>
           )}
+          </Suspense>
         </main>
       </div>
 
@@ -937,45 +949,48 @@ function App() {
         }}
       />
 
-      {/* 1-Click Printable ATS Resume Formatter Modal */}
-      <AtsResumeFormatterModal
-        isOpen={isAtsResumeOpen}
-        onClose={() => setIsAtsResumeOpen(false)}
-        profile={profile}
-      />
-
-      {/* Interactive STAR Prep Coach Modal */}
-      {starCoachParams && (
-        <StarCoachModal
-          isOpen={true}
-          companyName={starCoachParams.company}
-          roleTitle={starCoachParams.position}
-          onClose={() => setStarCoachParams(null)}
+      {/* Lazy-loaded Dialogs & Modals */}
+      <Suspense fallback={null}>
+        {/* 1-Click Printable ATS Resume Formatter Modal */}
+        <AtsResumeFormatterModal
+          isOpen={isAtsResumeOpen}
+          onClose={() => setIsAtsResumeOpen(false)}
+          profile={profile}
         />
-      )}
 
-      {/* Global Search & Discovery Modal (Ctrl+K / Cmd+K) */}
-      <GlobalSearchModal
-        isOpen={isGlobalSearchOpen}
-        onClose={() => setIsGlobalSearchOpen(false)}
-        applications={applications}
-        interviews={interviews}
-        jobLeads={jobLeads}
-        onSelectApplication={(app: Application) => {
-          setDrawer(app);
-          navigateTo('pipeline');
-        }}
-      />
+        {/* Interactive STAR Prep Coach Modal */}
+        {starCoachParams && (
+          <StarCoachModal
+            isOpen={true}
+            companyName={starCoachParams.company}
+            roleTitle={starCoachParams.position}
+            onClose={() => setStarCoachParams(null)}
+          />
+        )}
 
-      {/* Onboarding Setup Wizard & Product Tour Modal */}
-      <OnboardingWizardModal
-        isOpen={isOnboardingOpen}
-        onClose={() => setIsOnboardingOpen(false)}
-        onComplete={(data) => {
-          setIsOnboardingOpen(false);
-          navigateTo('cockpit');
-        }}
-      />
+        {/* Global Search & Discovery Modal (Ctrl+K / Cmd+K) */}
+        <GlobalSearchModal
+          isOpen={isGlobalSearchOpen}
+          onClose={() => setIsGlobalSearchOpen(false)}
+          applications={applications}
+          interviews={interviews}
+          jobLeads={jobLeads}
+          onSelectApplication={(app: Application) => {
+            setDrawer(app);
+            navigateTo('pipeline');
+          }}
+        />
+
+        {/* Onboarding Setup Wizard & Product Tour Modal */}
+        <OnboardingWizardModal
+          isOpen={isOnboardingOpen}
+          onClose={() => setIsOnboardingOpen(false)}
+          onComplete={(data) => {
+            setIsOnboardingOpen(false);
+            navigateTo('cockpit');
+          }}
+        />
+      </Suspense>
 
       {/* Keyboard Shortcuts Cheatsheet Modal */}
       <KeyboardShortcutsModal
