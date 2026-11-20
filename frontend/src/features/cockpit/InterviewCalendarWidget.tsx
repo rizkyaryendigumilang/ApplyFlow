@@ -53,7 +53,7 @@ export const InterviewCalendarWidget: React.FC<InterviewCalendarWidgetProps> = (
 
   // Sort interviews ascending by date
   const sortedInterviews = useMemo(() => {
-    return [...interviews].sort((a, b) => {
+    return interviews.toSorted((a, b) => {
       const timeA = new Date(a.scheduledAt).getTime();
       const timeB = new Date(b.scheduledAt).getTime();
       return timeA - timeB;

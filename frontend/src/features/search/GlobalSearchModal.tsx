@@ -165,6 +165,7 @@ export function GlobalSearchModal({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => {
+              if (e.nativeEvent.isComposing || e.keyCode === 229) return;
               if (e.key === 'Enter' && query.trim()) {
                 saveRecent(query.trim());
               }

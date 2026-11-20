@@ -300,6 +300,15 @@
 html {
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior-y: contain;
+  scrollbar-gutter: stable;
+}
+
+h1, h2, h3, h4 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
 }
 
 body {

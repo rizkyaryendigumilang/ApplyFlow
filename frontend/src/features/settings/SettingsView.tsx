@@ -599,6 +599,7 @@ export function SettingsView({
                       Password Lama
                       <input
                         type="password"
+                        autoComplete="current-password"
                         value={oldPassword}
                         onChange={e => setOldPassword(e.target.value)}
                         placeholder="••••••••"
@@ -608,6 +609,7 @@ export function SettingsView({
                       Password Baru
                       <input
                         type="password"
+                        autoComplete="new-password"
                         value={newPassword}
                         onChange={e => setNewPassword(e.target.value)}
                         placeholder="Minimal 8 karakter"
@@ -952,7 +954,13 @@ export function SettingsView({
                     value={newRoleInput}
                     onChange={e => setNewRoleInput(e.target.value)}
                     placeholder="Tambah posisi baru (e.g. Staff SRE, Cloud Architect)..."
-                    onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), handleAddRole())}
+                    onKeyDown={e => {
+                      if (e.nativeEvent.isComposing || e.keyCode === 229) return;
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleAddRole();
+                      }
+                    }}
                   />
                   <button type="button" className="secondary compact-btn" onClick={handleAddRole}>
                     Tambah
@@ -980,7 +988,13 @@ export function SettingsView({
                     value={newSkillInput}
                     onChange={e => setNewSkillInput(e.target.value)}
                     placeholder="Tambah skill teknis (e.g. Kubernetes, Golang, Terraform)..."
-                    onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), handleAddSkill())}
+                    onKeyDown={e => {
+                      if (e.nativeEvent.isComposing || e.keyCode === 229) return;
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleAddSkill();
+                      }
+                    }}
                   />
                   <button type="button" className="secondary compact-btn" onClick={handleAddSkill}>
                     Tambah
@@ -1060,9 +1074,13 @@ export function SettingsView({
                     value={newDealbreakerInput}
                     onChange={e => setNewDealbreakerInput(e.target.value)}
                     placeholder="Tambah dealbreaker (e.g. WFO full, Judi online, Unpaid overtime)..."
-                    onKeyDown={e =>
-                      e.key === 'Enter' && (e.preventDefault(), handleAddDealbreaker())
-                    }
+                    onKeyDown={e => {
+                      if (e.nativeEvent.isComposing || e.keyCode === 229) return;
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleAddDealbreaker();
+                      }
+                    }}
                   />
                   <button
                     type="button"

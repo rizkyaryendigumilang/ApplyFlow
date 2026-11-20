@@ -53,7 +53,7 @@ export function AnalyticsView({ applications, cvs }: AnalyticsViewProps) {
       .map((a) => (a.salaryPeriod === 'annual' ? a.salaryMax / 12 : a.salaryMax));
 
     if (salaries.length === 0) return { min: 0, max: 0, avg: 0, median: 0 };
-    const sorted = [...salaries].sort((a, b) => a - b);
+    const sorted = salaries.toSorted((a, b) => a - b);
     const min = sorted[0];
     const max = sorted[sorted.length - 1];
     const avg = Math.round(sorted.reduce((acc, curr) => acc + curr, 0) / sorted.length);
