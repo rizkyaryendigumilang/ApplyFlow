@@ -34,7 +34,7 @@ export const FunnelMomentumWidget: React.FC<FunnelMomentumWidgetProps> = ({ stat
           </div>
 
           <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800">
-            {stats.responseRatePercent}% Respon Positif
+            {stats.responseRatePercent}% Respons Positif
           </span>
         </div>
       </CardHeader>

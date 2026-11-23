@@ -823,7 +823,7 @@ export function SettingsView({
                   <div>
                     <strong>Ambang Batas Ghosting (Hari)</strong>
                     <p className="setting-desc">
-                      Jumlah hari tanpa respon setelah lamaran dikirim sebelum sistem menandai peringatan tindak lanjut.
+                      Jumlah hari tanpa respons setelah lamaran dikirim sebelum sistem menandai peringatan tindak lanjut.
                     </p>
                   </div>
                   <div className="setting-control">
@@ -1615,7 +1615,7 @@ export function SettingsView({
                     <div>
                       <strong>Zero-Token Leakage Architecture</strong>
                       <p>
-                        Token OAuth Gmail (<code>accessToken</code> & <code>refreshToken</code>) dienkripsi dengan AES-256 saat tersimpan di disk dan otomatis dihapus dari respon HTTP sebelum dikirim ke browser.
+                        Token OAuth Gmail (<code>accessToken</code> & <code>refreshToken</code>) dienkripsi dengan AES-256 saat tersimpan di disk dan otomatis dihapus dari respons HTTP sebelum dikirim ke browser.
                       </p>
                     </div>
                   </div>

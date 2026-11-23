@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import type { Application, ApplicationDraft, Status } from '../../lib/pb-types';
 import { cn } from '../../lib/utils';
+import { useI18n } from '../../lib/i18n';
 
 export interface AddOpportunityModalProps {
   onClose: () => void;
@@ -22,6 +23,7 @@ export interface AddOpportunityModalProps {
 }
 
 export const AddOpportunityModal: React.FC<AddOpportunityModalProps> = ({ onClose, onAdd }) => {
+  const { t, locale } = useI18n();
   const [position, setPosition] = useState('');
   const [company, setCompany] = useState('');
   const [location, setLocation] = useState('Jakarta / Remote');
@@ -64,7 +66,7 @@ export const AddOpportunityModal: React.FC<AddOpportunityModalProps> = ({ onClos
   const handleSave = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (!company.trim() || !position.trim()) {
-      setError('Harap isi judul posisi pekerjaan dan nama perusahaan.');
+      setError(locale === 'id' ? 'Harap isi nama posisi pekerjaan dan nama perusahaan.' : 'Please enter the position title and company name.');
       return;
     }
     setError('');
@@ -135,7 +137,7 @@ export const AddOpportunityModal: React.FC<AddOpportunityModalProps> = ({ onClos
         onClose();
       }
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : 'Gagal menyimpan peluang karier');
+      setError(cause instanceof Error ? cause.message : (locale === 'id' ? 'Gagal menyimpan peluang karier' : 'Failed to save opportunity'));
     } finally {
       setBusy(false);
     }
@@ -146,7 +148,7 @@ export const AddOpportunityModal: React.FC<AddOpportunityModalProps> = ({ onClos
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-md select-none animate-fadeIn"
       role="dialog"
       aria-modal="true"
-      aria-label="Create new work item"
+      aria-label={t('modal.addWork.title')}
     >
       <div className="w-full max-w-xl max-h-[92vh] flex flex-col rounded-3xl bg-white dark:bg-[#151518] border border-zinc-200/90 dark:border-white/[0.08] shadow-2xl overflow-hidden animate-scaleUp">
         {/* 1. Header (Exact Cansaas Space Reference) */}
@@ -157,10 +159,10 @@ export const AddOpportunityModal: React.FC<AddOpportunityModalProps> = ({ onClos
             </div>
             <div>
               <h2 className="text-sm sm:text-base font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">
-                Create new work item
+                {t('modal.addWork.title')}
               </h2>
               <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                Turn your ideas into actionable tasks.
+                {t('modal.addWork.subtitle')}
               </p>
             </div>
           </div>
@@ -168,7 +170,7 @@ export const AddOpportunityModal: React.FC<AddOpportunityModalProps> = ({ onClos
             type="button"
             onClick={onClose}
             className="p-1.5 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors"
-            aria-label="Tutup"
+            aria-label={t('modal.addWork.discard')}
           >
             <X size={18} />
           </button>
@@ -179,7 +181,7 @@ export const AddOpportunityModal: React.FC<AddOpportunityModalProps> = ({ onClos
           {successToast && (
             <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-xs text-emerald-800 dark:text-emerald-200 flex items-center gap-2">
               <Sparkles size={14} className="text-emerald-600" />
-              <span>Lowongan berhasil disimpan ke pipeline. Silakan buat entri berikutnya!</span>
+              <span>{t('modal.addWork.successToast')}</span>
             </div>
           )}
 
@@ -193,7 +195,7 @@ export const AddOpportunityModal: React.FC<AddOpportunityModalProps> = ({ onClos
           <div>
             <div className="flex items-center justify-between mb-1.5">
               <label className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">
-                Title <span className="text-rose-500">*</span>
+                {t('modal.addWork.position')} <span className="text-rose-500">*</span>
               </label>
               <span className="text-[11px] font-mono text-zinc-400 dark:text-zinc-500">
                 {position.length}/100
@@ -205,7 +207,7 @@ export const AddOpportunityModal: React.FC<AddOpportunityModalProps> = ({ onClos
               maxLength={100}
               value={position}
               onChange={(e) => setPosition(e.target.value)}
-              placeholder="Enter a clear and descriptive title (misal: Senior Frontend Engineer)..."
+              placeholder={t('modal.addWork.positionPlaceholder')}
               className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/80 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium"
               required
             />
@@ -215,20 +217,20 @@ export const AddOpportunityModal: React.FC<AddOpportunityModalProps> = ({ onClos
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-semibold text-zinc-800 dark:text-zinc-200 mb-1.5">
-                Company <span className="text-rose-500">*</span>
+                {t('modal.addWork.company')} <span className="text-rose-500">*</span>
               </label>
               <input
                 type="text"
                 value={company}
                 onChange={(e) => setCompany(e.target.value)}
-                placeholder="Nama Perusahaan (misal: Google, Tokopedia)..."
+                placeholder={t('modal.addWork.companyPlaceholder')}
                 className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/80 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
                 required
               />
             </div>
             <div>
               <label className="block text-xs font-semibold text-zinc-800 dark:text-zinc-200 mb-1.5">
-                Location
+                {locale === 'id' ? 'Lokasi' : 'Location'}
               </label>
               <div className="relative">
                 <MapPin size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none" />
@@ -246,7 +248,7 @@ export const AddOpportunityModal: React.FC<AddOpportunityModalProps> = ({ onClos
           {/* Description / Notes with Embedded Formatting Toolbar */}
           <div>
             <label className="block text-xs font-semibold text-zinc-800 dark:text-zinc-200 mb-1.5">
-              Description
+              {t('modal.addWork.description')}
             </label>
             <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/80 overflow-hidden focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500 transition-all">
               {/* Rich-Text Toolbar */}
@@ -320,7 +322,7 @@ export const AddOpportunityModal: React.FC<AddOpportunityModalProps> = ({ onClos
                 rows={3}
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                placeholder="Add more details about this work item (catatan kualifikasi, deskripsi pekerjaan, dll)..."
+                placeholder={t('modal.addWork.descriptionPlaceholder')}
                 className="w-full px-3.5 py-2.5 text-xs bg-transparent text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none resize-none leading-relaxed"
               />
             </div>
@@ -330,7 +332,7 @@ export const AddOpportunityModal: React.FC<AddOpportunityModalProps> = ({ onClos
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-semibold text-zinc-800 dark:text-zinc-200 mb-1.5">
-                Priority
+                {t('modal.addWork.priority')}
               </label>
               <div className="relative">
                 <select
@@ -338,10 +340,10 @@ export const AddOpportunityModal: React.FC<AddOpportunityModalProps> = ({ onClos
                   onChange={(e) => setPriority(e.target.value as typeof priority)}
                   className="w-full pl-8 pr-8 py-2.5 text-xs rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/80 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 appearance-none transition-all font-medium cursor-pointer"
                 >
-                  <option value="Urgent">Urgent</option>
-                  <option value="High">High</option>
-                  <option value="Medium">Medium</option>
-                  <option value="Low">Low</option>
+                  <option value="Urgent">{t('modal.addWork.priorityUrgent')}</option>
+                  <option value="High">{t('modal.addWork.priorityHigh')}</option>
+                  <option value="Medium">{t('modal.addWork.priorityMedium')}</option>
+                  <option value="Low">{t('modal.addWork.priorityLow')}</option>
                 </select>
                 <span
                   className={cn(
@@ -361,7 +363,7 @@ export const AddOpportunityModal: React.FC<AddOpportunityModalProps> = ({ onClos
 
             <div>
               <label className="block text-xs font-semibold text-zinc-800 dark:text-zinc-200 mb-1.5">
-                Due Date
+                {t('modal.addWork.dueDate')}
               </label>
               <div className="relative">
                 <Calendar size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none" />
@@ -379,20 +381,22 @@ export const AddOpportunityModal: React.FC<AddOpportunityModalProps> = ({ onClos
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-semibold text-zinc-800 dark:text-zinc-200 mb-1.5">
-                Assignee
+                {t('modal.addWork.assignee')}
               </label>
               <div className="flex items-center gap-2 px-3 py-2 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40 text-xs text-zinc-800 dark:text-zinc-200 font-medium">
                 <div className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] font-bold">
                   <User size={11} />
                 </div>
                 <span className="truncate">Rizky Aryendi</span>
-                <span className="ml-auto text-[10px] text-zinc-400 font-mono">Owner</span>
+                <span className="ml-auto text-[10px] text-zinc-400 font-mono">
+                  {locale === 'id' ? 'Pemilik' : 'Owner'}
+                </span>
               </div>
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-zinc-800 dark:text-zinc-200 mb-1.5">
-                Cycle / Status Pipeline
+                {t('modal.addWork.cycle')}
               </label>
               <div className="relative">
                 <RefreshCw size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none" />
@@ -401,12 +405,12 @@ export const AddOpportunityModal: React.FC<AddOpportunityModalProps> = ({ onClos
                   onChange={(e) => setStatus(e.target.value as Status)}
                   className="w-full pl-8 pr-8 py-2.5 text-xs rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/80 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 appearance-none transition-all font-medium cursor-pointer"
                 >
-                  <option value="Wishlist">Wishlist (Rencana)</option>
-                  <option value="Applied">Applied (Terkirim)</option>
-                  <option value="Viewed">Viewed (Dilihat HR)</option>
-                  <option value="Screening">Screening (Panggilan)</option>
-                  <option value="Interview">Interview (Wawancara)</option>
-                  <option value="Offer">Offer (Penawaran)</option>
+                  <option value="Wishlist">{locale === 'id' ? 'Wishlist (Rencana)' : 'Wishlist (Planned)'}</option>
+                  <option value="Applied">{locale === 'id' ? 'Applied (Terkirim)' : 'Applied (Submitted)'}</option>
+                  <option value="Viewed">{locale === 'id' ? 'Viewed (Dilihat HR)' : 'Viewed (Reviewed by HR)'}</option>
+                  <option value="Screening">{locale === 'id' ? 'Screening (Panggilan)' : 'Screening (Screening)'}</option>
+                  <option value="Interview">{locale === 'id' ? 'Interview (Wawancara)' : 'Interview (Interview)'}</option>
+                  <option value="Offer">{locale === 'id' ? 'Offer (Penawaran)' : 'Offer (Offer)'}</option>
                 </select>
                 <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none" />
               </div>
@@ -417,22 +421,22 @@ export const AddOpportunityModal: React.FC<AddOpportunityModalProps> = ({ onClos
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
             <div>
               <label className="block text-xs font-semibold text-zinc-800 dark:text-zinc-200 mb-1.5">
-                Mode Kerja
+                {locale === 'id' ? 'Mode Kerja' : 'Work Mode'}
               </label>
               <select
                 value={mode}
                 onChange={(e) => setMode(e.target.value as Application['mode'])}
                 className="w-full px-3 py-2 text-xs rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/80 text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
               >
-                <option value="Remote">Remote (Kerja dari Mana Saja)</option>
-                <option value="Hybrid">Hybrid (Fleksibel Kantor/Rumah)</option>
-                <option value="On-site">On-site (Di Kantor Penuh)</option>
+                <option value="Remote">{locale === 'id' ? 'Remote (Kerja dari Mana Saja)' : 'Remote (Anywhere)'}</option>
+                <option value="Hybrid">{locale === 'id' ? 'Hybrid (Fleksibel Kantor/Rumah)' : 'Hybrid (Flexible Office/Home)'}</option>
+                <option value="On-site">{locale === 'id' ? 'On-site (Di Kantor Penuh)' : 'On-site (In Office)'}</option>
               </select>
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-zinc-800 dark:text-zinc-200 mb-1.5">
-                Perkiraan Gaji / Kompensasi
+                {locale === 'id' ? 'Perkiraan Gaji / Kompensasi' : 'Estimated Salary / Compensation'}
               </label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-zinc-400 font-mono pointer-events-none">
@@ -442,7 +446,7 @@ export const AddOpportunityModal: React.FC<AddOpportunityModalProps> = ({ onClos
                   type="text"
                   value={pay}
                   onChange={(e) => setPay(e.target.value)}
-                  placeholder="15.000.000 atau 135/hr..."
+                  placeholder={locale === 'id' ? '15.000.000 atau 135/hr...' : '15,000,000 or 135/hr...'}
                   className="w-full pl-9 pr-3 py-2 text-xs rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/80 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 font-mono"
                 />
               </div>
@@ -452,7 +456,7 @@ export const AddOpportunityModal: React.FC<AddOpportunityModalProps> = ({ onClos
           {/* Optional Link Lowongan */}
           <div>
             <label className="block text-xs font-semibold text-zinc-800 dark:text-zinc-200 mb-1.5">
-              Link Lowongan (URL / Job Board)
+              {locale === 'id' ? 'Tautan Lowongan (URL / Job Board)' : 'Job Listing Link (URL / Job Board)'}
             </label>
             <div className="relative">
               <Link2 size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none" />
@@ -460,7 +464,7 @@ export const AddOpportunityModal: React.FC<AddOpportunityModalProps> = ({ onClos
                 type="text"
                 value={link}
                 onChange={(e) => setLink(e.target.value)}
-                placeholder="https://www.linkedin.com/jobs/view/... atau portal karier"
+                placeholder={locale === 'id' ? 'https://www.linkedin.com/jobs/view/... atau portal karier' : 'https://www.linkedin.com/jobs/view/... or career portal'}
                 className="w-full pl-8 pr-3 py-2 text-xs rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/80 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 font-mono"
               />
             </div>
@@ -489,7 +493,7 @@ export const AddOpportunityModal: React.FC<AddOpportunityModalProps> = ({ onClos
               />
             </button>
             <span className="text-xs text-zinc-600 dark:text-zinc-300 font-medium">
-              Create more
+              {t('modal.addWork.createMore')}
             </span>
           </label>
 
@@ -499,7 +503,7 @@ export const AddOpportunityModal: React.FC<AddOpportunityModalProps> = ({ onClos
               onClick={onClose}
               className="px-4 py-2 text-xs font-semibold text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200 transition-colors"
             >
-              Discard
+              {t('modal.addWork.discard')}
             </button>
             <button
               type="button"
@@ -507,7 +511,7 @@ export const AddOpportunityModal: React.FC<AddOpportunityModalProps> = ({ onClos
               disabled={busy}
               className="px-5 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 text-xs font-semibold shadow-sm transition-all active:scale-[0.98] disabled:opacity-50"
             >
-              {busy ? 'Creating...' : 'Create Work Item'}
+              {busy ? (locale === 'id' ? 'Menyimpan...' : 'Saving...') : t('modal.addWork.submit')}
             </button>
           </div>
         </div>

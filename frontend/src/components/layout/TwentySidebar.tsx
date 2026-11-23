@@ -250,12 +250,12 @@ export const TwentySidebar: React.FC<TwentySidebarProps> = ({
             className={`flex items-center gap-2 px-2.5 py-1.5 text-xs text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200 bg-white dark:bg-zinc-800/60 border border-zinc-200/80 dark:border-zinc-700/60 rounded-md transition-all active:scale-[0.985] shadow-2xs ${
               isCollapsed ? 'w-full justify-center px-0' : 'flex-1'
             }`}
-            title="Pencarian Global (⌘K)"
+            title={`${t('sidebar.searchShortcut')} (⌘K)`}
           >
             <Search size={14} className="text-zinc-400" />
             {!isCollapsed && (
               <>
-                <span className="flex-1 text-left text-[11px]">Cari…</span>
+                <span className="flex-1 text-left text-[11px]">{t('sidebar.searchShortcut')}…</span>
                 <kbd className="text-[9px] font-mono bg-zinc-100 dark:bg-zinc-700 text-zinc-500 dark:text-zinc-300 px-1 py-0.5 rounded border border-zinc-200 dark:border-zinc-600">
                   ⌘K
                 </kbd>
@@ -267,8 +267,8 @@ export const TwentySidebar: React.FC<TwentySidebarProps> = ({
             <button
               onClick={onOpenAddModal}
               className="w-7 h-7 flex items-center justify-center rounded-md bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-900 shadow-2xs active:scale-[0.95] transition-all flex-shrink-0"
-              title="Tambah Lamaran Baru (N)"
-              aria-label="Tambah Lamaran Baru"
+              title={`${t('sidebar.createNewWork')} (N)`}
+              aria-label={t('sidebar.createNewWork')}
             >
               <Plus size={14} />
             </button>
@@ -280,13 +280,13 @@ export const TwentySidebar: React.FC<TwentySidebarProps> = ({
           <button
             onClick={onOpenAddModal}
             className="w-full flex items-center justify-between px-3 py-2 rounded-xl border border-zinc-200/90 dark:border-zinc-800 bg-white dark:bg-zinc-900/90 text-xs font-semibold text-zinc-800 dark:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800/80 shadow-2xs hover:shadow-xs active:scale-[0.985] transition-all"
-            title="Create New Work / Buat Peluang Baru (N)"
+            title={`${t('sidebar.createNewWork')} (N)`}
           >
             <span className="flex items-center gap-2">
               <span className="w-4 h-4 rounded-md bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-xs">
                 +
               </span>
-              <span>Create New Work</span>
+              <span>{t('sidebar.createNewWork')}</span>
             </span>
             <span className="text-[10px] font-mono text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded border border-zinc-200 dark:border-zinc-700">
               N
@@ -301,7 +301,7 @@ export const TwentySidebar: React.FC<TwentySidebarProps> = ({
           <div key={group.id} className="space-y-0.5">
             {!isCollapsed && (
               <div className="px-2 pt-1 pb-1 text-[10px] uppercase font-semibold text-zinc-400 dark:text-zinc-500 tracking-wider">
-                {group.fallbackTitle}
+                {t(group.titleKey) !== group.titleKey ? t(group.titleKey) : group.fallbackTitle}
               </div>
             )}
             {group.items.map((item) => {

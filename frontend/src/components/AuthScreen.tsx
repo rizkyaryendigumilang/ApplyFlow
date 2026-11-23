@@ -127,7 +127,7 @@ export function AuthScreen({ onPreview }: { onPreview: () => void }) {
           setNotice('Autentikasi dua faktor berhasil disetujui.');
           location.reload();
         } else {
-          throw new Error('Kode otentikasi tidak lengkap.');
+          throw new Error('Kode autentikasi tidak lengkap.');
         }
       } catch (cause) {
         setError(cause instanceof Error ? cause.message : 'Kode 2FA salah atau kedaluwarsa.');

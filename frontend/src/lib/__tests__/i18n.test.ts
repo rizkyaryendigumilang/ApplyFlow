@@ -34,6 +34,23 @@ test('translateKey supports settings language keys in both English and Indonesia
   assert.match(titleEn, /Language/i);
 });
 
+test('translateKey supports sidebar and topbar keys in both languages', () => {
+  const sbWorkId = translateKey('id', 'sidebar.workspace');
+  const sbWorkEn = translateKey('en', 'sidebar.workspace');
+  assert.equal(sbWorkId, 'Ruang Kerja');
+  assert.equal(sbWorkEn, 'Workspace');
+
+  const topNewId = translateKey('id', 'topbar.newOpportunity');
+  const topNewEn = translateKey('en', 'topbar.newOpportunity');
+  assert.equal(topNewId, 'Peluang Baru');
+  assert.equal(topNewEn, 'New Opportunity');
+
+  const modalTitleId = translateKey('id', 'modal.addWork.title');
+  const modalTitleEn = translateKey('en', 'modal.addWork.title');
+  assert.equal(modalTitleId, 'Buat Peluang Baru');
+  assert.equal(modalTitleEn, 'Create New Work Item');
+});
+
 test('DICTIONARY contains no em-dashes across all keys in both languages', () => {
   for (const lang of ['id', 'en'] as const) {
     const dict = DICTIONARY[lang];

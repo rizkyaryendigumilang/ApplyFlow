@@ -88,7 +88,7 @@ export function AnalyticsView({ applications, cvs }: AnalyticsViewProps) {
             </span>
           </div>
           <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1.5 leading-relaxed">
-            Metrik konversi tiap tahapan, rasio respon rekruter, efektivitas CV, dan distribusi penawaran gaji.
+            Metrik konversi tiap tahapan, rasio respons rekruter, efektivitas CV, dan distribusi penawaran gaji.
           </p>
         </div>
 
@@ -124,7 +124,7 @@ export function AnalyticsView({ applications, cvs }: AnalyticsViewProps) {
 
         <div className="p-5 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-[#18181b] shadow-2xs space-y-1">
           <span className="text-[10px] font-mono uppercase font-semibold text-zinc-400 tracking-wider block">
-            Rasio Respon Rekruter
+            Rasio Respons Rekruter
           </span>
           <b className="font-mono text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 block">
             {overallResponseRate}%
@@ -222,7 +222,7 @@ export function AnalyticsView({ applications, cvs }: AnalyticsViewProps) {
                   <b className="font-mono text-sm font-bold text-zinc-900 dark:text-zinc-100 block tabular-nums">
                     {responseRate(cv.responses, cv.applications)}%
                   </b>
-                  <span className="text-[10px] text-zinc-400 block font-mono">respon</span>
+                  <span className="text-[10px] text-zinc-400 block font-mono">respons</span>
                 </div>
               </div>
             ))}

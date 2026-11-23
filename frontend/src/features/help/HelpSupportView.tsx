@@ -30,7 +30,7 @@ const FAQS: FaqItem[] = [
     category: 'sync',
     question: 'Bagaimana sistem keamanan membaca email JobStreet?',
     answer:
-      'Sinkronisasi menggunakan OAuth 2.0 Gmail dengan izin read-only terbatas. Token akses dienkripsi menggunakan AES-256 pada database server dan dihapus dari respon HTTP ke browser demi privasi penuh.',
+      'Sinkronisasi menggunakan OAuth 2.0 Gmail dengan izin read-only terbatas. Token akses dienkripsi menggunakan AES-256 pada database server dan dihapus dari respons HTTP ke browser demi privasi penuh.',
   },
   {
     id: 'faq-3',

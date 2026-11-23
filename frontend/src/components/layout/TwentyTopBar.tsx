@@ -94,7 +94,7 @@ export const TwentyTopBar: React.FC<TwentyTopBarProps> = ({
         <button
           onClick={onOpenMobileSidebar}
           className="md:hidden p-1.5 rounded-md text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:text-zinc-100 dark:hover:bg-zinc-800 active:scale-[0.95] transition-all"
-          aria-label="Buka menu navigasi"
+          aria-label={locale === 'id' ? 'Buka menu navigasi' : 'Open navigation menu'}
         >
           <Menu size={18} />
         </button>
@@ -114,18 +114,18 @@ export const TwentyTopBar: React.FC<TwentyTopBarProps> = ({
             <button
               onClick={() => onViewChange('board')}
               className={`arc-pill-button ${view === 'board' ? 'active' : ''}`}
-              title="Tampilan Papan Kanban"
+              title={t('topbar.viewBoard')}
             >
               <LayoutGrid size={12} />
-              <span>Board</span>
+              <span>{t('topbar.viewBoard')}</span>
             </button>
             <button
               onClick={() => onViewChange('table')}
               className={`arc-pill-button ${view === 'table' ? 'active' : ''}`}
-              title="Tampilan Tabel Spreadsheet"
+              title={t('topbar.viewTable')}
             >
               <List size={12} />
-              <span>Table</span>
+              <span>{t('topbar.viewTable')}</span>
             </button>
           </div>
         )}
@@ -137,7 +137,7 @@ export const TwentyTopBar: React.FC<TwentyTopBarProps> = ({
             <input
               ref={searchInputRef}
               type="text"
-              placeholder="Cari lowongan atau perusahaan..."
+              placeholder={locale === 'id' ? 'Cari lowongan atau perusahaan...' : 'Search jobs or companies...'}
               value={query}
               onChange={(e) => onQueryChange(e.target.value)}
               className="w-48 lg:w-60 pl-8 pr-7 py-1 text-xs bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200/80 dark:border-zinc-700/70 rounded-md text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-400 dark:focus:ring-zinc-600 transition-all font-sans"
@@ -154,7 +154,7 @@ export const TwentyTopBar: React.FC<TwentyTopBarProps> = ({
         {/* Bencho live status ping indicator */}
         <div
           className="hidden lg:flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono text-zinc-500 dark:text-zinc-400 bg-zinc-100/70 dark:bg-zinc-800/60 border border-zinc-200/60 dark:border-zinc-700/50"
-          title={loading ? 'Menyinkronkan data...' : 'PocketBase tersambung dan aktif'}
+          title={loading ? t('nav.syncing') : t('nav.syncReady')}
         >
           <span className="bencho-live-dot">
             {loading ? (
@@ -192,7 +192,7 @@ export const TwentyTopBar: React.FC<TwentyTopBarProps> = ({
           type="button"
           onClick={toggleTheme}
           className="p-1.5 rounded-md text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 active:scale-[0.95] transition-all border border-transparent hover:border-zinc-200/60 dark:hover:border-zinc-700/60"
-          title={isDark ? 'Ganti ke Mode Terang' : 'Ganti ke Mode Gelap HorizonX'}
+          title={isDark ? t('topbar.themeLight') : t('topbar.themeDark')}
           aria-label="Toggle theme mode"
         >
           {isDark ? (
@@ -206,8 +206,8 @@ export const TwentyTopBar: React.FC<TwentyTopBarProps> = ({
         <button
           onClick={onOpenNotifications}
           className="relative p-1.5 rounded-md text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 active:scale-[0.95] transition-all"
-          title="Notifikasi"
-          aria-label="Buka notifikasi"
+          title={t('nav.notifications')}
+          aria-label={t('nav.notifications')}
         >
           <Bell size={16} />
           {unreadAlertsCount > 0 && (
@@ -221,8 +221,8 @@ export const TwentyTopBar: React.FC<TwentyTopBarProps> = ({
         <button
           onClick={onOpenShortcuts}
           className="hidden sm:flex items-center gap-1 p-1.5 rounded-md text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800 active:scale-[0.95] transition-all"
-          title="Pintasan Keyboard (?)"
-          aria-label="Pintasan Keyboard"
+          title={`${t('topbar.shortcutsTitle')} (?)`}
+          aria-label={t('topbar.shortcutsTitle')}
         >
           <Command size={14} />
           <span className="bencho-kbd hidden xl:inline-flex">?</span>
@@ -232,11 +232,11 @@ export const TwentyTopBar: React.FC<TwentyTopBarProps> = ({
         <button
           onClick={onOpenAddModal}
           className="flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-white dark:hover:bg-zinc-100 dark:text-zinc-950 rounded-md text-xs font-semibold shadow-2xs active:scale-[0.975] transition-all"
-          title="Tambah Peluang Karier Baru (N)"
+          title={`${t('topbar.newOpportunity')} (N)`}
         >
           <Plus size={14} />
-          <span className="hidden sm:inline">Peluang Baru</span>
-          <span className="sm:hidden">Baru</span>
+          <span className="hidden sm:inline">{t('topbar.newOpportunity')}</span>
+          <span className="sm:hidden">{t('topbar.newShort')}</span>
           <span className="bencho-kbd hidden 2xl:inline-flex bg-zinc-800 text-zinc-300 dark:bg-zinc-200 dark:text-zinc-700 border-zinc-700 dark:border-zinc-300">
             N
           </span>

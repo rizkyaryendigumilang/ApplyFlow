@@ -94,7 +94,7 @@ export function FollowUpModal({ application, onClose, onLogFollowUp }: FollowUpM
 
         <p className="muted" style={{ marginBottom: 18 }}>
           Kirim tindak lanjut terukur untuk <b>{application.position}</b> di <b>{application.company}</b>{' '}
-          (menunggu respon {daysWaiting} hari).
+          (menunggu respons {daysWaiting} hari).
         </p>
 
         {/* Control Bar: Channel, Language, Tone */}

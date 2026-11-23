@@ -72,6 +72,56 @@ export const DICTIONARY: Record<Locale, Record<string, string>> = {
     'cockpit.prioritySubtitle': 'Lowongan yang membutuhkan keputusan atau langkah selanjutnya',
     'cockpit.viewDetails': 'Buka Detail',
     'cockpit.noApplications': 'Belum ada lamaran aktif. Tambahkan lowongan pertama Anda sekarang.',
+
+    // Sidebar Groups & Actions
+    'sidebar.workspace': 'Ruang Kerja',
+    'sidebar.tools': 'Alat & Pertumbuhan',
+    'sidebar.admin': 'Pengaturan & Admin',
+    'sidebar.createNewWork': 'Buat Peluang Baru',
+    'sidebar.searchShortcut': 'Cari cepat',
+
+    // TopBar
+    'topbar.viewBoard': 'Papan',
+    'topbar.viewTable': 'Tabel',
+    'topbar.newOpportunity': 'Peluang Baru',
+    'topbar.newShort': 'Baru',
+    'topbar.shortcutsTitle': 'Pintasan Keyboard',
+    'topbar.themeDark': 'Ganti ke Mode Gelap',
+    'topbar.themeLight': 'Ganti ke Mode Terang',
+
+    // Add Opportunity Modal
+    'modal.addWork.title': 'Buat Peluang Baru',
+    'modal.addWork.subtitle': 'Ubah peluang karier Anda menjadi langkah nyata.',
+    'modal.addWork.position': 'Nama Posisi',
+    'modal.addWork.positionPlaceholder': 'Masukkan nama posisi yang jelas (misal: Technical Consultant Analyst)...',
+    'modal.addWork.company': 'Perusahaan',
+    'modal.addWork.companyPlaceholder': 'Contoh: PT Bank Central Asia, Tokopedia...',
+    'modal.addWork.description': 'Deskripsi & Catatan',
+    'modal.addWork.descriptionPlaceholder': 'Tambahkan rincian mengenai peluang, keterampilan yang dibutuhkan, atau catatan penting...',
+    'modal.addWork.priority': 'Prioritas',
+    'modal.addWork.priorityUrgent': 'Mendesak',
+    'modal.addWork.priorityHigh': 'Tinggi',
+    'modal.addWork.priorityMedium': 'Sedang',
+    'modal.addWork.priorityLow': 'Rendah',
+    'modal.addWork.dueDate': 'Batas Waktu',
+    'modal.addWork.assignee': 'Penanggung Jawab',
+    'modal.addWork.cycle': 'Gelombang Seleksi',
+    'modal.addWork.createMore': 'Buat lagi',
+    'modal.addWork.discard': 'Batal',
+    'modal.addWork.submit': 'Simpan Peluang',
+    'modal.addWork.successToast': 'Lowongan berhasil disimpan ke pipeline. Silakan buat entri berikutnya!',
+
+    // Bento Analytics
+    'bento.priorityTitle': 'Sebaran Prioritas',
+    'bento.priorityDesc': 'Sebaran intensitas dan urgensi peluang kerja di radar Anda.',
+    'bento.liveChart': 'Grafik Langsung',
+    'bento.workStatusTitle': 'Status Lamaran',
+    'bento.totalLabel': 'Total',
+    'bento.insightTitle': 'Pantau Perkembangan Lamaran',
+    'bento.insightDesc': 'Sistem memantau pergerakan lamaran harian Anda agar peluang penawaran kerja maksimal.',
+    'bento.recentActivityTitle': 'Aktivitas Terkini',
+    'bento.recentActivityLive': 'Log Langsung',
+    'bento.focusNextTitle': 'Fokus Tindakan Selanjutnya',
   },
   en: {
     // Navigation & Shell
@@ -140,6 +190,56 @@ export const DICTIONARY: Record<Locale, Record<string, string>> = {
     'cockpit.prioritySubtitle': 'Roles requiring upcoming decisions or direct action',
     'cockpit.viewDetails': 'View Details',
     'cockpit.noApplications': 'No active applications found. Add your first opportunity now.',
+
+    // Sidebar Groups & Actions
+    'sidebar.workspace': 'Workspace',
+    'sidebar.tools': 'Tools & Growth',
+    'sidebar.admin': 'Settings & Admin',
+    'sidebar.createNewWork': 'Create New Work',
+    'sidebar.searchShortcut': 'Quick search',
+
+    // TopBar
+    'topbar.viewBoard': 'Board',
+    'topbar.viewTable': 'Table',
+    'topbar.newOpportunity': 'New Opportunity',
+    'topbar.newShort': 'New',
+    'topbar.shortcutsTitle': 'Keyboard Shortcuts',
+    'topbar.themeDark': 'Switch to Dark Mode',
+    'topbar.themeLight': 'Switch to Light Mode',
+
+    // Add Opportunity Modal
+    'modal.addWork.title': 'Create New Work Item',
+    'modal.addWork.subtitle': 'Turn your career leads into actionable tasks.',
+    'modal.addWork.position': 'Position Title',
+    'modal.addWork.positionPlaceholder': 'Enter a clear and descriptive title...',
+    'modal.addWork.company': 'Company Name',
+    'modal.addWork.companyPlaceholder': 'e.g. Acme Corp, Stripe...',
+    'modal.addWork.description': 'Description & Notes',
+    'modal.addWork.descriptionPlaceholder': 'Add more details about this work item, required skills, or notes...',
+    'modal.addWork.priority': 'Priority',
+    'modal.addWork.priorityUrgent': 'Urgent',
+    'modal.addWork.priorityHigh': 'High',
+    'modal.addWork.priorityMedium': 'Medium',
+    'modal.addWork.priorityLow': 'Low',
+    'modal.addWork.dueDate': 'Due Date',
+    'modal.addWork.assignee': 'Assignee',
+    'modal.addWork.cycle': 'Hiring Cycle',
+    'modal.addWork.createMore': 'Create more',
+    'modal.addWork.discard': 'Discard',
+    'modal.addWork.submit': 'Create Work Item',
+    'modal.addWork.successToast': 'Opportunity saved to pipeline successfully. Ready for next entry!',
+
+    // Bento Analytics
+    'bento.priorityTitle': 'Priority Distribution',
+    'bento.priorityDesc': 'Intensity and urgency distribution of active opportunities in your radar.',
+    'bento.liveChart': 'Live Chart',
+    'bento.workStatusTitle': 'Application Status',
+    'bento.totalLabel': 'Total',
+    'bento.insightTitle': 'See how your applications progress',
+    'bento.insightDesc': 'AI monitors your daily momentum to maximize conversion into job offers.',
+    'bento.recentActivityTitle': 'Recent Activity',
+    'bento.recentActivityLive': 'Live Logs',
+    'bento.focusNextTitle': 'Focus Next',
   },
 };
 

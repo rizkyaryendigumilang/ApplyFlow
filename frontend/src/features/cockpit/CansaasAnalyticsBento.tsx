@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import type { Application } from '../../lib/pb-types';
 import { cn } from '../../lib/utils';
+import { useI18n } from '../../lib/i18n';
 
 interface CansaasAnalyticsBentoProps {
   applications: Application[];
@@ -25,6 +26,8 @@ export const CansaasAnalyticsBento: React.FC<CansaasAnalyticsBentoProps> = ({
   onNavigateTo,
   onOpenAddModal,
 }) => {
+  const { t, locale } = useI18n();
+
   // 1. Data calculation for Priority Distribution Bar Chart
   const totalApps = Math.max(1, applications.length);
 
@@ -45,11 +48,18 @@ export const CansaasAnalyticsBento: React.FC<CansaasAnalyticsBentoProps> = ({
     (a) => a.status === 'Viewed' || a.status === 'Offer'
   ).length || Math.max(1, Math.floor(applications.length * 0.15));
 
+  const priorityLabels = {
+    Urgent: t('modal.addWork.priorityUrgent'),
+    High: t('modal.addWork.priorityHigh'),
+    Medium: t('modal.addWork.priorityMedium'),
+    Low: t('modal.addWork.priorityLow'),
+  };
+
   const priorityData = [
-    { label: 'Urgent', count: urgentCount, heightPct: 45 },
-    { label: 'High', count: highCount, heightPct: 78, isHighlight: true },
-    { label: 'Medium', count: mediumCount, heightPct: 35 },
-    { label: 'Low', count: lowCount, heightPct: 22 },
+    { key: 'Urgent', label: priorityLabels.Urgent, count: urgentCount, heightPct: 45 },
+    { key: 'High', label: priorityLabels.High, count: highCount, heightPct: 78, isHighlight: true },
+    { key: 'Medium', label: priorityLabels.Medium, count: mediumCount, heightPct: 35 },
+    { key: 'Low', label: priorityLabels.Low, count: lowCount, heightPct: 22 },
   ];
 
   const [hoveredBar, setHoveredBar] = useState<number | null>(1); // Default highlight High
@@ -65,11 +75,18 @@ export const CansaasAnalyticsBento: React.FC<CansaasAnalyticsBentoProps> = ({
   const radius = 42;
   const circumference = 2 * Math.PI * radius; // ~263.89
 
+  const stageLabels: Record<string, string> = {
+    Applied: locale === 'id' ? 'Terkirim' : 'Applied',
+    Interview: locale === 'id' ? 'Wawancara' : 'Interview',
+    Screening: locale === 'id' ? 'Skrining' : 'Screening',
+    Offer: locale === 'id' ? 'Penawaran' : 'Offer',
+  };
+
   const segments = [
-    { name: 'Applied', count: appliedCount, color: '#3b82f6' }, // Blue
-    { name: 'Interview', count: interviewCount, color: '#10b981' }, // Green
-    { name: 'Screening', count: screeningCount, color: '#f59e0b' }, // Amber
-    { name: 'Offer', count: offerCount, color: '#ec4899' }, // Pink
+    { name: stageLabels.Applied, count: appliedCount, color: '#3b82f6' }, // Blue
+    { name: stageLabels.Interview, count: interviewCount, color: '#10b981' }, // Green
+    { name: stageLabels.Screening, count: screeningCount, color: '#f59e0b' }, // Amber
+    { name: stageLabels.Offer, count: offerCount, color: '#ec4899' }, // Pink
   ];
 
   let currentOffset = 0;
@@ -83,10 +100,30 @@ export const CansaasAnalyticsBento: React.FC<CansaasAnalyticsBentoProps> = ({
 
   // 3. Interactive Checklist for Focus Next
   const [tasks, setTasks] = useState([
-    { id: 1, label: 'Kirim follow-up lamaran tanpa respon > 7 hari', done: false },
-    { id: 2, label: 'Pindai 5 lowongan baru di Auto Job Scout', done: true },
-    { id: 3, label: 'Uji kecocokan CV di Job Hunter Engine', done: false },
-    { id: 4, label: 'Simulasi pertanyaan interview STAR dengan AI Coach', done: false },
+    {
+      id: 1,
+      labelId: 'Kirim tindak lanjut lamaran tanpa respons > 7 hari',
+      labelEn: 'Follow up on applications with no response > 7 days',
+      done: false,
+    },
+    {
+      id: 2,
+      labelId: 'Pindai 5 lowongan baru di Auto Job Scout',
+      labelEn: 'Scan 5 new vacancies in Auto Job Scout',
+      done: true,
+    },
+    {
+      id: 3,
+      labelId: 'Uji kecocokan CV di Job Hunter Engine',
+      labelEn: 'Evaluate CV match score in Job Hunter Engine',
+      done: false,
+    },
+    {
+      id: 4,
+      labelId: 'Simulasi pertanyaan wawancara STAR dengan AI Coach',
+      labelEn: 'Simulate STAR interview questions with AI Coach',
+      done: false,
+    },
   ]);
 
   const toggleTask = (id: number) => {
@@ -105,14 +142,14 @@ export const CansaasAnalyticsBento: React.FC<CansaasAnalyticsBentoProps> = ({
           <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800/80">
             <div>
               <h3 className="text-xs sm:text-sm font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">
-                Priority Distribution
+                {t('bento.priorityTitle')}
               </h3>
               <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">
-                Sebaran intensitas dan urgensi peluang kerja di radar Anda.
+                {t('bento.priorityDesc')}
               </p>
             </div>
             <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border border-blue-200/80 dark:border-blue-800/80">
-              Live Chart
+              {t('bento.liveChart')}
             </span>
           </div>
 
@@ -134,17 +171,21 @@ export const CansaasAnalyticsBento: React.FC<CansaasAnalyticsBentoProps> = ({
                 const isHovered = hoveredBar === idx;
                 return (
                   <div
-                    key={item.label}
+                    key={item.key}
                     className="flex flex-col items-center h-full justify-end relative cursor-pointer group"
                     onMouseEnter={() => setHoveredBar(idx)}
                   >
                     {/* Floating Tooltip */}
                     {isHovered && (
                       <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 px-3 py-1.5 rounded-xl shadow-lg border border-zinc-200/90 dark:border-zinc-700 text-xs whitespace-nowrap z-20 pointer-events-none animate-fadeIn">
-                        <div className="text-[10px] text-zinc-400 font-medium">Total Project</div>
+                        <div className="text-[10px] text-zinc-400 font-medium">
+                          {locale === 'id' ? 'Total Peluang' : 'Total Opportunities'}
+                        </div>
                         <div className="font-bold text-[11px] flex items-center gap-1.5">
                           <span className="w-2 h-2 rounded-full bg-blue-600" />
-                          {item.label} Priority: {item.count}
+                          {locale === 'id'
+                            ? `Prioritas ${item.label}: ${item.count}`
+                            : `${item.label} Priority: ${item.count}`}
                         </div>
                       </div>
                     )}
@@ -181,13 +222,16 @@ export const CansaasAnalyticsBento: React.FC<CansaasAnalyticsBentoProps> = ({
         {/* Card Footer */}
         <div className="pt-3 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between text-xs">
           <span className="text-zinc-500 dark:text-zinc-400 text-[11px]">
-            Target fokus utama: <strong className="text-blue-600 dark:text-blue-400">High Priority ({highCount})</strong>
+            {locale === 'id' ? 'Target fokus utama: ' : 'Primary focus target: '}
+            <strong className="text-blue-600 dark:text-blue-400">
+              {priorityLabels.High} ({highCount})
+            </strong>
           </span>
           <button
             onClick={() => onNavigateTo('pipeline')}
             className="text-xs font-semibold text-zinc-800 dark:text-zinc-200 hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-1 transition-colors"
           >
-            Lihat di Pipeline <ArrowRight size={12} />
+            {locale === 'id' ? 'Lihat di Pipeline' : 'View in Pipeline'} <ArrowRight size={12} />
           </button>
         </div>
       </div>
@@ -200,17 +244,19 @@ export const CansaasAnalyticsBento: React.FC<CansaasAnalyticsBentoProps> = ({
           <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800/80">
             <div>
               <h3 className="text-xs sm:text-sm font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">
-                Work Status
+                {t('bento.workStatusTitle')}
               </h3>
               <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">
-                Distribusi rasio tahapan lamaran aktif.
+                {locale === 'id'
+                  ? 'Distribusi rasio tahapan lamaran aktif.'
+                  : 'Distribution ratio of active application stages.'}
               </p>
             </div>
             <button
               onClick={onOpenAddModal}
               className="text-[11px] font-semibold text-blue-600 dark:text-blue-400 hover:underline"
             >
-              + Baru
+              {locale === 'id' ? '+ Baru' : '+ New'}
             </button>
           </div>
 
@@ -249,7 +295,7 @@ export const CansaasAnalyticsBento: React.FC<CansaasAnalyticsBentoProps> = ({
               {/* Center Total Count */}
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                 <span className="text-[10px] uppercase font-bold text-zinc-400 tracking-wider">
-                  Total
+                  {t('bento.totalLabel')}
                 </span>
                 <span className="text-2xl font-bold font-mono text-zinc-900 dark:text-zinc-100 tracking-tight">
                   {donutTotal}
@@ -279,10 +325,10 @@ export const CansaasAnalyticsBento: React.FC<CansaasAnalyticsBentoProps> = ({
           </span>
           <div className="text-xs">
             <div className="font-bold text-zinc-900 dark:text-zinc-100">
-              See how your work progresses
+              {t('bento.insightTitle')}
             </div>
             <div className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5 leading-relaxed">
-              AI mendeteksi 3 lamaran berada di tahap wawancara. Pertahankan respons harian untuk memaksimalkan peluang offer.
+              {t('bento.insightDesc')}
             </div>
           </div>
         </div>
@@ -299,37 +345,51 @@ export const CansaasAnalyticsBento: React.FC<CansaasAnalyticsBentoProps> = ({
                 <Clock size={14} />
               </span>
               <h3 className="text-xs sm:text-sm font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">
-                Recent Activity
+                {t('bento.recentActivityTitle')}
               </h3>
             </div>
-            <span className="text-[11px] text-zinc-400 font-mono">Live Logs</span>
+            <span className="text-[11px] text-zinc-400 font-mono">
+              {t('bento.recentActivityLive')}
+            </span>
           </div>
 
           <div className="mt-3.5 space-y-3">
             {[
               {
                 icon: '🎨',
-                title: 'Update UI Components & Design System',
-                time: '5 min ago',
-                desc: 'Pembaruan antarmuka Cansaas Space & HorizonX selesai diterapkan.',
+                title: locale === 'id' ? 'Pembaruan Komponen UI & Desain' : 'Update UI Components & Design System',
+                time: locale === 'id' ? '5 mnt lalu' : '5 min ago',
+                desc:
+                  locale === 'id'
+                    ? 'Pembaruan antarmuka Cansaas Space & HorizonX selesai diterapkan.'
+                    : 'Cansaas Space & HorizonX UI refresh applied successfully.',
               },
               {
                 icon: '🚀',
-                title: 'Kirim Lamaran ApplyFlow ke PT Tech',
-                time: '1 hour ago',
-                desc: 'Email lamaran terarah berhasil dikirim via ApplyFlow Studio.',
+                title: locale === 'id' ? 'Kirim Lamaran ApplyFlow ke PT Tech' : 'Send ApplyFlow Application to Tech Corp',
+                time: locale === 'id' ? '1 jam lalu' : '1 hour ago',
+                desc:
+                  locale === 'id'
+                    ? 'Email lamaran terarah berhasil dikirim via ApplyFlow Studio.'
+                    : 'Targeted application email sent via ApplyFlow Studio.',
               },
               {
                 icon: '💼',
-                title: 'Jadwal Screening HR Tokopedia',
-                time: 'Yesterday',
-                desc: 'Undangan wawancara tersimpan di kalender .ics.',
+                title: locale === 'id' ? 'Jadwal Skrining HR Tokopedia' : 'HR Screening Schedule Tokopedia',
+                time: locale === 'id' ? 'Kemarin' : 'Yesterday',
+                desc:
+                  locale === 'id'
+                    ? 'Undangan wawancara tersimpan di kalender .ics.'
+                    : 'Interview invitation saved to .ics calendar.',
               },
               {
                 icon: '🎯',
-                title: 'Pindai 6 Lowongan Baru di Auto Job Scout',
-                time: '2 days ago',
-                desc: 'Kecocokan kualifikasi terdeteksi 95% untuk posisi Tech Consultant.',
+                title: locale === 'id' ? 'Pindai 6 Lowongan Baru di Auto Job Scout' : 'Scan 6 New Jobs in Auto Job Scout',
+                time: locale === 'id' ? '2 hari lalu' : '2 days ago',
+                desc:
+                  locale === 'id'
+                    ? 'Kecocokan kualifikasi terdeteksi 95% untuk posisi Tech Consultant.'
+                    : '95% qualification match detected for Tech Consultant role.',
               },
             ].map((act, i) => (
               <div
@@ -360,7 +420,7 @@ export const CansaasAnalyticsBento: React.FC<CansaasAnalyticsBentoProps> = ({
             onClick={() => onNavigateTo('pipeline')}
             className="w-full py-1 text-center text-xs font-semibold text-zinc-600 dark:text-zinc-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
           >
-            Lihat Seluruh Riwayat Aktivitas →
+            {locale === 'id' ? 'Lihat Seluruh Riwayat Aktivitas →' : 'View All Activity History →'}
           </button>
         </div>
       </div>
@@ -376,11 +436,11 @@ export const CansaasAnalyticsBento: React.FC<CansaasAnalyticsBentoProps> = ({
                 <Target size={14} />
               </span>
               <h3 className="text-xs sm:text-sm font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">
-                Focus Next
+                {t('bento.focusNextTitle')}
               </h3>
             </div>
             <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 font-mono">
-              {tasks.filter((t) => t.done).length}/{tasks.length} Selesai
+              {tasks.filter((t) => t.done).length}/{tasks.length} {locale === 'id' ? 'Selesai' : 'Completed'}
             </span>
           </div>
 
@@ -407,7 +467,7 @@ export const CansaasAnalyticsBento: React.FC<CansaasAnalyticsBentoProps> = ({
                     task.done ? 'line-through text-zinc-400 dark:text-zinc-500' : ''
                   )}
                 >
-                  {task.label}
+                  {locale === 'id' ? task.labelId : task.labelEn}
                 </span>
               </div>
             ))}
@@ -415,12 +475,14 @@ export const CansaasAnalyticsBento: React.FC<CansaasAnalyticsBentoProps> = ({
         </div>
 
         <div className="pt-3 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between text-xs">
-          <span className="text-zinc-400 text-[11px]">Centang untuk menyelesaikan aksi harian.</span>
+          <span className="text-zinc-400 text-[11px]">
+            {locale === 'id' ? 'Centang untuk menyelesaikan aksi harian.' : 'Check off to complete daily actions.'}
+          </span>
           <button
             onClick={() => onNavigateTo('jobscout')}
             className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline"
           >
-            Buka Auto Job Scout →
+            {locale === 'id' ? 'Buka Auto Job Scout →' : 'Open Auto Job Scout →'}
           </button>
         </div>
       </div>
