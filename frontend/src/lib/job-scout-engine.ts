@@ -1,6 +1,27 @@
 import type { CandidateProfile } from './pb-types';
 
-export type JobPlatform = 'Jobstreet' | 'LinkedIn' | 'Glints' | 'Kalibrr' | 'Indeed' | 'Dealls' | 'Other';
+export type JobPlatform =
+  | 'Jobstreet'
+  | 'LinkedIn'
+  | 'Glints'
+  | 'Kalibrr'
+  | 'Indeed'
+  | 'Dealls'
+  | 'Greenhouse'
+  | 'Lever'
+  | 'Workday'
+  | 'Other';
+
+export interface ExtractedJobLink {
+  id: string;
+  url: string;
+  title: string;
+  company: string;
+  platform: JobPlatform;
+  domain: string;
+  createdAt: string;
+  notes?: string;
+}
 
 export interface JobPlatformPreset {
   id: string;
@@ -192,22 +213,28 @@ export function buildCustomPlatformSearchUrl(
 export function parseJobUrlHeuristics(url: string): {
   isValid: boolean;
   platform: JobPlatform;
+  domain: string;
+  cleanUrl: string;
   suggestedTitle?: string;
   suggestedCompany?: string;
 } {
   const trimmed = url.trim();
   if (!trimmed || !/^https?:\/\//i.test(trimmed)) {
-    return { isValid: false, platform: 'Other' };
+    return { isValid: false, platform: 'Other', domain: '', cleanUrl: trimmed };
   }
 
   try {
     const parsed = new URL(trimmed);
     const host = parsed.hostname.toLowerCase();
+    const domain = host.replace(/^www\./, '');
+    const cleanUrl = trimmed;
 
     if (host.includes('jobstreet')) {
       return {
         isValid: true,
         platform: 'Jobstreet',
+        domain,
+        cleanUrl,
         suggestedTitle: extractSlugHeuristic(parsed.pathname),
       };
     }
@@ -216,6 +243,8 @@ export function parseJobUrlHeuristics(url: string): {
       return {
         isValid: true,
         platform: 'LinkedIn',
+        domain,
+        cleanUrl,
       };
     }
 
@@ -223,6 +252,8 @@ export function parseJobUrlHeuristics(url: string): {
       return {
         isValid: true,
         platform: 'Glints',
+        domain,
+        cleanUrl,
         suggestedTitle: extractSlugHeuristic(parsed.pathname),
       };
     }
@@ -231,6 +262,65 @@ export function parseJobUrlHeuristics(url: string): {
       return {
         isValid: true,
         platform: 'Kalibrr',
+        domain,
+        cleanUrl,
+        suggestedTitle: extractSlugHeuristic(parsed.pathname),
+      };
+    }
+
+    if (host.includes('indeed')) {
+      return {
+        isValid: true,
+        platform: 'Indeed',
+        domain,
+        cleanUrl,
+      };
+    }
+
+    if (host.includes('dealls')) {
+      return {
+        isValid: true,
+        platform: 'Dealls',
+        domain,
+        cleanUrl,
+        suggestedTitle: extractSlugHeuristic(parsed.pathname),
+      };
+    }
+
+    if (host.includes('greenhouse.io')) {
+      const segments = parsed.pathname.split('/').filter(Boolean);
+      const companySlug = segments[0] || '';
+      return {
+        isValid: true,
+        platform: 'Greenhouse',
+        domain,
+        cleanUrl,
+        suggestedCompany: formatCompanySlug(companySlug),
+        suggestedTitle: extractSlugHeuristic(parsed.pathname),
+      };
+    }
+
+    if (host.includes('lever.co')) {
+      const segments = parsed.pathname.split('/').filter(Boolean);
+      const companySlug = segments[0] || '';
+      return {
+        isValid: true,
+        platform: 'Lever',
+        domain,
+        cleanUrl,
+        suggestedCompany: formatCompanySlug(companySlug),
+        suggestedTitle: extractSlugHeuristic(parsed.pathname),
+      };
+    }
+
+    if (host.includes('myworkdayjobs.com') || host.includes('workday.com')) {
+      const sub = host.split('.')[0] || '';
+      return {
+        isValid: true,
+        platform: 'Workday',
+        domain,
+        cleanUrl,
+        suggestedCompany: formatCompanySlug(sub),
         suggestedTitle: extractSlugHeuristic(parsed.pathname),
       };
     }
@@ -238,10 +328,71 @@ export function parseJobUrlHeuristics(url: string): {
     return {
       isValid: true,
       platform: 'Other',
+      domain,
+      cleanUrl,
+      suggestedTitle: extractSlugHeuristic(parsed.pathname),
     };
   } catch {
-    return { isValid: false, platform: 'Other' };
+    return { isValid: false, platform: 'Other', domain: '', cleanUrl: trimmed };
   }
+}
+
+function formatCompanySlug(slug: string): string | undefined {
+  if (!slug) return undefined;
+  const clean = slug.replace(/[-_]/g, ' ').trim();
+  if (clean.length < 2 || clean.length > 40) return undefined;
+  return clean
+    .split(' ')
+    .filter(Boolean)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
+}
+
+/**
+ * Extracts and parses all job URLs found in a text block (single URL, multiple lines, or mixed text)
+ */
+export function parseBatchJobUrls(rawText: string): ExtractedJobLink[] {
+  if (!rawText || !rawText.trim()) return [];
+
+  const urlRegex = /(https?:\/\/[^\s<>"'`{}|\\^~[\]]+)/gi;
+  const matches = rawText.match(urlRegex) || [];
+
+  const seen = new Set<string>();
+  const results: ExtractedJobLink[] = [];
+
+  for (let i = 0; i < matches.length; i++) {
+    const cleaned = matches[i].replace(/[.,;:!?)]+$/, '').trim();
+    if (!cleaned) continue;
+
+    let normalizedKey = cleaned.toLowerCase().replace(/\/+$/, '');
+    try {
+      const u = new URL(cleaned);
+      normalizedKey = `${u.origin.toLowerCase()}${u.pathname.toLowerCase().replace(/\/+$/, '')}`;
+    } catch {
+      // fallback to cleaned string
+    }
+
+    if (seen.has(normalizedKey)) continue;
+    seen.add(normalizedKey);
+
+    const parsed = parseJobUrlHeuristics(cleaned);
+    if (!parsed.isValid) continue;
+
+    const id = `scraped_${Date.now()}_${i}_${Math.random().toString(36).slice(2, 7)}`;
+    const platformName = parsed.platform !== 'Other' ? parsed.platform : (parsed.domain || 'Portal');
+
+    results.push({
+      id,
+      url: cleaned,
+      title: parsed.suggestedTitle || `Lowongan di ${parsed.suggestedCompany || platformName}`,
+      company: parsed.suggestedCompany || (parsed.platform !== 'Other' ? parsed.platform : parsed.domain),
+      platform: parsed.platform,
+      domain: parsed.domain || 'web',
+      createdAt: new Date().toISOString(),
+    });
+  }
+
+  return results;
 }
 
 function extractSlugHeuristic(pathname: string): string | undefined {

@@ -6,6 +6,7 @@ import {
   buildGlintsSearchUrl,
   buildCustomPlatformSearchUrl,
   parseJobUrlHeuristics,
+  parseBatchJobUrls,
   calculateScoutFitScore,
   CURATED_TECH_VACANCIES,
   DEFAULT_PLATFORM_PRESETS,
@@ -62,8 +63,44 @@ test('parseJobUrlHeuristics safely extracts platform and metadata from job URL',
   assert.equal(parsedLi.platform, 'LinkedIn');
   assert.equal(parsedLi.isValid, true);
 
+  const ghUrl = 'https://boards.greenhouse.io/traveloka/jobs/4567890';
+  const parsedGh = parseJobUrlHeuristics(ghUrl);
+  assert.equal(parsedGh.platform, 'Greenhouse');
+  assert.equal(parsedGh.suggestedCompany, 'Traveloka');
+  assert.equal(parsedGh.isValid, true);
+
+  const leverUrl = 'https://jobs.lever.co/tokopedia/1234-abcd-5678';
+  const parsedLever = parseJobUrlHeuristics(leverUrl);
+  assert.equal(parsedLever.platform, 'Lever');
+  assert.equal(parsedLever.suggestedCompany, 'Tokopedia');
+  assert.equal(parsedLever.isValid, true);
+
   const invalid = parseJobUrlHeuristics('not-a-valid-url');
   assert.equal(invalid.isValid, false);
+});
+
+test('parseBatchJobUrls extracts, sanitizes, and deduplicates multiple job links', () => {
+  const mixedText = `
+    Halo, ini kumpulan lowongan minggu ini:
+    1. https://id.jobstreet.com/job/11111111?source=share.
+    2. https://www.linkedin.com/jobs/view/22222222/
+    3. Cek juga di https://boards.greenhouse.io/acme-corp/jobs/33333333;
+    4. Duplikat: https://id.jobstreet.com/job/11111111
+    Dan teks biasa tanpa link.
+  `;
+
+  const extracted = parseBatchJobUrls(mixedText);
+  assert.equal(extracted.length, 3, 'Should extract exactly 3 unique valid URLs');
+  assert.equal(extracted[0].platform, 'Jobstreet');
+  assert.equal(extracted[0].url, 'https://id.jobstreet.com/job/11111111?source=share');
+  assert.equal(extracted[1].platform, 'LinkedIn');
+  assert.equal(extracted[2].platform, 'Greenhouse');
+  assert.equal(extracted[2].company, 'Acme Corp');
+});
+
+test('parseBatchJobUrls handles empty or invalid text safely', () => {
+  assert.deepEqual(parseBatchJobUrls(''), []);
+  assert.deepEqual(parseBatchJobUrls('hanya teks biasa tanpa link http atau https'), []);
 });
 
 test('calculateScoutFitScore returns high match for aligned tech roles and skills', () => {

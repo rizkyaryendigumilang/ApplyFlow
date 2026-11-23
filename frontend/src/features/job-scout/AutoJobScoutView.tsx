@@ -20,10 +20,13 @@ import {
   Trash2,
   Globe,
   Share2,
+  Link2,
 } from 'lucide-react';
 import { cn } from '../../lib/cn';
 import { useCandidateProfile } from '../../hooks/useCandidateProfile';
 import { useJobPlatforms } from '../../hooks/useJobPlatforms';
+import { useScrapedJobs } from '../../hooks/useScrapedJobs';
+import { DirectJobScraperPanel } from './DirectJobScraperPanel';
 import { idr } from '../../lib/utils';
 import type { ApplicationDraft } from '../../lib/pb-types';
 import {
@@ -67,6 +70,10 @@ export function AutoJobScoutView({
 }: AutoJobScoutViewProps) {
   const { profile } = useCandidateProfile();
   const { platforms, addPlatform, removePlatform } = useJobPlatforms();
+  const { scrapedJobs } = useScrapedJobs();
+
+  // Active View Tab: 'radar' | 'scraper'
+  const [scoutViewMode, setScoutViewMode] = useState<'radar' | 'scraper'>('radar');
 
   // Filter State
   const defaultRole = profile.targetRoles?.[0] || 'Technical Consultant Analyst';
@@ -290,17 +297,53 @@ export function AutoJobScoutView({
             </span>
           </div>
           <p className="mt-1.5 text-xs text-zinc-500 dark:text-zinc-400">
-            Cari puluhan lowongan kerja di Jobstreet, LinkedIn, dan Glints sekaligus tanpa repot mengisi formulir manual.
+            Cari puluhan lowongan kerja di Jobstreet, LinkedIn, dan Glints, atau kumpulkan link lowongan mandiri di satu layar.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2.5">
+          {/* Main Navigation Tabs */}
+          <div className="flex items-center bg-zinc-100 dark:bg-zinc-800 p-1 rounded-xl border border-zinc-200/70 dark:border-zinc-700/70">
+            <button
+              type="button"
+              onClick={() => setScoutViewMode('radar')}
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all",
+                scoutViewMode === 'radar'
+                  ? "bg-white text-zinc-900 shadow-2xs dark:bg-zinc-900 dark:text-zinc-100"
+                  : "text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200"
+              )}
+            >
+              <Compass size={13} className={scoutViewMode === 'radar' ? "text-zinc-900 dark:text-zinc-100" : ""} />
+              <span>Radar Multi-Platform</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setScoutViewMode('scraper')}
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all",
+                scoutViewMode === 'scraper'
+                  ? "bg-white text-zinc-900 shadow-2xs dark:bg-zinc-900 dark:text-zinc-100"
+                  : "text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200"
+              )}
+            >
+              <Link2 size={13} className={scoutViewMode === 'scraper' ? "text-amber-500" : ""} />
+              <span>Loker Scraper</span>
+              {scrapedJobs.length > 0 && (
+                <span className="ml-0.5 px-1.5 py-0.2 rounded-full font-mono text-[9px] bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 font-bold">
+                  {scrapedJobs.length}
+                </span>
+              )}
+            </button>
+          </div>
+
           {onNavigateToTracker && (
             <button
               onClick={onNavigateToTracker}
-              className="inline-flex items-center gap-1.5 rounded-md border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 shadow-2xs hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-medium text-zinc-700 shadow-2xs hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 transition-colors"
             >
-              <Bookmark size={13} /> Buka Pipeline Pelacak
+              <Bookmark size={13} /> Buka Pipeline
             </button>
           )}
         </div>
@@ -319,46 +362,91 @@ export function AutoJobScoutView({
       )}
 
       {/* KPI Stats Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-        <div className="rounded-2xl border border-zinc-200/80 bg-white/80 backdrop-blur-md p-4 shadow-2xs hover:shadow-xs transition-shadow dark:border-zinc-800 dark:bg-zinc-900/80">
-          <span className="text-[11px] uppercase tracking-wider font-semibold text-zinc-500 dark:text-zinc-400">
-            Total Lowongan di Radar
-          </span>
-          <div className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mt-1 font-mono tabular-nums tracking-tight">
-            {filteredVacancies.length}
+      {scoutViewMode === 'scraper' ? (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+          <div className="rounded-2xl border border-zinc-200/80 bg-white/80 backdrop-blur-md p-4 shadow-2xs hover:shadow-xs transition-shadow dark:border-zinc-800 dark:bg-zinc-900/80">
+            <span className="text-[11px] uppercase tracking-wider font-semibold text-zinc-500 dark:text-zinc-400">
+              Total Link di Koleksi
+            </span>
+            <div className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mt-1 font-mono tabular-nums tracking-tight">
+              {scrapedJobs.length}
+            </div>
+            <span className="text-[11px] text-zinc-400 mt-1 block">
+              Tautan resmi siap dilamar 1-klik
+            </span>
           </div>
-          <span className="text-[11px] text-zinc-400 mt-1 block">
-            Aktif siap dilamar di platform
-          </span>
-        </div>
 
-        <div className="rounded-2xl border border-zinc-200/80 bg-white/80 backdrop-blur-md p-4 shadow-2xs hover:shadow-xs transition-shadow dark:border-zinc-800 dark:bg-zinc-900/80">
-          <span className="text-[11px] uppercase tracking-wider font-semibold text-emerald-600 dark:text-emerald-400">
-            Kecocokan Tinggi (&gt;= 80%)
-          </span>
-          <div className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mt-1 font-mono tabular-nums tracking-tight">
-            {highMatchCount}
+          <div className="rounded-2xl border border-zinc-200/80 bg-white/80 backdrop-blur-md p-4 shadow-2xs hover:shadow-xs transition-shadow dark:border-zinc-800 dark:bg-zinc-900/80">
+            <span className="text-[11px] uppercase tracking-wider font-semibold text-amber-600 dark:text-amber-400">
+              Antrean Belum Dilamar
+            </span>
+            <div className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mt-1 font-mono tabular-nums tracking-tight">
+              {scrapedJobs.filter((j) => !j.isSavedToPipeline).length}
+            </div>
+            <span className="text-[11px] text-zinc-400 mt-1 block">
+              Menunggu dibuka dan disalin
+            </span>
           </div>
-          <span className="text-[11px] text-zinc-400 mt-1 block">
-            Sesuai profil teknis & batas gaji
-          </span>
-        </div>
 
-        <div className="rounded-2xl border border-zinc-200/80 bg-white/80 backdrop-blur-md p-4 shadow-2xs hover:shadow-xs transition-shadow dark:border-zinc-800 dark:bg-zinc-900/80">
-          <span className="text-[11px] uppercase tracking-wider font-semibold text-zinc-500 dark:text-zinc-400">
-            Tersimpan ke Pipeline
-          </span>
-          <div className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mt-1 font-mono tabular-nums tracking-tight">
-            {Object.keys(savedVacancyIds).length}
+          <div className="rounded-2xl border border-zinc-200/80 bg-white/80 backdrop-blur-md p-4 shadow-2xs hover:shadow-xs transition-shadow dark:border-zinc-800 dark:bg-zinc-900/80">
+            <span className="text-[11px] uppercase tracking-wider font-semibold text-emerald-600 dark:text-emerald-400">
+              Tersimpan ke Pipeline
+            </span>
+            <div className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mt-1 font-mono tabular-nums tracking-tight">
+              {scrapedJobs.filter((j) => j.isSavedToPipeline).length}
+            </div>
+            <span className="text-[11px] text-zinc-400 mt-1 block">
+              Proses lamaran aktif di Kanban
+            </span>
           </div>
-          <span className="text-[11px] text-zinc-400 mt-1 block">
-            Siap dipantau proses seleksinya
-          </span>
         </div>
-      </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+          <div className="rounded-2xl border border-zinc-200/80 bg-white/80 backdrop-blur-md p-4 shadow-2xs hover:shadow-xs transition-shadow dark:border-zinc-800 dark:bg-zinc-900/80">
+            <span className="text-[11px] uppercase tracking-wider font-semibold text-zinc-500 dark:text-zinc-400">
+              Total Lowongan di Radar
+            </span>
+            <div className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mt-1 font-mono tabular-nums tracking-tight">
+              {filteredVacancies.length}
+            </div>
+            <span className="text-[11px] text-zinc-400 mt-1 block">
+              Aktif siap dilamar di platform
+            </span>
+          </div>
 
-      {/* Control Box: Target Role, Platform, Location, and Live Launch */}
-      <div className="rounded-2xl border border-zinc-200/80 bg-white/80 backdrop-blur-md p-5 shadow-2xs dark:border-zinc-800 dark:bg-zinc-900/80 space-y-4">
+          <div className="rounded-2xl border border-zinc-200/80 bg-white/80 backdrop-blur-md p-4 shadow-2xs hover:shadow-xs transition-shadow dark:border-zinc-800 dark:bg-zinc-900/80">
+            <span className="text-[11px] uppercase tracking-wider font-semibold text-emerald-600 dark:text-emerald-400">
+              Kecocokan Tinggi (&gt;= 80%)
+            </span>
+            <div className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mt-1 font-mono tabular-nums tracking-tight">
+              {highMatchCount}
+            </div>
+            <span className="text-[11px] text-zinc-400 mt-1 block">
+              Sesuai profil teknis & batas gaji
+            </span>
+          </div>
+
+          <div className="rounded-2xl border border-zinc-200/80 bg-white/80 backdrop-blur-md p-4 shadow-2xs hover:shadow-xs transition-shadow dark:border-zinc-800 dark:bg-zinc-900/80">
+            <span className="text-[11px] uppercase tracking-wider font-semibold text-zinc-500 dark:text-zinc-400">
+              Tersimpan ke Pipeline
+            </span>
+            <div className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mt-1 font-mono tabular-nums tracking-tight">
+              {Object.keys(savedVacancyIds).length}
+            </div>
+            <span className="text-[11px] text-zinc-400 mt-1 block">
+              Siap dipantau proses seleksinya
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* Main View Switch: Scraper Panel vs Radar Panel */}
+      {scoutViewMode === 'scraper' ? (
+        <DirectJobScraperPanel onSaveToPipeline={onAddApplication} />
+      ) : (
+        <>
+          {/* Control Box: Target Role, Platform, Location, and Live Launch */}
+          <div className="rounded-2xl border border-zinc-200/80 bg-white/80 backdrop-blur-md p-5 shadow-2xs dark:border-zinc-800 dark:bg-zinc-900/80 space-y-4">
         <div>
           <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
             Pilih Target Posisi dari Profil Anda:
@@ -653,9 +741,19 @@ export function AutoJobScoutView({
 
       {/* Quick Paste URL Bar */}
       <form onSubmit={handleQuickPaste} className="rounded-2xl border border-zinc-200/80 bg-zinc-50/70 backdrop-blur-md p-4 dark:border-zinc-800 dark:bg-zinc-900/50">
-        <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300 mb-1.5">
-          Punya Link Lowongan Spesifik? Tempel Langsung di Sini:
-        </label>
+        <div className="flex items-center justify-between mb-1.5">
+          <label className="block text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+            Punya Link Lowongan Spesifik? Tempel Langsung di Sini:
+          </label>
+          <button
+            type="button"
+            onClick={() => setScoutViewMode('scraper')}
+            className="text-[11px] font-semibold text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 flex items-center gap-1 transition-colors"
+          >
+            <Link2 size={12} className="text-amber-500" />
+            <span>Buka Loker Scraper (Koleksi & Mode Massal) &rarr;</span>
+          </button>
+        </div>
         <div className="flex flex-col sm:flex-row gap-2">
           <input
             type="url"
@@ -918,6 +1016,8 @@ export function AutoJobScoutView({
           </div>
         )}
       </div>
+      </>
+      )}
     </div>
   );
 }
